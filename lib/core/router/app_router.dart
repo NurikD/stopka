@@ -1,6 +1,8 @@
 import 'package:go_router/go_router.dart';
 
+import '../../features/courses/course_detail_screen.dart';
 import '../../features/courses/courses_screen.dart';
+import '../../features/courses/unit_detail_screen.dart';
 import '../../features/mistakes/mistakes_screen.dart';
 import '../../features/practice/practice_screen.dart';
 import '../../features/settings/settings_screen.dart';
@@ -19,6 +21,17 @@ final appRouter = GoRouter(
         GoRoute(path: '/mistakes', builder: (context, state) => const MistakesScreen()),
         GoRoute(path: '/settings', builder: (context, state) => const SettingsScreen()),
       ],
+    ),
+    GoRoute(
+      path: '/courses/:courseId',
+      builder: (context, state) => CourseDetailScreen(courseId: state.pathParameters['courseId']!),
+    ),
+    GoRoute(
+      path: '/courses/:courseId/units/:unitId',
+      builder: (context, state) => UnitDetailScreen(
+        courseId: state.pathParameters['courseId']!,
+        unitId: state.pathParameters['unitId']!,
+      ),
     ),
   ],
 );
