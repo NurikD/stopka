@@ -16,8 +16,10 @@ import '../../domain/repositories/word_card_repository.dart';
 import '../../domain/repositories/word_set_repository.dart';
 import '../analytics/event_logger.dart';
 import '../llm/api_key_store.dart';
+import '../llm/card_enrichment_service.dart';
 import '../llm/gemini_llm_client.dart';
 import '../llm/llm_client.dart';
+import '../llm/word_recognition_service.dart';
 
 final appDatabaseProvider = Provider<AppDatabase>((ref) {
   final db = AppDatabase();
@@ -72,3 +74,11 @@ final llmClientProvider = Provider<LlmClient>((ref) {
 });
 
 final eventLoggerProvider = Provider<EventLogger>((ref) => NoopEventLogger());
+
+final wordRecognitionServiceProvider = Provider<WordRecognitionService>((ref) {
+  return WordRecognitionService(ref.watch(llmClientProvider));
+});
+
+final cardEnrichmentServiceProvider = Provider<CardEnrichmentService>((ref) {
+  return CardEnrichmentService(ref.watch(llmClientProvider), ref.watch(llmCacheRepositoryProvider));
+});
