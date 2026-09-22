@@ -69,3 +69,11 @@ class Cards extends Table with SyncColumns {
   late final note = text().withDefault(const Constant(''))();
   late final imageRef = text().nullable()();
 }
+
+/// Caches LLM responses by request hash so the same word/batch is never
+/// re-sent to Gemini twice — required to stay inside the free tier's limits.
+@DataClassName('LlmCacheRow')
+class LlmCaches extends Table with SyncColumns {
+  late final requestHash = text()();
+  late final responseJson = text()();
+}
