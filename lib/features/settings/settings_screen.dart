@@ -4,6 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/llm/api_key_store.dart';
 import '../../core/llm/llm_exception.dart';
 import '../../core/providers/core_providers.dart';
+import '../../core/theme/app_theme_extension.dart';
+import '../../core/theme/tokens.dart';
+import '../../core/theme/typography.dart';
+import '../../core/widgets/ghost_button.dart';
+import '../../core/widgets/primary_button.dart';
 
 /// Known Gemini flash model ids as of the last documentation check
 /// (ai.google.dev/gemini-api/docs/models, checked 2026-09-23). Re-verify
@@ -110,10 +115,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Настройки')),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         children: [
-          Text('Gemini API', style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 8),
+          Text('Gemini API', style: AppTypography.subtitle.copyWith(color: context.colors.textPrimary)),
+          const SizedBox(height: AppSpacing.sm),
           TextField(
             controller: _keyController,
             obscureText: _obscureKey,
@@ -141,33 +146,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               if (value != null) setState(() => _model = value);
             },
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.lg),
           Row(
             children: [
-              FilledButton(
-                onPressed: _saving ? null : _save,
-                child: _saving
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Сохранить'),
-              ),
-              const SizedBox(width: 12),
-              OutlinedButton(
+              PrimaryButton(label: 'Сохранить', onPressed: _save, loading: _saving),
+              const SizedBox(width: AppSpacing.md),
+              GhostButton(
+                label: 'Проверить ключ',
                 onPressed: _checkStatus == _KeyCheckStatus.checking ? null : _checkKey,
-                child: _checkStatus == _KeyCheckStatus.checking
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Проверить ключ'),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           _buildCheckStatus(context),
         ],
       ),
@@ -175,24 +165,25 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Widget _buildCheckStatus(BuildContext context) {
+    final colors = context.colors;
     switch (_checkStatus) {
       case _KeyCheckStatus.idle:
       case _KeyCheckStatus.checking:
         return const SizedBox.shrink();
       case _KeyCheckStatus.valid:
-        return const Text(
+        return Text(
           'Ключ работает.',
-          style: TextStyle(color: Colors.green),
+          style: AppTypography.body.copyWith(color: colors.statusCorrect),
         );
       case _KeyCheckStatus.invalid:
         return Text(
           _checkErrorMessage ?? 'Ключ недействителен. Проверьте его и попробуйте снова.',
-          style: TextStyle(color: Theme.of(context).colorScheme.error),
+          style: AppTypography.body.copyWith(color: colors.statusWrong),
         );
       case _KeyCheckStatus.error:
         return Text(
           _checkErrorMessage ?? 'Не удалось проверить ключ.',
-          style: TextStyle(color: Theme.of(context).colorScheme.error),
+          style: AppTypography.body.copyWith(color: colors.statusWrong),
         );
     }
   }
