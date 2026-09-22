@@ -10,14 +10,16 @@ import 'tables.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [Profiles, Courses, Units, WordSets, Cards, LlmCaches])
+@DriftDatabase(
+  tables: [Profiles, Courses, Units, WordSets, Cards, LlmCaches, DictationSessions, DictationAnswers],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   AppDatabase.forTesting(super.connection);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration {
@@ -28,6 +30,10 @@ class AppDatabase extends _$AppDatabase {
       onUpgrade: (m, from, to) async {
         if (from < 2) {
           await m.createTable(llmCaches);
+        }
+        if (from < 3) {
+          await m.createTable(dictationSessions);
+          await m.createTable(dictationAnswers);
         }
       },
     );

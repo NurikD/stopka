@@ -3839,6 +3839,1448 @@ class LlmCachesCompanion extends UpdateCompanion<LlmCacheRow> {
   }
 }
 
+class $DictationSessionsTable extends DictationSessions
+    with TableInfo<$DictationSessionsTable, DictationSessionRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DictationSessionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: () => const Uuid().v4(),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _ownerIdMeta = const VerificationMeta(
+    'ownerId',
+  );
+  @override
+  late final GeneratedColumn<String> ownerId = GeneratedColumn<String>(
+    'owner_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _setIdMeta = const VerificationMeta('setId');
+  @override
+  late final GeneratedColumn<String> setId = GeneratedColumn<String>(
+    'set_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES word_sets (id)',
+    ),
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<DictationDirection, String>
+  direction =
+      GeneratedColumn<String>(
+        'direction',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<DictationDirection>(
+        $DictationSessionsTable.$converterdirection,
+      );
+  static const VerificationMeta _startedAtMeta = const VerificationMeta(
+    'startedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> startedAt = GeneratedColumn<DateTime>(
+    'started_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _finishedAtMeta = const VerificationMeta(
+    'finishedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> finishedAt = GeneratedColumn<DateTime>(
+    'finished_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _roundsCountMeta = const VerificationMeta(
+    'roundsCount',
+  );
+  @override
+  late final GeneratedColumn<int> roundsCount = GeneratedColumn<int>(
+    'rounds_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _totalWordsMeta = const VerificationMeta(
+    'totalWords',
+  );
+  @override
+  late final GeneratedColumn<int> totalWords = GeneratedColumn<int>(
+    'total_words',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    ownerId,
+    syncedAt,
+    setId,
+    direction,
+    startedAt,
+    finishedAt,
+    roundsCount,
+    totalWords,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'dictation_sessions';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<DictationSessionRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('owner_id')) {
+      context.handle(
+        _ownerIdMeta,
+        ownerId.isAcceptableOrUnknown(data['owner_id']!, _ownerIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_ownerIdMeta);
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
+    if (data.containsKey('set_id')) {
+      context.handle(
+        _setIdMeta,
+        setId.isAcceptableOrUnknown(data['set_id']!, _setIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_setIdMeta);
+    }
+    if (data.containsKey('started_at')) {
+      context.handle(
+        _startedAtMeta,
+        startedAt.isAcceptableOrUnknown(data['started_at']!, _startedAtMeta),
+      );
+    }
+    if (data.containsKey('finished_at')) {
+      context.handle(
+        _finishedAtMeta,
+        finishedAt.isAcceptableOrUnknown(data['finished_at']!, _finishedAtMeta),
+      );
+    }
+    if (data.containsKey('rounds_count')) {
+      context.handle(
+        _roundsCountMeta,
+        roundsCount.isAcceptableOrUnknown(
+          data['rounds_count']!,
+          _roundsCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('total_words')) {
+      context.handle(
+        _totalWordsMeta,
+        totalWords.isAcceptableOrUnknown(data['total_words']!, _totalWordsMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  DictationSessionRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DictationSessionRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      ownerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}owner_id'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
+      setId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}set_id'],
+      )!,
+      direction: $DictationSessionsTable.$converterdirection.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}direction'],
+        )!,
+      ),
+      startedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}started_at'],
+      )!,
+      finishedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}finished_at'],
+      ),
+      roundsCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rounds_count'],
+      )!,
+      totalWords: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total_words'],
+      )!,
+    );
+  }
+
+  @override
+  $DictationSessionsTable createAlias(String alias) {
+    return $DictationSessionsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<DictationDirection, String, String>
+  $converterdirection = const EnumNameConverter<DictationDirection>(
+    DictationDirection.values,
+  );
+}
+
+class DictationSessionRow extends DataClass
+    implements Insertable<DictationSessionRow> {
+  final String id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  final String ownerId;
+  final DateTime? syncedAt;
+  final String setId;
+  final DictationDirection direction;
+  final DateTime startedAt;
+  final DateTime? finishedAt;
+  final int roundsCount;
+  final int totalWords;
+  const DictationSessionRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    required this.ownerId,
+    this.syncedAt,
+    required this.setId,
+    required this.direction,
+    required this.startedAt,
+    this.finishedAt,
+    required this.roundsCount,
+    required this.totalWords,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    map['owner_id'] = Variable<String>(ownerId);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
+    map['set_id'] = Variable<String>(setId);
+    {
+      map['direction'] = Variable<String>(
+        $DictationSessionsTable.$converterdirection.toSql(direction),
+      );
+    }
+    map['started_at'] = Variable<DateTime>(startedAt);
+    if (!nullToAbsent || finishedAt != null) {
+      map['finished_at'] = Variable<DateTime>(finishedAt);
+    }
+    map['rounds_count'] = Variable<int>(roundsCount);
+    map['total_words'] = Variable<int>(totalWords);
+    return map;
+  }
+
+  DictationSessionsCompanion toCompanion(bool nullToAbsent) {
+    return DictationSessionsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      ownerId: Value(ownerId),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
+      setId: Value(setId),
+      direction: Value(direction),
+      startedAt: Value(startedAt),
+      finishedAt: finishedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(finishedAt),
+      roundsCount: Value(roundsCount),
+      totalWords: Value(totalWords),
+    );
+  }
+
+  factory DictationSessionRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DictationSessionRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      ownerId: serializer.fromJson<String>(json['ownerId']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+      setId: serializer.fromJson<String>(json['setId']),
+      direction: $DictationSessionsTable.$converterdirection.fromJson(
+        serializer.fromJson<String>(json['direction']),
+      ),
+      startedAt: serializer.fromJson<DateTime>(json['startedAt']),
+      finishedAt: serializer.fromJson<DateTime?>(json['finishedAt']),
+      roundsCount: serializer.fromJson<int>(json['roundsCount']),
+      totalWords: serializer.fromJson<int>(json['totalWords']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'ownerId': serializer.toJson<String>(ownerId),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+      'setId': serializer.toJson<String>(setId),
+      'direction': serializer.toJson<String>(
+        $DictationSessionsTable.$converterdirection.toJson(direction),
+      ),
+      'startedAt': serializer.toJson<DateTime>(startedAt),
+      'finishedAt': serializer.toJson<DateTime?>(finishedAt),
+      'roundsCount': serializer.toJson<int>(roundsCount),
+      'totalWords': serializer.toJson<int>(totalWords),
+    };
+  }
+
+  DictationSessionRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+    String? ownerId,
+    Value<DateTime?> syncedAt = const Value.absent(),
+    String? setId,
+    DictationDirection? direction,
+    DateTime? startedAt,
+    Value<DateTime?> finishedAt = const Value.absent(),
+    int? roundsCount,
+    int? totalWords,
+  }) => DictationSessionRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    ownerId: ownerId ?? this.ownerId,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+    setId: setId ?? this.setId,
+    direction: direction ?? this.direction,
+    startedAt: startedAt ?? this.startedAt,
+    finishedAt: finishedAt.present ? finishedAt.value : this.finishedAt,
+    roundsCount: roundsCount ?? this.roundsCount,
+    totalWords: totalWords ?? this.totalWords,
+  );
+  DictationSessionRow copyWithCompanion(DictationSessionsCompanion data) {
+    return DictationSessionRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+      setId: data.setId.present ? data.setId.value : this.setId,
+      direction: data.direction.present ? data.direction.value : this.direction,
+      startedAt: data.startedAt.present ? data.startedAt.value : this.startedAt,
+      finishedAt: data.finishedAt.present
+          ? data.finishedAt.value
+          : this.finishedAt,
+      roundsCount: data.roundsCount.present
+          ? data.roundsCount.value
+          : this.roundsCount,
+      totalWords: data.totalWords.present
+          ? data.totalWords.value
+          : this.totalWords,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DictationSessionRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('setId: $setId, ')
+          ..write('direction: $direction, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('finishedAt: $finishedAt, ')
+          ..write('roundsCount: $roundsCount, ')
+          ..write('totalWords: $totalWords')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    ownerId,
+    syncedAt,
+    setId,
+    direction,
+    startedAt,
+    finishedAt,
+    roundsCount,
+    totalWords,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DictationSessionRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.ownerId == this.ownerId &&
+          other.syncedAt == this.syncedAt &&
+          other.setId == this.setId &&
+          other.direction == this.direction &&
+          other.startedAt == this.startedAt &&
+          other.finishedAt == this.finishedAt &&
+          other.roundsCount == this.roundsCount &&
+          other.totalWords == this.totalWords);
+}
+
+class DictationSessionsCompanion extends UpdateCompanion<DictationSessionRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<String> ownerId;
+  final Value<DateTime?> syncedAt;
+  final Value<String> setId;
+  final Value<DictationDirection> direction;
+  final Value<DateTime> startedAt;
+  final Value<DateTime?> finishedAt;
+  final Value<int> roundsCount;
+  final Value<int> totalWords;
+  final Value<int> rowid;
+  const DictationSessionsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.ownerId = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.setId = const Value.absent(),
+    this.direction = const Value.absent(),
+    this.startedAt = const Value.absent(),
+    this.finishedAt = const Value.absent(),
+    this.roundsCount = const Value.absent(),
+    this.totalWords = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  DictationSessionsCompanion.insert({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    required String ownerId,
+    this.syncedAt = const Value.absent(),
+    required String setId,
+    required DictationDirection direction,
+    this.startedAt = const Value.absent(),
+    this.finishedAt = const Value.absent(),
+    this.roundsCount = const Value.absent(),
+    this.totalWords = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : ownerId = Value(ownerId),
+       setId = Value(setId),
+       direction = Value(direction);
+  static Insertable<DictationSessionRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<String>? ownerId,
+    Expression<DateTime>? syncedAt,
+    Expression<String>? setId,
+    Expression<String>? direction,
+    Expression<DateTime>? startedAt,
+    Expression<DateTime>? finishedAt,
+    Expression<int>? roundsCount,
+    Expression<int>? totalWords,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (ownerId != null) 'owner_id': ownerId,
+      if (syncedAt != null) 'synced_at': syncedAt,
+      if (setId != null) 'set_id': setId,
+      if (direction != null) 'direction': direction,
+      if (startedAt != null) 'started_at': startedAt,
+      if (finishedAt != null) 'finished_at': finishedAt,
+      if (roundsCount != null) 'rounds_count': roundsCount,
+      if (totalWords != null) 'total_words': totalWords,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  DictationSessionsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
+    Value<String>? ownerId,
+    Value<DateTime?>? syncedAt,
+    Value<String>? setId,
+    Value<DictationDirection>? direction,
+    Value<DateTime>? startedAt,
+    Value<DateTime?>? finishedAt,
+    Value<int>? roundsCount,
+    Value<int>? totalWords,
+    Value<int>? rowid,
+  }) {
+    return DictationSessionsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      ownerId: ownerId ?? this.ownerId,
+      syncedAt: syncedAt ?? this.syncedAt,
+      setId: setId ?? this.setId,
+      direction: direction ?? this.direction,
+      startedAt: startedAt ?? this.startedAt,
+      finishedAt: finishedAt ?? this.finishedAt,
+      roundsCount: roundsCount ?? this.roundsCount,
+      totalWords: totalWords ?? this.totalWords,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (ownerId.present) {
+      map['owner_id'] = Variable<String>(ownerId.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    if (setId.present) {
+      map['set_id'] = Variable<String>(setId.value);
+    }
+    if (direction.present) {
+      map['direction'] = Variable<String>(
+        $DictationSessionsTable.$converterdirection.toSql(direction.value),
+      );
+    }
+    if (startedAt.present) {
+      map['started_at'] = Variable<DateTime>(startedAt.value);
+    }
+    if (finishedAt.present) {
+      map['finished_at'] = Variable<DateTime>(finishedAt.value);
+    }
+    if (roundsCount.present) {
+      map['rounds_count'] = Variable<int>(roundsCount.value);
+    }
+    if (totalWords.present) {
+      map['total_words'] = Variable<int>(totalWords.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DictationSessionsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('setId: $setId, ')
+          ..write('direction: $direction, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('finishedAt: $finishedAt, ')
+          ..write('roundsCount: $roundsCount, ')
+          ..write('totalWords: $totalWords, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $DictationAnswersTable extends DictationAnswers
+    with TableInfo<$DictationAnswersTable, DictationAnswerRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DictationAnswersTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: () => const Uuid().v4(),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _ownerIdMeta = const VerificationMeta(
+    'ownerId',
+  );
+  @override
+  late final GeneratedColumn<String> ownerId = GeneratedColumn<String>(
+    'owner_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _sessionIdMeta = const VerificationMeta(
+    'sessionId',
+  );
+  @override
+  late final GeneratedColumn<String> sessionId = GeneratedColumn<String>(
+    'session_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES dictation_sessions (id)',
+    ),
+  );
+  static const VerificationMeta _cardIdMeta = const VerificationMeta('cardId');
+  @override
+  late final GeneratedColumn<String> cardId = GeneratedColumn<String>(
+    'card_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES cards (id)',
+    ),
+  );
+  static const VerificationMeta _roundIndexMeta = const VerificationMeta(
+    'roundIndex',
+  );
+  @override
+  late final GeneratedColumn<int> roundIndex = GeneratedColumn<int>(
+    'round_index',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _userInputMeta = const VerificationMeta(
+    'userInput',
+  );
+  @override
+  late final GeneratedColumn<String> userInput = GeneratedColumn<String>(
+    'user_input',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<DictationVerdictColumn, String>
+  verdict =
+      GeneratedColumn<String>(
+        'verdict',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<DictationVerdictColumn>(
+        $DictationAnswersTable.$converterverdict,
+      );
+  @override
+  late final GeneratedColumnWithTypeConverter<DictationCheckedBy, String>
+  checkedBy =
+      GeneratedColumn<String>(
+        'checked_by',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant('local'),
+      ).withConverter<DictationCheckedBy>(
+        $DictationAnswersTable.$convertercheckedBy,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    ownerId,
+    syncedAt,
+    sessionId,
+    cardId,
+    roundIndex,
+    userInput,
+    verdict,
+    checkedBy,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'dictation_answers';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<DictationAnswerRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('owner_id')) {
+      context.handle(
+        _ownerIdMeta,
+        ownerId.isAcceptableOrUnknown(data['owner_id']!, _ownerIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_ownerIdMeta);
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
+    if (data.containsKey('session_id')) {
+      context.handle(
+        _sessionIdMeta,
+        sessionId.isAcceptableOrUnknown(data['session_id']!, _sessionIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sessionIdMeta);
+    }
+    if (data.containsKey('card_id')) {
+      context.handle(
+        _cardIdMeta,
+        cardId.isAcceptableOrUnknown(data['card_id']!, _cardIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cardIdMeta);
+    }
+    if (data.containsKey('round_index')) {
+      context.handle(
+        _roundIndexMeta,
+        roundIndex.isAcceptableOrUnknown(data['round_index']!, _roundIndexMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_roundIndexMeta);
+    }
+    if (data.containsKey('user_input')) {
+      context.handle(
+        _userInputMeta,
+        userInput.isAcceptableOrUnknown(data['user_input']!, _userInputMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_userInputMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  DictationAnswerRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DictationAnswerRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      ownerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}owner_id'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
+      sessionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}session_id'],
+      )!,
+      cardId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}card_id'],
+      )!,
+      roundIndex: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}round_index'],
+      )!,
+      userInput: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_input'],
+      )!,
+      verdict: $DictationAnswersTable.$converterverdict.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}verdict'],
+        )!,
+      ),
+      checkedBy: $DictationAnswersTable.$convertercheckedBy.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}checked_by'],
+        )!,
+      ),
+    );
+  }
+
+  @override
+  $DictationAnswersTable createAlias(String alias) {
+    return $DictationAnswersTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<DictationVerdictColumn, String, String>
+  $converterverdict = const EnumNameConverter<DictationVerdictColumn>(
+    DictationVerdictColumn.values,
+  );
+  static JsonTypeConverter2<DictationCheckedBy, String, String>
+  $convertercheckedBy = const EnumNameConverter<DictationCheckedBy>(
+    DictationCheckedBy.values,
+  );
+}
+
+class DictationAnswerRow extends DataClass
+    implements Insertable<DictationAnswerRow> {
+  final String id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  final String ownerId;
+  final DateTime? syncedAt;
+  final String sessionId;
+  final String cardId;
+  final int roundIndex;
+  final String userInput;
+  final DictationVerdictColumn verdict;
+  final DictationCheckedBy checkedBy;
+  const DictationAnswerRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    required this.ownerId,
+    this.syncedAt,
+    required this.sessionId,
+    required this.cardId,
+    required this.roundIndex,
+    required this.userInput,
+    required this.verdict,
+    required this.checkedBy,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    map['owner_id'] = Variable<String>(ownerId);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
+    map['session_id'] = Variable<String>(sessionId);
+    map['card_id'] = Variable<String>(cardId);
+    map['round_index'] = Variable<int>(roundIndex);
+    map['user_input'] = Variable<String>(userInput);
+    {
+      map['verdict'] = Variable<String>(
+        $DictationAnswersTable.$converterverdict.toSql(verdict),
+      );
+    }
+    {
+      map['checked_by'] = Variable<String>(
+        $DictationAnswersTable.$convertercheckedBy.toSql(checkedBy),
+      );
+    }
+    return map;
+  }
+
+  DictationAnswersCompanion toCompanion(bool nullToAbsent) {
+    return DictationAnswersCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      ownerId: Value(ownerId),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
+      sessionId: Value(sessionId),
+      cardId: Value(cardId),
+      roundIndex: Value(roundIndex),
+      userInput: Value(userInput),
+      verdict: Value(verdict),
+      checkedBy: Value(checkedBy),
+    );
+  }
+
+  factory DictationAnswerRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DictationAnswerRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      ownerId: serializer.fromJson<String>(json['ownerId']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+      sessionId: serializer.fromJson<String>(json['sessionId']),
+      cardId: serializer.fromJson<String>(json['cardId']),
+      roundIndex: serializer.fromJson<int>(json['roundIndex']),
+      userInput: serializer.fromJson<String>(json['userInput']),
+      verdict: $DictationAnswersTable.$converterverdict.fromJson(
+        serializer.fromJson<String>(json['verdict']),
+      ),
+      checkedBy: $DictationAnswersTable.$convertercheckedBy.fromJson(
+        serializer.fromJson<String>(json['checkedBy']),
+      ),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'ownerId': serializer.toJson<String>(ownerId),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+      'sessionId': serializer.toJson<String>(sessionId),
+      'cardId': serializer.toJson<String>(cardId),
+      'roundIndex': serializer.toJson<int>(roundIndex),
+      'userInput': serializer.toJson<String>(userInput),
+      'verdict': serializer.toJson<String>(
+        $DictationAnswersTable.$converterverdict.toJson(verdict),
+      ),
+      'checkedBy': serializer.toJson<String>(
+        $DictationAnswersTable.$convertercheckedBy.toJson(checkedBy),
+      ),
+    };
+  }
+
+  DictationAnswerRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+    String? ownerId,
+    Value<DateTime?> syncedAt = const Value.absent(),
+    String? sessionId,
+    String? cardId,
+    int? roundIndex,
+    String? userInput,
+    DictationVerdictColumn? verdict,
+    DictationCheckedBy? checkedBy,
+  }) => DictationAnswerRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    ownerId: ownerId ?? this.ownerId,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+    sessionId: sessionId ?? this.sessionId,
+    cardId: cardId ?? this.cardId,
+    roundIndex: roundIndex ?? this.roundIndex,
+    userInput: userInput ?? this.userInput,
+    verdict: verdict ?? this.verdict,
+    checkedBy: checkedBy ?? this.checkedBy,
+  );
+  DictationAnswerRow copyWithCompanion(DictationAnswersCompanion data) {
+    return DictationAnswerRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+      sessionId: data.sessionId.present ? data.sessionId.value : this.sessionId,
+      cardId: data.cardId.present ? data.cardId.value : this.cardId,
+      roundIndex: data.roundIndex.present
+          ? data.roundIndex.value
+          : this.roundIndex,
+      userInput: data.userInput.present ? data.userInput.value : this.userInput,
+      verdict: data.verdict.present ? data.verdict.value : this.verdict,
+      checkedBy: data.checkedBy.present ? data.checkedBy.value : this.checkedBy,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DictationAnswerRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('sessionId: $sessionId, ')
+          ..write('cardId: $cardId, ')
+          ..write('roundIndex: $roundIndex, ')
+          ..write('userInput: $userInput, ')
+          ..write('verdict: $verdict, ')
+          ..write('checkedBy: $checkedBy')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    ownerId,
+    syncedAt,
+    sessionId,
+    cardId,
+    roundIndex,
+    userInput,
+    verdict,
+    checkedBy,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DictationAnswerRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.ownerId == this.ownerId &&
+          other.syncedAt == this.syncedAt &&
+          other.sessionId == this.sessionId &&
+          other.cardId == this.cardId &&
+          other.roundIndex == this.roundIndex &&
+          other.userInput == this.userInput &&
+          other.verdict == this.verdict &&
+          other.checkedBy == this.checkedBy);
+}
+
+class DictationAnswersCompanion extends UpdateCompanion<DictationAnswerRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<String> ownerId;
+  final Value<DateTime?> syncedAt;
+  final Value<String> sessionId;
+  final Value<String> cardId;
+  final Value<int> roundIndex;
+  final Value<String> userInput;
+  final Value<DictationVerdictColumn> verdict;
+  final Value<DictationCheckedBy> checkedBy;
+  final Value<int> rowid;
+  const DictationAnswersCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.ownerId = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.sessionId = const Value.absent(),
+    this.cardId = const Value.absent(),
+    this.roundIndex = const Value.absent(),
+    this.userInput = const Value.absent(),
+    this.verdict = const Value.absent(),
+    this.checkedBy = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  DictationAnswersCompanion.insert({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    required String ownerId,
+    this.syncedAt = const Value.absent(),
+    required String sessionId,
+    required String cardId,
+    required int roundIndex,
+    required String userInput,
+    required DictationVerdictColumn verdict,
+    this.checkedBy = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : ownerId = Value(ownerId),
+       sessionId = Value(sessionId),
+       cardId = Value(cardId),
+       roundIndex = Value(roundIndex),
+       userInput = Value(userInput),
+       verdict = Value(verdict);
+  static Insertable<DictationAnswerRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<String>? ownerId,
+    Expression<DateTime>? syncedAt,
+    Expression<String>? sessionId,
+    Expression<String>? cardId,
+    Expression<int>? roundIndex,
+    Expression<String>? userInput,
+    Expression<String>? verdict,
+    Expression<String>? checkedBy,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (ownerId != null) 'owner_id': ownerId,
+      if (syncedAt != null) 'synced_at': syncedAt,
+      if (sessionId != null) 'session_id': sessionId,
+      if (cardId != null) 'card_id': cardId,
+      if (roundIndex != null) 'round_index': roundIndex,
+      if (userInput != null) 'user_input': userInput,
+      if (verdict != null) 'verdict': verdict,
+      if (checkedBy != null) 'checked_by': checkedBy,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  DictationAnswersCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
+    Value<String>? ownerId,
+    Value<DateTime?>? syncedAt,
+    Value<String>? sessionId,
+    Value<String>? cardId,
+    Value<int>? roundIndex,
+    Value<String>? userInput,
+    Value<DictationVerdictColumn>? verdict,
+    Value<DictationCheckedBy>? checkedBy,
+    Value<int>? rowid,
+  }) {
+    return DictationAnswersCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      ownerId: ownerId ?? this.ownerId,
+      syncedAt: syncedAt ?? this.syncedAt,
+      sessionId: sessionId ?? this.sessionId,
+      cardId: cardId ?? this.cardId,
+      roundIndex: roundIndex ?? this.roundIndex,
+      userInput: userInput ?? this.userInput,
+      verdict: verdict ?? this.verdict,
+      checkedBy: checkedBy ?? this.checkedBy,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (ownerId.present) {
+      map['owner_id'] = Variable<String>(ownerId.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    if (sessionId.present) {
+      map['session_id'] = Variable<String>(sessionId.value);
+    }
+    if (cardId.present) {
+      map['card_id'] = Variable<String>(cardId.value);
+    }
+    if (roundIndex.present) {
+      map['round_index'] = Variable<int>(roundIndex.value);
+    }
+    if (userInput.present) {
+      map['user_input'] = Variable<String>(userInput.value);
+    }
+    if (verdict.present) {
+      map['verdict'] = Variable<String>(
+        $DictationAnswersTable.$converterverdict.toSql(verdict.value),
+      );
+    }
+    if (checkedBy.present) {
+      map['checked_by'] = Variable<String>(
+        $DictationAnswersTable.$convertercheckedBy.toSql(checkedBy.value),
+      );
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DictationAnswersCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('sessionId: $sessionId, ')
+          ..write('cardId: $cardId, ')
+          ..write('roundIndex: $roundIndex, ')
+          ..write('userInput: $userInput, ')
+          ..write('verdict: $verdict, ')
+          ..write('checkedBy: $checkedBy, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3848,6 +5290,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $WordSetsTable wordSets = $WordSetsTable(this);
   late final $CardsTable cards = $CardsTable(this);
   late final $LlmCachesTable llmCaches = $LlmCachesTable(this);
+  late final $DictationSessionsTable dictationSessions =
+      $DictationSessionsTable(this);
+  late final $DictationAnswersTable dictationAnswers = $DictationAnswersTable(
+    this,
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3859,6 +5306,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     wordSets,
     cards,
     llmCaches,
+    dictationSessions,
+    dictationAnswers,
   ];
 }
 
@@ -5155,6 +6604,27 @@ final class $$WordSetsTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$DictationSessionsTable, List<DictationSessionRow>>
+  _dictationSessionsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.dictationSessions,
+        aliasName: 'word_sets__id__dictation_sessions__set_id',
+      );
+
+  $$DictationSessionsTableProcessedTableManager get dictationSessionsRefs {
+    final manager = $$DictationSessionsTableTableManager(
+      $_db,
+      $_db.dictationSessions,
+    ).filter((f) => f.setId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _dictationSessionsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$WordSetsTableFilterComposer
@@ -5251,6 +6721,31 @@ class $$WordSetsTableFilterComposer
           }) => $$CardsTableFilterComposer(
             $db: $db,
             $table: $db.cards,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> dictationSessionsRefs(
+    Expression<bool> Function($$DictationSessionsTableFilterComposer f) f,
+  ) {
+    final $$DictationSessionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.dictationSessions,
+      getReferencedColumn: (t) => t.setId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DictationSessionsTableFilterComposer(
+            $db: $db,
+            $table: $db.dictationSessions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -5424,6 +6919,32 @@ class $$WordSetsTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> dictationSessionsRefs<T extends Object>(
+    Expression<T> Function($$DictationSessionsTableAnnotationComposer a) f,
+  ) {
+    final $$DictationSessionsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.dictationSessions,
+          getReferencedColumn: (t) => t.setId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$DictationSessionsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.dictationSessions,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$WordSetsTableTableManager
@@ -5439,7 +6960,11 @@ class $$WordSetsTableTableManager
           $$WordSetsTableUpdateCompanionBuilder,
           (WordSetRow, $$WordSetsTableReferences),
           WordSetRow,
-          PrefetchHooks Function({bool unitId, bool cardsRefs})
+          PrefetchHooks Function({
+            bool unitId,
+            bool cardsRefs,
+            bool dictationSessionsRefs,
+          })
         > {
   $$WordSetsTableTableManager(_$AppDatabase db, $WordSetsTable table)
     : super(
@@ -5512,62 +7037,96 @@ class $$WordSetsTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({unitId = false, cardsRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [if (cardsRefs) db.cards],
-              addJoins:
-                  <
-                    T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic
-                    >
-                  >(state) {
-                    if (unitId) {
-                      state = state.withJoin(
-                        currentTable: table,
-                        currentColumn: table.unitId,
-                        referencedTable: $$WordSetsTableReferences._unitIdTable(
-                          db,
-                        ),
-                        referencedColumn: $$WordSetsTableReferences
-                            ._unitIdTable(db)
-                            .id,
-                      ) as T;
-                    }
+          prefetchHooksCallback:
+              ({
+                unitId = false,
+                cardsRefs = false,
+                dictationSessionsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (cardsRefs) db.cards,
+                    if (dictationSessionsRefs) db.dictationSessions,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (unitId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.unitId,
+                            referencedTable: $$WordSetsTableReferences
+                                ._unitIdTable(db),
+                            referencedColumn: $$WordSetsTableReferences
+                                ._unitIdTable(db)
+                                .id,
+                          ) as T;
+                        }
 
-                    return state;
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (cardsRefs)
+                        await $_getPrefetchedData<
+                          WordSetRow,
+                          $WordSetsTable,
+                          CardRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$WordSetsTableReferences
+                              ._cardsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$WordSetsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).cardsRefs,
+                          referencedItemsForCurrentItem: (
+                            item,
+                            referencedItems,
+                          ) => referencedItems.where((e) => e.setId == item.id),
+                          typedResults: items,
+                        ),
+                      if (dictationSessionsRefs)
+                        await $_getPrefetchedData<
+                          WordSetRow,
+                          $WordSetsTable,
+                          DictationSessionRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$WordSetsTableReferences
+                              ._dictationSessionsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$WordSetsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).dictationSessionsRefs,
+                          referencedItemsForCurrentItem: (
+                            item,
+                            referencedItems,
+                          ) => referencedItems.where((e) => e.setId == item.id),
+                          typedResults: items,
+                        ),
+                    ];
                   },
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (cardsRefs)
-                    await $_getPrefetchedData<
-                      WordSetRow,
-                      $WordSetsTable,
-                      CardRow
-                    >(
-                      currentTable: table,
-                      referencedTable: $$WordSetsTableReferences
-                          ._cardsRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$WordSetsTableReferences(db, table, p0).cardsRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.setId == item.id),
-                      typedResults: items,
-                    ),
-                ];
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -5584,7 +7143,11 @@ typedef $$WordSetsTableProcessedTableManager =
       $$WordSetsTableUpdateCompanionBuilder,
       (WordSetRow, $$WordSetsTableReferences),
       WordSetRow,
-      PrefetchHooks Function({bool unitId, bool cardsRefs})
+      PrefetchHooks Function({
+        bool unitId,
+        bool cardsRefs,
+        bool dictationSessionsRefs,
+      })
     >;
 typedef $$CardsTableCreateCompanionBuilder = CardsCompanion Function({
   Value<String> id,
@@ -5639,6 +7202,26 @@ final class $$CardsTableReferences
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<$DictationAnswersTable, List<DictationAnswerRow>>
+  _dictationAnswersRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.dictationAnswers,
+    aliasName: 'cards__id__dictation_answers__card_id',
+  );
+
+  $$DictationAnswersTableProcessedTableManager get dictationAnswersRefs {
+    final manager = $$DictationAnswersTableTableManager(
+      $_db,
+      $_db.dictationAnswers,
+    ).filter((f) => f.cardId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _dictationAnswersRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
     );
   }
 }
@@ -5737,6 +7320,31 @@ class $$CardsTableFilterComposer extends Composer<_$AppDatabase, $CardsTable> {
           ),
     );
     return composer;
+  }
+
+  Expression<bool> dictationAnswersRefs(
+    Expression<bool> Function($$DictationAnswersTableFilterComposer f) f,
+  ) {
+    final $$DictationAnswersTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.dictationAnswers,
+      getReferencedColumn: (t) => t.cardId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DictationAnswersTableFilterComposer(
+            $db: $db,
+            $table: $db.dictationAnswers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
   }
 }
 
@@ -5914,6 +7522,31 @@ class $$CardsTableAnnotationComposer
     );
     return composer;
   }
+
+  Expression<T> dictationAnswersRefs<T extends Object>(
+    Expression<T> Function($$DictationAnswersTableAnnotationComposer a) f,
+  ) {
+    final $$DictationAnswersTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.dictationAnswers,
+      getReferencedColumn: (t) => t.cardId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DictationAnswersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.dictationAnswers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$CardsTableTableManager
@@ -5929,7 +7562,7 @@ class $$CardsTableTableManager
           $$CardsTableUpdateCompanionBuilder,
           (CardRow, $$CardsTableReferences),
           CardRow,
-          PrefetchHooks Function({bool setId})
+          PrefetchHooks Function({bool setId, bool dictationAnswersRefs})
         > {
   $$CardsTableTableManager(_$AppDatabase db, $CardsTable table)
     : super(
@@ -6018,44 +7651,71 @@ class $$CardsTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({setId = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [],
-              addJoins:
-                  <
-                    T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic
-                    >
-                  >(state) {
-                    if (setId) {
-                      state = state.withJoin(
-                        currentTable: table,
-                        currentColumn: table.setId,
-                        referencedTable: $$CardsTableReferences._setIdTable(db),
-                        referencedColumn: $$CardsTableReferences
-                            ._setIdTable(db)
-                            .id,
-                      ) as T;
-                    }
+          prefetchHooksCallback:
+              ({setId = false, dictationAnswersRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (dictationAnswersRefs) db.dictationAnswers,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (setId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.setId,
+                            referencedTable: $$CardsTableReferences._setIdTable(
+                              db,
+                            ),
+                            referencedColumn: $$CardsTableReferences
+                                ._setIdTable(db)
+                                .id,
+                          ) as T;
+                        }
 
-                    return state;
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (dictationAnswersRefs)
+                        await $_getPrefetchedData<
+                          CardRow,
+                          $CardsTable,
+                          DictationAnswerRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$CardsTableReferences
+                              ._dictationAnswersRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$CardsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).dictationAnswersRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.cardId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
                   },
-              getPrefetchedDataCallback: (items) async {
-                return [];
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -6072,7 +7732,7 @@ typedef $$CardsTableProcessedTableManager =
       $$CardsTableUpdateCompanionBuilder,
       (CardRow, $$CardsTableReferences),
       CardRow,
-      PrefetchHooks Function({bool setId})
+      PrefetchHooks Function({bool setId, bool dictationAnswersRefs})
     >;
 typedef $$LlmCachesTableCreateCompanionBuilder = LlmCachesCompanion Function({
   Value<String> id,
@@ -6342,6 +8002,1128 @@ typedef $$LlmCachesTableProcessedTableManager =
       LlmCacheRow,
       PrefetchHooks Function()
     >;
+typedef $$DictationSessionsTableCreateCompanionBuilder =
+    DictationSessionsCompanion Function({
+      Value<String> id,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      required String ownerId,
+      Value<DateTime?> syncedAt,
+      required String setId,
+      required DictationDirection direction,
+      Value<DateTime> startedAt,
+      Value<DateTime?> finishedAt,
+      Value<int> roundsCount,
+      Value<int> totalWords,
+      Value<int> rowid,
+    });
+typedef $$DictationSessionsTableUpdateCompanionBuilder =
+    DictationSessionsCompanion Function({
+      Value<String> id,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<String> ownerId,
+      Value<DateTime?> syncedAt,
+      Value<String> setId,
+      Value<DictationDirection> direction,
+      Value<DateTime> startedAt,
+      Value<DateTime?> finishedAt,
+      Value<int> roundsCount,
+      Value<int> totalWords,
+      Value<int> rowid,
+    });
+
+final class $$DictationSessionsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $DictationSessionsTable,
+          DictationSessionRow
+        > {
+  $$DictationSessionsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $WordSetsTable _setIdTable(_$AppDatabase db) =>
+      db.wordSets.createAlias('dictation_sessions__set_id__word_sets__id');
+
+  $$WordSetsTableProcessedTableManager get setId {
+    final $_column = $_itemColumn<String>('set_id')!;
+
+    final manager = $$WordSetsTableTableManager(
+      $_db,
+      $_db.wordSets,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_setIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<$DictationAnswersTable, List<DictationAnswerRow>>
+  _dictationAnswersRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.dictationAnswers,
+    aliasName: 'dictation_sessions__id__dictation_answers__session_id',
+  );
+
+  $$DictationAnswersTableProcessedTableManager get dictationAnswersRefs {
+    final manager = $$DictationAnswersTableTableManager(
+      $_db,
+      $_db.dictationAnswers,
+    ).filter((f) => f.sessionId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _dictationAnswersRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$DictationSessionsTableFilterComposer
+    extends Composer<_$AppDatabase, $DictationSessionsTable> {
+  $$DictationSessionsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ownerId => $composableBuilder(
+    column: $table.ownerId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<DictationDirection, DictationDirection, String>
+  get direction => $composableBuilder(
+    column: $table.direction,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<DateTime> get startedAt => $composableBuilder(
+    column: $table.startedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get finishedAt => $composableBuilder(
+    column: $table.finishedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get roundsCount => $composableBuilder(
+    column: $table.roundsCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get totalWords => $composableBuilder(
+    column: $table.totalWords,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$WordSetsTableFilterComposer get setId {
+    final $$WordSetsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.setId,
+      referencedTable: $db.wordSets,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WordSetsTableFilterComposer(
+            $db: $db,
+            $table: $db.wordSets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> dictationAnswersRefs(
+    Expression<bool> Function($$DictationAnswersTableFilterComposer f) f,
+  ) {
+    final $$DictationAnswersTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.dictationAnswers,
+      getReferencedColumn: (t) => t.sessionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DictationAnswersTableFilterComposer(
+            $db: $db,
+            $table: $db.dictationAnswers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$DictationSessionsTableOrderingComposer
+    extends Composer<_$AppDatabase, $DictationSessionsTable> {
+  $$DictationSessionsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ownerId => $composableBuilder(
+    column: $table.ownerId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get direction => $composableBuilder(
+    column: $table.direction,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get startedAt => $composableBuilder(
+    column: $table.startedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get finishedAt => $composableBuilder(
+    column: $table.finishedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get roundsCount => $composableBuilder(
+    column: $table.roundsCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get totalWords => $composableBuilder(
+    column: $table.totalWords,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$WordSetsTableOrderingComposer get setId {
+    final $$WordSetsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.setId,
+      referencedTable: $db.wordSets,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WordSetsTableOrderingComposer(
+            $db: $db,
+            $table: $db.wordSets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$DictationSessionsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $DictationSessionsTable> {
+  $$DictationSessionsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get ownerId =>
+      $composableBuilder(column: $table.ownerId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<DictationDirection, String> get direction =>
+      $composableBuilder(column: $table.direction, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get startedAt =>
+      $composableBuilder(column: $table.startedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get finishedAt => $composableBuilder(
+    column: $table.finishedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get roundsCount => $composableBuilder(
+    column: $table.roundsCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get totalWords => $composableBuilder(
+    column: $table.totalWords,
+    builder: (column) => column,
+  );
+
+  $$WordSetsTableAnnotationComposer get setId {
+    final $$WordSetsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.setId,
+      referencedTable: $db.wordSets,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WordSetsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.wordSets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<T> dictationAnswersRefs<T extends Object>(
+    Expression<T> Function($$DictationAnswersTableAnnotationComposer a) f,
+  ) {
+    final $$DictationAnswersTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.dictationAnswers,
+      getReferencedColumn: (t) => t.sessionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DictationAnswersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.dictationAnswers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$DictationSessionsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $DictationSessionsTable,
+          DictationSessionRow,
+          $$DictationSessionsTableFilterComposer,
+          $$DictationSessionsTableOrderingComposer,
+          $$DictationSessionsTableAnnotationComposer,
+          $$DictationSessionsTableCreateCompanionBuilder,
+          $$DictationSessionsTableUpdateCompanionBuilder,
+          (DictationSessionRow, $$DictationSessionsTableReferences),
+          DictationSessionRow,
+          PrefetchHooks Function({bool setId, bool dictationAnswersRefs})
+        > {
+  $$DictationSessionsTableTableManager(
+    _$AppDatabase db,
+    $DictationSessionsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$DictationSessionsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$DictationSessionsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$DictationSessionsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<String> ownerId = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<String> setId = const Value.absent(),
+                Value<DictationDirection> direction = const Value.absent(),
+                Value<DateTime> startedAt = const Value.absent(),
+                Value<DateTime?> finishedAt = const Value.absent(),
+                Value<int> roundsCount = const Value.absent(),
+                Value<int> totalWords = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DictationSessionsCompanion(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                ownerId: ownerId,
+                syncedAt: syncedAt,
+                setId: setId,
+                direction: direction,
+                startedAt: startedAt,
+                finishedAt: finishedAt,
+                roundsCount: roundsCount,
+                totalWords: totalWords,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                required String ownerId,
+                Value<DateTime?> syncedAt = const Value.absent(),
+                required String setId,
+                required DictationDirection direction,
+                Value<DateTime> startedAt = const Value.absent(),
+                Value<DateTime?> finishedAt = const Value.absent(),
+                Value<int> roundsCount = const Value.absent(),
+                Value<int> totalWords = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DictationSessionsCompanion.insert(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                ownerId: ownerId,
+                syncedAt: syncedAt,
+                setId: setId,
+                direction: direction,
+                startedAt: startedAt,
+                finishedAt: finishedAt,
+                roundsCount: roundsCount,
+                totalWords: totalWords,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$DictationSessionsTable, DictationSessionRow>(
+                    table,
+                  ),
+                  $$DictationSessionsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({setId = false, dictationAnswersRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (dictationAnswersRefs) db.dictationAnswers,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (setId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.setId,
+                            referencedTable: $$DictationSessionsTableReferences
+                                ._setIdTable(db),
+                            referencedColumn: $$DictationSessionsTableReferences
+                                ._setIdTable(db)
+                                .id,
+                          ) as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (dictationAnswersRefs)
+                        await $_getPrefetchedData<
+                          DictationSessionRow,
+                          $DictationSessionsTable,
+                          DictationAnswerRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$DictationSessionsTableReferences
+                              ._dictationAnswersRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$DictationSessionsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).dictationAnswersRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.sessionId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$DictationSessionsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $DictationSessionsTable,
+      DictationSessionRow,
+      $$DictationSessionsTableFilterComposer,
+      $$DictationSessionsTableOrderingComposer,
+      $$DictationSessionsTableAnnotationComposer,
+      $$DictationSessionsTableCreateCompanionBuilder,
+      $$DictationSessionsTableUpdateCompanionBuilder,
+      (DictationSessionRow, $$DictationSessionsTableReferences),
+      DictationSessionRow,
+      PrefetchHooks Function({bool setId, bool dictationAnswersRefs})
+    >;
+typedef $$DictationAnswersTableCreateCompanionBuilder =
+    DictationAnswersCompanion Function({
+      Value<String> id,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      required String ownerId,
+      Value<DateTime?> syncedAt,
+      required String sessionId,
+      required String cardId,
+      required int roundIndex,
+      required String userInput,
+      required DictationVerdictColumn verdict,
+      Value<DictationCheckedBy> checkedBy,
+      Value<int> rowid,
+    });
+typedef $$DictationAnswersTableUpdateCompanionBuilder =
+    DictationAnswersCompanion Function({
+      Value<String> id,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<String> ownerId,
+      Value<DateTime?> syncedAt,
+      Value<String> sessionId,
+      Value<String> cardId,
+      Value<int> roundIndex,
+      Value<String> userInput,
+      Value<DictationVerdictColumn> verdict,
+      Value<DictationCheckedBy> checkedBy,
+      Value<int> rowid,
+    });
+
+final class $$DictationAnswersTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $DictationAnswersTable,
+          DictationAnswerRow
+        > {
+  $$DictationAnswersTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $DictationSessionsTable _sessionIdTable(_$AppDatabase db) => db
+      .dictationSessions
+      .createAlias('dictation_answers__session_id__dictation_sessions__id');
+
+  $$DictationSessionsTableProcessedTableManager get sessionId {
+    final $_column = $_itemColumn<String>('session_id')!;
+
+    final manager = $$DictationSessionsTableTableManager(
+      $_db,
+      $_db.dictationSessions,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_sessionIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $CardsTable _cardIdTable(_$AppDatabase db) =>
+      db.cards.createAlias('dictation_answers__card_id__cards__id');
+
+  $$CardsTableProcessedTableManager get cardId {
+    final $_column = $_itemColumn<String>('card_id')!;
+
+    final manager = $$CardsTableTableManager(
+      $_db,
+      $_db.cards,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_cardIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$DictationAnswersTableFilterComposer
+    extends Composer<_$AppDatabase, $DictationAnswersTable> {
+  $$DictationAnswersTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ownerId => $composableBuilder(
+    column: $table.ownerId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get roundIndex => $composableBuilder(
+    column: $table.roundIndex,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userInput => $composableBuilder(
+    column: $table.userInput,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<
+    DictationVerdictColumn,
+    DictationVerdictColumn,
+    String
+  >
+  get verdict => $composableBuilder(
+    column: $table.verdict,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<DictationCheckedBy, DictationCheckedBy, String>
+  get checkedBy => $composableBuilder(
+    column: $table.checkedBy,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  $$DictationSessionsTableFilterComposer get sessionId {
+    final $$DictationSessionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.sessionId,
+      referencedTable: $db.dictationSessions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DictationSessionsTableFilterComposer(
+            $db: $db,
+            $table: $db.dictationSessions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$CardsTableFilterComposer get cardId {
+    final $$CardsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.cardId,
+      referencedTable: $db.cards,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CardsTableFilterComposer(
+            $db: $db,
+            $table: $db.cards,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$DictationAnswersTableOrderingComposer
+    extends Composer<_$AppDatabase, $DictationAnswersTable> {
+  $$DictationAnswersTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ownerId => $composableBuilder(
+    column: $table.ownerId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get roundIndex => $composableBuilder(
+    column: $table.roundIndex,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get userInput => $composableBuilder(
+    column: $table.userInput,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get verdict => $composableBuilder(
+    column: $table.verdict,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get checkedBy => $composableBuilder(
+    column: $table.checkedBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$DictationSessionsTableOrderingComposer get sessionId {
+    final $$DictationSessionsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.sessionId,
+      referencedTable: $db.dictationSessions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DictationSessionsTableOrderingComposer(
+            $db: $db,
+            $table: $db.dictationSessions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$CardsTableOrderingComposer get cardId {
+    final $$CardsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.cardId,
+      referencedTable: $db.cards,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CardsTableOrderingComposer(
+            $db: $db,
+            $table: $db.cards,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$DictationAnswersTableAnnotationComposer
+    extends Composer<_$AppDatabase, $DictationAnswersTable> {
+  $$DictationAnswersTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get ownerId =>
+      $composableBuilder(column: $table.ownerId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get roundIndex => $composableBuilder(
+    column: $table.roundIndex,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get userInput =>
+      $composableBuilder(column: $table.userInput, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<DictationVerdictColumn, String>
+  get verdict =>
+      $composableBuilder(column: $table.verdict, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<DictationCheckedBy, String> get checkedBy =>
+      $composableBuilder(column: $table.checkedBy, builder: (column) => column);
+
+  $$DictationSessionsTableAnnotationComposer get sessionId {
+    final $$DictationSessionsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.sessionId,
+          referencedTable: $db.dictationSessions,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$DictationSessionsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.dictationSessions,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+
+  $$CardsTableAnnotationComposer get cardId {
+    final $$CardsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.cardId,
+      referencedTable: $db.cards,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CardsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.cards,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$DictationAnswersTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $DictationAnswersTable,
+          DictationAnswerRow,
+          $$DictationAnswersTableFilterComposer,
+          $$DictationAnswersTableOrderingComposer,
+          $$DictationAnswersTableAnnotationComposer,
+          $$DictationAnswersTableCreateCompanionBuilder,
+          $$DictationAnswersTableUpdateCompanionBuilder,
+          (DictationAnswerRow, $$DictationAnswersTableReferences),
+          DictationAnswerRow,
+          PrefetchHooks Function({bool sessionId, bool cardId})
+        > {
+  $$DictationAnswersTableTableManager(
+    _$AppDatabase db,
+    $DictationAnswersTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$DictationAnswersTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$DictationAnswersTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$DictationAnswersTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<String> ownerId = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<String> sessionId = const Value.absent(),
+                Value<String> cardId = const Value.absent(),
+                Value<int> roundIndex = const Value.absent(),
+                Value<String> userInput = const Value.absent(),
+                Value<DictationVerdictColumn> verdict = const Value.absent(),
+                Value<DictationCheckedBy> checkedBy = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DictationAnswersCompanion(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                ownerId: ownerId,
+                syncedAt: syncedAt,
+                sessionId: sessionId,
+                cardId: cardId,
+                roundIndex: roundIndex,
+                userInput: userInput,
+                verdict: verdict,
+                checkedBy: checkedBy,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                required String ownerId,
+                Value<DateTime?> syncedAt = const Value.absent(),
+                required String sessionId,
+                required String cardId,
+                required int roundIndex,
+                required String userInput,
+                required DictationVerdictColumn verdict,
+                Value<DictationCheckedBy> checkedBy = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DictationAnswersCompanion.insert(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                ownerId: ownerId,
+                syncedAt: syncedAt,
+                sessionId: sessionId,
+                cardId: cardId,
+                roundIndex: roundIndex,
+                userInput: userInput,
+                verdict: verdict,
+                checkedBy: checkedBy,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$DictationAnswersTable, DictationAnswerRow>(
+                    table,
+                  ),
+                  $$DictationAnswersTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({sessionId = false, cardId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (sessionId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.sessionId,
+                        referencedTable: $$DictationAnswersTableReferences
+                            ._sessionIdTable(db),
+                        referencedColumn: $$DictationAnswersTableReferences
+                            ._sessionIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+                    if (cardId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.cardId,
+                        referencedTable: $$DictationAnswersTableReferences
+                            ._cardIdTable(db),
+                        referencedColumn: $$DictationAnswersTableReferences
+                            ._cardIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$DictationAnswersTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $DictationAnswersTable,
+      DictationAnswerRow,
+      $$DictationAnswersTableFilterComposer,
+      $$DictationAnswersTableOrderingComposer,
+      $$DictationAnswersTableAnnotationComposer,
+      $$DictationAnswersTableCreateCompanionBuilder,
+      $$DictationAnswersTableUpdateCompanionBuilder,
+      (DictationAnswerRow, $$DictationAnswersTableReferences),
+      DictationAnswerRow,
+      PrefetchHooks Function({bool sessionId, bool cardId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -6358,4 +9140,8 @@ class $AppDatabaseManager {
       $$CardsTableTableManager(_db, _db.cards);
   $$LlmCachesTableTableManager get llmCaches =>
       $$LlmCachesTableTableManager(_db, _db.llmCaches);
+  $$DictationSessionsTableTableManager get dictationSessions =>
+      $$DictationSessionsTableTableManager(_db, _db.dictationSessions);
+  $$DictationAnswersTableTableManager get dictationAnswers =>
+      $$DictationAnswersTableTableManager(_db, _db.dictationAnswers);
 }

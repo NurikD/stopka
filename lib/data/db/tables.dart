@@ -77,3 +77,29 @@ class LlmCaches extends Table with SyncColumns {
   late final requestHash = text()();
   late final responseJson = text()();
 }
+
+@DataClassName('DictationSessionRow')
+class DictationSessions extends Table with SyncColumns {
+  late final setId = text().references(WordSets, #id)();
+  late final direction = textEnum<DictationDirection>()();
+  late final startedAt = dateTime().withDefault(currentDateAndTime)();
+  late final finishedAt = dateTime().nullable()();
+  late final roundsCount = integer().withDefault(const Constant(0))();
+  late final totalWords = integer().withDefault(const Constant(0))();
+}
+
+enum DictationDirection { ruEn, enRu }
+
+enum DictationVerdictColumn { correct, typo, wrong, skipped }
+
+enum DictationCheckedBy { local, llm }
+
+@DataClassName('DictationAnswerRow')
+class DictationAnswers extends Table with SyncColumns {
+  late final sessionId = text().references(DictationSessions, #id)();
+  late final cardId = text().references(Cards, #id)();
+  late final roundIndex = integer()();
+  late final userInput = text()();
+  late final verdict = textEnum<DictationVerdictColumn>()();
+  late final checkedBy = textEnum<DictationCheckedBy>().withDefault(const Constant('local'))();
+}
