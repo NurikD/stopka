@@ -2,12 +2,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/db/app_database.dart';
 import '../../data/repositories/course_repository_impl.dart';
+import '../../data/repositories/llm_cache_repository_impl.dart';
 import '../../data/repositories/profile_repository_impl.dart';
 import '../../data/repositories/unit_repository_impl.dart';
 import '../../data/repositories/word_card_repository_impl.dart';
 import '../../data/repositories/word_set_repository_impl.dart';
 import '../../domain/models/profile.dart';
 import '../../domain/repositories/course_repository.dart';
+import '../../domain/repositories/llm_cache_repository.dart';
 import '../../domain/repositories/profile_repository.dart';
 import '../../domain/repositories/unit_repository.dart';
 import '../../domain/repositories/word_card_repository.dart';
@@ -56,6 +58,11 @@ final wordSetRepositoryProvider = Provider<WordSetRepository>((ref) {
 final wordCardRepositoryProvider = Provider<WordCardRepository>((ref) {
   final ownerId = ref.watch(currentOwnerIdProvider) ?? '';
   return DriftWordCardRepository(ref.watch(appDatabaseProvider), ownerId);
+});
+
+final llmCacheRepositoryProvider = Provider<LlmCacheRepository>((ref) {
+  final ownerId = ref.watch(currentOwnerIdProvider) ?? '';
+  return DriftLlmCacheRepository(ref.watch(appDatabaseProvider), ownerId);
 });
 
 final apiKeyStoreProvider = Provider<ApiKeyStore>((ref) => ApiKeyStore());
