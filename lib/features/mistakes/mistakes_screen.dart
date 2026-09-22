@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/empty_state.dart';
+
 class MistakesScreen extends StatelessWidget {
   const MistakesScreen({super.key});
 
@@ -7,8 +9,8 @@ class MistakesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Ошибки')),
-      body: const Center(
-        child: Text('Статистика ошибок появится в фазе 5.'),
+      body: const EmptyState(
+        message: 'Как только пройдёте первые упражнения, здесь появится статистика по ошибкам.',
       ),
     );
   }

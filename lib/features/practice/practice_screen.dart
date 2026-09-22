@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/empty_state.dart';
+
 class PracticeScreen extends StatelessWidget {
   const PracticeScreen({super.key});
 
@@ -7,8 +9,8 @@ class PracticeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Практика')),
-      body: const Center(
-        child: Text('Диктант и практика в предложениях появятся позже.'),
+      body: const EmptyState(
+        message: 'Диктант и практика в предложениях появятся здесь в следующих фазах.',
       ),
     );
   }
