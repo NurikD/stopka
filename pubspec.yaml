@@ -74,6 +74,7 @@ flutter:
   assets:
     - prompts/word_recognition.md
     - prompts/card_enrichment.md
+    - prompts/answer_appeal.md
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
