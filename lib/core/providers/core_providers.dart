@@ -20,6 +20,7 @@ import '../llm/card_enrichment_service.dart';
 import '../llm/gemini_llm_client.dart';
 import '../llm/llm_client.dart';
 import '../llm/word_recognition_service.dart';
+import '../tts/tts_service.dart';
 
 final appDatabaseProvider = Provider<AppDatabase>((ref) {
   final db = AppDatabase();
@@ -82,3 +83,5 @@ final wordRecognitionServiceProvider = Provider<WordRecognitionService>((ref) {
 final cardEnrichmentServiceProvider = Provider<CardEnrichmentService>((ref) {
   return CardEnrichmentService(ref.watch(llmClientProvider), ref.watch(llmCacheRepositoryProvider));
 });
+
+final ttsServiceProvider = Provider<TtsService>((ref) => TtsService());
