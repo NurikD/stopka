@@ -17,6 +17,7 @@ import '../../domain/repositories/unit_repository.dart';
 import '../../domain/repositories/word_card_repository.dart';
 import '../../domain/repositories/word_set_repository.dart';
 import '../analytics/event_logger.dart';
+import '../llm/answer_appeal_service.dart';
 import '../llm/api_key_store.dart';
 import '../llm/card_enrichment_service.dart';
 import '../llm/gemini_llm_client.dart';
@@ -91,4 +92,8 @@ final ttsServiceProvider = Provider<TtsService>((ref) => TtsService());
 final dictationRepositoryProvider = Provider<DictationRepository>((ref) {
   final ownerId = ref.watch(currentOwnerIdProvider) ?? '';
   return DriftDictationRepository(ref.watch(appDatabaseProvider), ownerId);
+});
+
+final answerAppealServiceProvider = Provider<AnswerAppealService>((ref) {
+  return AnswerAppealService(ref.watch(llmClientProvider));
 });
