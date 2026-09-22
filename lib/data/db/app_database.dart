@@ -35,5 +35,12 @@ QueryExecutor _openConnection() {
     native: const DriftNativeOptions(
       databaseDirectory: getApplicationSupportDirectory,
     ),
+    // Only used when running on the web (e.g. `flutter run -d chrome` for
+    // quick manual checks without an Android device). Android is still the
+    // priority platform per the plan; this doesn't affect native builds.
+    web: DriftWebOptions(
+      sqlite3Wasm: Uri.parse('sqlite3.wasm'),
+      driftWorker: Uri.parse('drift_worker.dart.js'),
+    ),
   );
 }
