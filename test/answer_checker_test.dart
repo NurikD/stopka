@@ -116,10 +116,35 @@ void main() {
       );
     });
 
-    test('a two-letter typo on a word of 5+ letters is still "typo"', () {
+    test('a distance-1 typo on a 5-letter word is still "typo"', () {
+      // mouse -> moose, one substitution.
       expect(
-        AnswerChecker.check(userInput: 'achieb', correctAnswer: 'achieve'),
+        AnswerChecker.check(userInput: 'moose', correctAnswer: 'mouse'),
         DictationVerdict.typo,
+      );
+    });
+
+    test('a distance-2 typo on an 8+ letter word is "typo"', () {
+      // elephant -> elefant: drop the p, swap h for f — distance 2.
+      expect(
+        AnswerChecker.check(userInput: 'elefant', correctAnswer: 'elephant'),
+        DictationVerdict.typo,
+      );
+    });
+
+    test('a distance-2 pair at 5-7 letters is "wrong" — quite/quiet are different words', () {
+      expect(
+        AnswerChecker.check(userInput: 'quiet', correctAnswer: 'quite'),
+        DictationVerdict.wrong,
+      );
+    });
+
+    test('recieve/receive is distance 2 (a transposition costs 2 under plain '
+        'Levenshtein), so at 7 letters (max distance 1) it is "wrong" — '
+        'consistent with quite/quiet above, not a special case', () {
+      expect(
+        AnswerChecker.check(userInput: 'recieve', correctAnswer: 'receive'),
+        DictationVerdict.wrong,
       );
     });
 
@@ -127,6 +152,14 @@ void main() {
       // "cat" -> "cot" is distance 1 but too short to count as a forgivable typo.
       expect(
         AnswerChecker.check(userInput: 'cot', correctAnswer: 'cat'),
+        DictationVerdict.wrong,
+      );
+    });
+
+    test('a 4-letter word (just under the 5-letter floor) allows no typo tolerance', () {
+      // book -> look, distance 1, but 4 letters is still below the floor.
+      expect(
+        AnswerChecker.check(userInput: 'look', correctAnswer: 'book'),
         DictationVerdict.wrong,
       );
     });
