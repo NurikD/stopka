@@ -57,6 +57,25 @@ void main() {
     test('normalizes each variant', () {
       expect(AnswerChecker.variantsOf(' Achieve / To Reach '), ['achieve', 'reach']);
     });
+
+    test('splits a comma-separated list of single-word synonyms', () {
+      expect(AnswerChecker.variantsOf('достигать, добиваться'), ['достигать', 'добиваться']);
+    });
+
+    test('keeps a phrase with an internal comma as one variant', () {
+      expect(AnswerChecker.variantsOf('несмотря на то, что'), ['несмотря на то, что']);
+    });
+
+    test('a synonym list where one entry is two words still splits', () {
+      expect(AnswerChecker.variantsOf('очень хороший, отличный'), ['очень хороший', 'отличный']);
+    });
+
+    test('slash and semicolon still split a phrase that itself contains a comma', () {
+      expect(
+        AnswerChecker.variantsOf('несмотря на то, что / хотя'),
+        ['несмотря на то, что', 'хотя'],
+      );
+    });
   });
 
   group('AnswerChecker.check', () {
