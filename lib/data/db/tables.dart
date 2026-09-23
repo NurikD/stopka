@@ -86,6 +86,12 @@ class DictationSessions extends Table with SyncColumns {
   late final finishedAt = dateTime().nullable()();
   late final roundsCount = integer().withDefault(const Constant(0))();
   late final totalWords = integer().withDefault(const Constant(0))();
+  /// Not in PLAN.md's data model, but required to correctly replay
+  /// DictationEngine.resume() — without the original stack size and
+  /// streak requirement, a resumed session's round math would diverge
+  /// from what actually happened.
+  late final stackSize = integer().withDefault(const Constant(12))();
+  late final requiredStreak = integer().withDefault(const Constant(1))();
 }
 
 enum DictationDirection { ruEn, enRu }

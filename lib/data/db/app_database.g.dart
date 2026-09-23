@@ -3983,6 +3983,30 @@ class $DictationSessionsTable extends DictationSessions
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _stackSizeMeta = const VerificationMeta(
+    'stackSize',
+  );
+  @override
+  late final GeneratedColumn<int> stackSize = GeneratedColumn<int>(
+    'stack_size',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(12),
+  );
+  static const VerificationMeta _requiredStreakMeta = const VerificationMeta(
+    'requiredStreak',
+  );
+  @override
+  late final GeneratedColumn<int> requiredStreak = GeneratedColumn<int>(
+    'required_streak',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3997,6 +4021,8 @@ class $DictationSessionsTable extends DictationSessions
     finishedAt,
     roundsCount,
     totalWords,
+    stackSize,
+    requiredStreak,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -4080,6 +4106,21 @@ class $DictationSessionsTable extends DictationSessions
         totalWords.isAcceptableOrUnknown(data['total_words']!, _totalWordsMeta),
       );
     }
+    if (data.containsKey('stack_size')) {
+      context.handle(
+        _stackSizeMeta,
+        stackSize.isAcceptableOrUnknown(data['stack_size']!, _stackSizeMeta),
+      );
+    }
+    if (data.containsKey('required_streak')) {
+      context.handle(
+        _requiredStreakMeta,
+        requiredStreak.isAcceptableOrUnknown(
+          data['required_streak']!,
+          _requiredStreakMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -4139,6 +4180,14 @@ class $DictationSessionsTable extends DictationSessions
         DriftSqlType.int,
         data['${effectivePrefix}total_words'],
       )!,
+      stackSize: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}stack_size'],
+      )!,
+      requiredStreak: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}required_streak'],
+      )!,
     );
   }
 
@@ -4167,6 +4216,13 @@ class DictationSessionRow extends DataClass
   final DateTime? finishedAt;
   final int roundsCount;
   final int totalWords;
+
+  /// Not in PLAN.md's data model, but required to correctly replay
+  /// DictationEngine.resume() — without the original stack size and
+  /// streak requirement, a resumed session's round math would diverge
+  /// from what actually happened.
+  final int stackSize;
+  final int requiredStreak;
   const DictationSessionRow({
     required this.id,
     required this.createdAt,
@@ -4180,6 +4236,8 @@ class DictationSessionRow extends DataClass
     this.finishedAt,
     required this.roundsCount,
     required this.totalWords,
+    required this.stackSize,
+    required this.requiredStreak,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -4206,6 +4264,8 @@ class DictationSessionRow extends DataClass
     }
     map['rounds_count'] = Variable<int>(roundsCount);
     map['total_words'] = Variable<int>(totalWords);
+    map['stack_size'] = Variable<int>(stackSize);
+    map['required_streak'] = Variable<int>(requiredStreak);
     return map;
   }
 
@@ -4229,6 +4289,8 @@ class DictationSessionRow extends DataClass
           : Value(finishedAt),
       roundsCount: Value(roundsCount),
       totalWords: Value(totalWords),
+      stackSize: Value(stackSize),
+      requiredStreak: Value(requiredStreak),
     );
   }
 
@@ -4252,6 +4314,8 @@ class DictationSessionRow extends DataClass
       finishedAt: serializer.fromJson<DateTime?>(json['finishedAt']),
       roundsCount: serializer.fromJson<int>(json['roundsCount']),
       totalWords: serializer.fromJson<int>(json['totalWords']),
+      stackSize: serializer.fromJson<int>(json['stackSize']),
+      requiredStreak: serializer.fromJson<int>(json['requiredStreak']),
     );
   }
   @override
@@ -4272,6 +4336,8 @@ class DictationSessionRow extends DataClass
       'finishedAt': serializer.toJson<DateTime?>(finishedAt),
       'roundsCount': serializer.toJson<int>(roundsCount),
       'totalWords': serializer.toJson<int>(totalWords),
+      'stackSize': serializer.toJson<int>(stackSize),
+      'requiredStreak': serializer.toJson<int>(requiredStreak),
     };
   }
 
@@ -4288,6 +4354,8 @@ class DictationSessionRow extends DataClass
     Value<DateTime?> finishedAt = const Value.absent(),
     int? roundsCount,
     int? totalWords,
+    int? stackSize,
+    int? requiredStreak,
   }) => DictationSessionRow(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -4301,6 +4369,8 @@ class DictationSessionRow extends DataClass
     finishedAt: finishedAt.present ? finishedAt.value : this.finishedAt,
     roundsCount: roundsCount ?? this.roundsCount,
     totalWords: totalWords ?? this.totalWords,
+    stackSize: stackSize ?? this.stackSize,
+    requiredStreak: requiredStreak ?? this.requiredStreak,
   );
   DictationSessionRow copyWithCompanion(DictationSessionsCompanion data) {
     return DictationSessionRow(
@@ -4322,6 +4392,10 @@ class DictationSessionRow extends DataClass
       totalWords: data.totalWords.present
           ? data.totalWords.value
           : this.totalWords,
+      stackSize: data.stackSize.present ? data.stackSize.value : this.stackSize,
+      requiredStreak: data.requiredStreak.present
+          ? data.requiredStreak.value
+          : this.requiredStreak,
     );
   }
 
@@ -4339,7 +4413,9 @@ class DictationSessionRow extends DataClass
           ..write('startedAt: $startedAt, ')
           ..write('finishedAt: $finishedAt, ')
           ..write('roundsCount: $roundsCount, ')
-          ..write('totalWords: $totalWords')
+          ..write('totalWords: $totalWords, ')
+          ..write('stackSize: $stackSize, ')
+          ..write('requiredStreak: $requiredStreak')
           ..write(')'))
         .toString();
   }
@@ -4358,6 +4434,8 @@ class DictationSessionRow extends DataClass
     finishedAt,
     roundsCount,
     totalWords,
+    stackSize,
+    requiredStreak,
   );
   @override
   bool operator ==(Object other) =>
@@ -4374,7 +4452,9 @@ class DictationSessionRow extends DataClass
           other.startedAt == this.startedAt &&
           other.finishedAt == this.finishedAt &&
           other.roundsCount == this.roundsCount &&
-          other.totalWords == this.totalWords);
+          other.totalWords == this.totalWords &&
+          other.stackSize == this.stackSize &&
+          other.requiredStreak == this.requiredStreak);
 }
 
 class DictationSessionsCompanion extends UpdateCompanion<DictationSessionRow> {
@@ -4390,6 +4470,8 @@ class DictationSessionsCompanion extends UpdateCompanion<DictationSessionRow> {
   final Value<DateTime?> finishedAt;
   final Value<int> roundsCount;
   final Value<int> totalWords;
+  final Value<int> stackSize;
+  final Value<int> requiredStreak;
   final Value<int> rowid;
   const DictationSessionsCompanion({
     this.id = const Value.absent(),
@@ -4404,6 +4486,8 @@ class DictationSessionsCompanion extends UpdateCompanion<DictationSessionRow> {
     this.finishedAt = const Value.absent(),
     this.roundsCount = const Value.absent(),
     this.totalWords = const Value.absent(),
+    this.stackSize = const Value.absent(),
+    this.requiredStreak = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   DictationSessionsCompanion.insert({
@@ -4419,6 +4503,8 @@ class DictationSessionsCompanion extends UpdateCompanion<DictationSessionRow> {
     this.finishedAt = const Value.absent(),
     this.roundsCount = const Value.absent(),
     this.totalWords = const Value.absent(),
+    this.stackSize = const Value.absent(),
+    this.requiredStreak = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : ownerId = Value(ownerId),
        setId = Value(setId),
@@ -4436,6 +4522,8 @@ class DictationSessionsCompanion extends UpdateCompanion<DictationSessionRow> {
     Expression<DateTime>? finishedAt,
     Expression<int>? roundsCount,
     Expression<int>? totalWords,
+    Expression<int>? stackSize,
+    Expression<int>? requiredStreak,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4451,6 +4539,8 @@ class DictationSessionsCompanion extends UpdateCompanion<DictationSessionRow> {
       if (finishedAt != null) 'finished_at': finishedAt,
       if (roundsCount != null) 'rounds_count': roundsCount,
       if (totalWords != null) 'total_words': totalWords,
+      if (stackSize != null) 'stack_size': stackSize,
+      if (requiredStreak != null) 'required_streak': requiredStreak,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4468,6 +4558,8 @@ class DictationSessionsCompanion extends UpdateCompanion<DictationSessionRow> {
     Value<DateTime?>? finishedAt,
     Value<int>? roundsCount,
     Value<int>? totalWords,
+    Value<int>? stackSize,
+    Value<int>? requiredStreak,
     Value<int>? rowid,
   }) {
     return DictationSessionsCompanion(
@@ -4483,6 +4575,8 @@ class DictationSessionsCompanion extends UpdateCompanion<DictationSessionRow> {
       finishedAt: finishedAt ?? this.finishedAt,
       roundsCount: roundsCount ?? this.roundsCount,
       totalWords: totalWords ?? this.totalWords,
+      stackSize: stackSize ?? this.stackSize,
+      requiredStreak: requiredStreak ?? this.requiredStreak,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4528,6 +4622,12 @@ class DictationSessionsCompanion extends UpdateCompanion<DictationSessionRow> {
     if (totalWords.present) {
       map['total_words'] = Variable<int>(totalWords.value);
     }
+    if (stackSize.present) {
+      map['stack_size'] = Variable<int>(stackSize.value);
+    }
+    if (requiredStreak.present) {
+      map['required_streak'] = Variable<int>(requiredStreak.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4549,6 +4649,8 @@ class DictationSessionsCompanion extends UpdateCompanion<DictationSessionRow> {
           ..write('finishedAt: $finishedAt, ')
           ..write('roundsCount: $roundsCount, ')
           ..write('totalWords: $totalWords, ')
+          ..write('stackSize: $stackSize, ')
+          ..write('requiredStreak: $requiredStreak, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -9020,6 +9122,8 @@ typedef $$DictationSessionsTableCreateCompanionBuilder =
       Value<DateTime?> finishedAt,
       Value<int> roundsCount,
       Value<int> totalWords,
+      Value<int> stackSize,
+      Value<int> requiredStreak,
       Value<int> rowid,
     });
 typedef $$DictationSessionsTableUpdateCompanionBuilder =
@@ -9036,6 +9140,8 @@ typedef $$DictationSessionsTableUpdateCompanionBuilder =
       Value<DateTime?> finishedAt,
       Value<int> roundsCount,
       Value<int> totalWords,
+      Value<int> stackSize,
+      Value<int> requiredStreak,
       Value<int> rowid,
     });
 
@@ -9155,6 +9261,16 @@ class $$DictationSessionsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<int> get stackSize => $composableBuilder(
+    column: $table.stackSize,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get requiredStreak => $composableBuilder(
+    column: $table.requiredStreak,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$WordSetsTableFilterComposer get setId {
     final $$WordSetsTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -9268,6 +9384,16 @@ class $$DictationSessionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get stackSize => $composableBuilder(
+    column: $table.stackSize,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get requiredStreak => $composableBuilder(
+    column: $table.requiredStreak,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$WordSetsTableOrderingComposer get setId {
     final $$WordSetsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -9337,6 +9463,14 @@ class $$DictationSessionsTableAnnotationComposer
 
   GeneratedColumn<int> get totalWords => $composableBuilder(
     column: $table.totalWords,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get stackSize =>
+      $composableBuilder(column: $table.stackSize, builder: (column) => column);
+
+  GeneratedColumn<int> get requiredStreak => $composableBuilder(
+    column: $table.requiredStreak,
     builder: (column) => column,
   );
 
@@ -9434,6 +9568,8 @@ class $$DictationSessionsTableTableManager
                 Value<DateTime?> finishedAt = const Value.absent(),
                 Value<int> roundsCount = const Value.absent(),
                 Value<int> totalWords = const Value.absent(),
+                Value<int> stackSize = const Value.absent(),
+                Value<int> requiredStreak = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => DictationSessionsCompanion(
                 id: id,
@@ -9448,6 +9584,8 @@ class $$DictationSessionsTableTableManager
                 finishedAt: finishedAt,
                 roundsCount: roundsCount,
                 totalWords: totalWords,
+                stackSize: stackSize,
+                requiredStreak: requiredStreak,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -9464,6 +9602,8 @@ class $$DictationSessionsTableTableManager
                 Value<DateTime?> finishedAt = const Value.absent(),
                 Value<int> roundsCount = const Value.absent(),
                 Value<int> totalWords = const Value.absent(),
+                Value<int> stackSize = const Value.absent(),
+                Value<int> requiredStreak = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => DictationSessionsCompanion.insert(
                 id: id,
@@ -9478,6 +9618,8 @@ class $$DictationSessionsTableTableManager
                 finishedAt: finishedAt,
                 roundsCount: roundsCount,
                 totalWords: totalWords,
+                stackSize: stackSize,
+                requiredStreak: requiredStreak,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
