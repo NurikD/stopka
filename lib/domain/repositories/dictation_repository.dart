@@ -4,9 +4,18 @@ import '../models/dictation_session.dart';
 abstract class DictationRepository {
   Stream<List<DictationSession>> watchSessions(String setId);
 
-  Future<DictationSession> startSession({required String setId, required DictationDirection direction});
+  Future<DictationSession> startSession({
+    required String setId,
+    required DictationDirection direction,
+    required int stackSize,
+    required int requiredStreak,
+  });
 
   Future<void> finishSession(String sessionId, {required int roundsCount, required int totalWords});
+
+  /// The most recent session for [setId] that was started but never
+  /// finished — for offering "Продолжить" on the setup screen.
+  Future<DictationSession?> findUnfinishedSession(String setId);
 
   Future<DictationAnswer> recordAnswer({
     required String sessionId,

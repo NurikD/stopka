@@ -8,6 +8,8 @@ class DictationSession {
   final DateTime? finishedAt;
   final int roundsCount;
   final int totalWords;
+  final int stackSize;
+  final int requiredStreak;
 
   const DictationSession({
     required this.id,
@@ -17,5 +19,7 @@ class DictationSession {
     this.finishedAt,
     required this.roundsCount,
     required this.totalWords,
+    required this.stackSize,
+    required this.requiredStreak,
   });
 }
