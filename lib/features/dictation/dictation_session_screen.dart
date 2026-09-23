@@ -176,6 +176,15 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
             roundsCount: _engine.roundIndex,
             totalWords: _engine.masteredWords.length,
           );
+
+      // Mastering a word in dictation is what sets its starting SRS state
+      // (PLAN.md: "результаты диктанта задают стартовое состояние
+      // карточек") — it enters the deck due immediately, ungraded.
+      final cardStateRepo = ref.read(cardStateRepositoryProvider);
+      for (final word in _engine.masteredWords) {
+        await cardStateRepo.ensureState(word.cardId, widget.direction);
+      }
+
       if (!mounted) return;
       final problemCardIds = (_mistakeCounts.entries.toList()..sort((a, b) => b.value.compareTo(a.value)))
           .take(10)
