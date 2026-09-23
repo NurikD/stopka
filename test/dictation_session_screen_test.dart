@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stopka/core/providers/core_providers.dart';
 import 'package:stopka/core/theme/app_theme.dart';
+import 'package:stopka/core/theme/tokens.dart';
 import 'package:stopka/domain/models/dictation_answer.dart';
 import 'package:stopka/domain/models/dictation_session.dart';
 import 'package:stopka/domain/models/word_card.dart';
@@ -204,5 +205,65 @@ void main() {
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
     expect(dictationRepo.recordedAnswers, 1);
+  });
+
+  testWidgets('the result transition duration is zero under reduce-motion', (tester) async {
+    final cardRepo = _FakeWordCardRepository([_card('c1', 'achieve', 'достигать')]);
+    final dictationRepo = _FakeDictationRepository();
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          wordCardRepositoryProvider.overrideWithValue(cardRepo),
+          dictationRepositoryProvider.overrideWithValue(dictationRepo),
+        ],
+        child: MediaQuery(
+          data: const MediaQueryData(disableAnimations: true),
+          child: MaterialApp(
+            theme: AppTheme.dark(),
+            home: const DictationSessionScreen(
+              setId: 'set1',
+              direction: DictationDirection.ruEn,
+              stackSize: 12,
+              requiredStreak: 1,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    final switcher = tester.widget<AnimatedSwitcher>(find.byType(AnimatedSwitcher));
+    expect(switcher.duration, Duration.zero);
+  });
+
+  testWidgets('the result transition duration is the normal one without reduce-motion', (tester) async {
+    final cardRepo = _FakeWordCardRepository([_card('c1', 'achieve', 'достигать')]);
+    final dictationRepo = _FakeDictationRepository();
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          wordCardRepositoryProvider.overrideWithValue(cardRepo),
+          dictationRepositoryProvider.overrideWithValue(dictationRepo),
+        ],
+        child: MediaQuery(
+          data: const MediaQueryData(disableAnimations: false),
+          child: MaterialApp(
+            theme: AppTheme.dark(),
+            home: const DictationSessionScreen(
+              setId: 'set1',
+              direction: DictationDirection.ruEn,
+              stackSize: 12,
+              requiredStreak: 1,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    final switcher = tester.widget<AnimatedSwitcher>(find.byType(AnimatedSwitcher));
+    expect(switcher.duration, AppMotion.checkDuration);
   });
 }
