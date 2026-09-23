@@ -38,6 +38,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _saving = false;
   _KeyCheckStatus _checkStatus = _KeyCheckStatus.idle;
   String? _checkErrorMessage;
+  int _requestsToday = 0;
 
   ApiKeyStore get _store => ref.read(apiKeyStoreProvider);
 
@@ -50,10 +51,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Future<void> _loadStoredValues() async {
     final key = await _store.getApiKey();
     final model = await _store.getModel();
+    final requestsToday = await ref.read(llmRequestCounterProvider).getTodayCount();
     if (!mounted) return;
     setState(() {
       _keyController.text = key ?? '';
       _model = model;
+      _requestsToday = requestsToday;
       _loading = false;
     });
   }
@@ -159,6 +162,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           const SizedBox(height: AppSpacing.md),
           _buildCheckStatus(context),
+          const SizedBox(height: AppSpacing.xl),
+          Text(
+            'Запросов к ИИ сегодня: $_requestsToday',
+            style: AppTypography.caption.copyWith(color: context.colors.textMuted),
+          ),
         ],
       ),
     );
