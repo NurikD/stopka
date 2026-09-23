@@ -3,9 +3,6 @@ enum DictationVerdict { correct, typo, wrong, skipped }
 /// Local, offline answer checking for the dictation mode — no AI call, so
 /// it has to feel instant. See PLAN.md "Ключевой режим: диктант".
 class AnswerChecker {
-  static const _typoMinLength = 5;
-  static const _typoMaxDistance = 2;
-
   static final _apostrophes = RegExp('[’‘`´ʼ]');
   static final _hyphens = RegExp('[–—−]');
 
@@ -49,13 +46,23 @@ class AnswerChecker {
     if (variants.contains(normalizedInput)) return DictationVerdict.correct;
 
     for (final variant in variants) {
-      if (variant.length >= _typoMinLength &&
-          _levenshtein(normalizedInput, variant) <= _typoMaxDistance) {
+      final maxDistance = _typoMaxDistanceFor(variant.length);
+      if (maxDistance > 0 && _levenshtein(normalizedInput, variant) <= maxDistance) {
         return DictationVerdict.typo;
       }
     }
 
     return DictationVerdict.wrong;
+  }
+
+  /// Word-trap pairs like quite/quiet (distance 2) or desert/dessert
+  /// (distance 1) are genuinely different words, not typos — so the
+  /// tolerance scales with length instead of using one flat distance.
+  /// Under 5 letters: no forgiveness, only an exact match counts.
+  static int _typoMaxDistanceFor(int length) {
+    if (length < 5) return 0;
+    if (length <= 7) return 1;
+    return 2;
   }
 
   static int _levenshtein(String a, String b) {
