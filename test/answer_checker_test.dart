@@ -26,6 +26,25 @@ void main() {
     test('does not strip "a" when it is not a leading article', () {
       expect(AnswerChecker.normalize('banana'), 'banana');
     });
+
+    test('folds a typographic right single quote onto a straight apostrophe', () {
+      expect(AnswerChecker.normalize('don’t'), AnswerChecker.normalize("don't"));
+    });
+
+    test('folds other apostrophe look-alikes too', () {
+      for (final quote in ['‘', '`', '´', 'ʼ']) {
+        expect(AnswerChecker.normalize('don${quote}t'), "don't");
+      }
+    });
+
+    test('folds an en dash and em dash onto a plain hyphen', () {
+      expect(AnswerChecker.normalize('well–known'), 'well-known');
+      expect(AnswerChecker.normalize('well—known'), 'well-known');
+    });
+
+    test('folds ё onto е', () {
+      expect(AnswerChecker.normalize('ещё'), 'еще');
+    });
   });
 
   group('AnswerChecker.variantsOf', () {
@@ -51,6 +70,27 @@ void main() {
     test('matches any stored variant', () {
       expect(
         AnswerChecker.check(userInput: 'reach', correctAnswer: 'achieve / reach'),
+        DictationVerdict.correct,
+      );
+    });
+
+    test('a typographic apostrophe from a mobile keyboard still matches', () {
+      expect(
+        AnswerChecker.check(userInput: 'don’t', correctAnswer: "don't"),
+        DictationVerdict.correct,
+      );
+    });
+
+    test('a non-breaking-style dash still matches a stored hyphen', () {
+      expect(
+        AnswerChecker.check(userInput: 'well–known', correctAnswer: 'well-known'),
+        DictationVerdict.correct,
+      );
+    });
+
+    test('ё vs е does not cause a false mismatch', () {
+      expect(
+        AnswerChecker.check(userInput: 'еще', correctAnswer: 'ещё'),
         DictationVerdict.correct,
       );
     });
