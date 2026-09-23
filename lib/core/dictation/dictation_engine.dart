@@ -1,5 +1,15 @@
 import 'answer_checker.dart';
 
+/// One persisted answer, as needed to replay a session — see
+/// [DictationEngine.resume].
+class DictationHistoryEntry {
+  final String cardId;
+  final int roundIndex;
+  final DictationVerdict verdict;
+
+  const DictationHistoryEntry({required this.cardId, required this.roundIndex, required this.verdict});
+}
+
 class DictationWord {
   final String cardId;
   final String prompt;
@@ -27,6 +37,37 @@ class DictationEngine {
     this.stackSize = 12,
     this.requiredStreak = 1,
   }) : _unintroduced = List.of(words);
+
+  /// Rebuilds a session's state from persisted answer history, for
+  /// resuming after the app was killed mid-session. Replays each round's
+  /// answers through the exact same [nextStack]/[recordAnswer] a live
+  /// session uses, so the result is indistinguishable from an engine that
+  /// never stopped. A word the user was mid-answer on when the app died
+  /// simply has no history entry and falls back into the next stack, same
+  /// as any other unanswered word.
+  factory DictationEngine.resume({
+    required List<DictationWord> words,
+    required List<DictationHistoryEntry> answers,
+    int stackSize = 12,
+    int requiredStreak = 1,
+  }) {
+    final engine = DictationEngine(words: words, stackSize: stackSize, requiredStreak: requiredStreak);
+
+    final byRound = <int, List<DictationHistoryEntry>>{};
+    for (final answer in answers) {
+      byRound.putIfAbsent(answer.roundIndex, () => []).add(answer);
+    }
+
+    final rounds = byRound.keys.toList()..sort();
+    for (final round in rounds) {
+      engine.nextStack();
+      for (final answer in byRound[round]!) {
+        engine.recordAnswer(answer.cardId, answer.verdict);
+      }
+    }
+
+    return engine;
+  }
 
   bool get isFinished => _unintroduced.isEmpty && _active.isEmpty;
 
