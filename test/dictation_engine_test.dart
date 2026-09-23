@@ -138,4 +138,71 @@ void main() {
       expect(engine.masteredWords, hasLength(30));
     });
   });
+
+  group('DictationEngine.resume', () {
+    test('empty history resumes to the exact same state as a fresh engine', () {
+      final live = DictationEngine(words: _words(5), stackSize: 3);
+      final resumed = DictationEngine.resume(words: _words(5), answers: [], stackSize: 3);
+
+      expect(resumed.roundIndex, live.roundIndex);
+      expect(resumed.isFinished, live.isFinished);
+      expect(resumed.nextStack().map((w) => w.cardId), live.nextStack().map((w) => w.cardId));
+    });
+
+    test('resuming mid-session reproduces the same mastered set and next stack as the live run', () {
+      // Live run: 6 words, stack size 3. Round 1: card0 wrong, card1/card2 correct.
+      final liveWords = _words(6);
+      final live = DictationEngine(words: liveWords, stackSize: 3, requiredStreak: 1);
+      live.nextStack();
+      live.recordAnswer('card0', DictationVerdict.wrong);
+      live.recordAnswer('card1', DictationVerdict.correct);
+      live.recordAnswer('card2', DictationVerdict.correct);
+      // Round 2: card0 (carried over) correct, card3/card4 (new) correct.
+      live.nextStack();
+      live.recordAnswer('card0', DictationVerdict.correct);
+      live.recordAnswer('card3', DictationVerdict.correct);
+      live.recordAnswer('card4', DictationVerdict.correct);
+
+      final history = [
+        const DictationHistoryEntry(cardId: 'card0', roundIndex: 1, verdict: DictationVerdict.wrong),
+        const DictationHistoryEntry(cardId: 'card1', roundIndex: 1, verdict: DictationVerdict.correct),
+        const DictationHistoryEntry(cardId: 'card2', roundIndex: 1, verdict: DictationVerdict.correct),
+        const DictationHistoryEntry(cardId: 'card0', roundIndex: 2, verdict: DictationVerdict.correct),
+        const DictationHistoryEntry(cardId: 'card3', roundIndex: 2, verdict: DictationVerdict.correct),
+        const DictationHistoryEntry(cardId: 'card4', roundIndex: 2, verdict: DictationVerdict.correct),
+      ];
+      final resumed = DictationEngine.resume(words: _words(6), answers: history, stackSize: 3, requiredStreak: 1);
+
+      expect(resumed.roundIndex, live.roundIndex);
+      expect(
+        resumed.masteredWords.map((w) => w.cardId).toSet(),
+        live.masteredWords.map((w) => w.cardId).toSet(),
+      );
+      expect(resumed.nextStack().map((w) => w.cardId), live.nextStack().map((w) => w.cardId));
+    });
+
+    test('a word left mid-answer (no history entry for the last round) falls into the next stack', () {
+      // Round 1 stack is card0, card1; only card0 got answered before the app died.
+      final history = [
+        const DictationHistoryEntry(cardId: 'card0', roundIndex: 1, verdict: DictationVerdict.correct),
+      ];
+      final resumed = DictationEngine.resume(words: _words(2), answers: history, stackSize: 2, requiredStreak: 1);
+
+      expect(resumed.masteredWords.map((w) => w.cardId), ['card0']);
+      // card1 was never recorded, so it's still active and comes right back.
+      expect(resumed.nextStack().map((w) => w.cardId), ['card1']);
+    });
+
+    test('resuming preserves a partially-built streak toward requiredStreak > 1', () {
+      final history = [
+        const DictationHistoryEntry(cardId: 'card0', roundIndex: 1, verdict: DictationVerdict.correct),
+      ];
+      final resumed = DictationEngine.resume(words: _words(1), answers: history, stackSize: 1, requiredStreak: 2);
+
+      expect(resumed.isFinished, isFalse);
+      resumed.nextStack();
+      resumed.recordAnswer('card0', DictationVerdict.correct);
+      expect(resumed.isFinished, isTrue); // second correct in a row completes the streak
+    });
+  });
 }
