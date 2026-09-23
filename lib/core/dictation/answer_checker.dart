@@ -6,12 +6,20 @@ class AnswerChecker {
   static const _typoMinLength = 5;
   static const _typoMaxDistance = 2;
 
-  /// Trims, lowercases, collapses whitespace, and strips a leading verb
-  /// infinitive marker ("to ") or article ("a "/"the ") so those don't
-  /// cause a false mismatch.
+  static final _apostrophes = RegExp('[’‘`´ʼ]');
+  static final _hyphens = RegExp('[–—−]');
+
+  /// Trims, lowercases, collapses whitespace, folds every apostrophe/hyphen
+  /// look-alike and ё onto one canonical form, and strips a leading verb
+  /// infinitive marker ("to ") or article ("a "/"the ") — all so a mobile
+  /// keyboard's typographic quotes or a missed ё don't cause a false
+  /// mismatch.
   static String normalize(String input) {
     var s = input.trim().toLowerCase();
     s = s.replaceAll(RegExp(r'\s+'), ' ');
+    s = s.replaceAll(_apostrophes, "'");
+    s = s.replaceAll(_hyphens, '-');
+    s = s.replaceAll('ё', 'е');
     if (s.startsWith('to ')) {
       s = s.substring(3);
     } else if (s.startsWith('the ')) {
