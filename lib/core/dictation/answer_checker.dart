@@ -28,14 +28,30 @@ class AnswerChecker {
   }
 
   /// A stored answer field may hold several acceptable variants separated
-  /// by "/", ",", or ";" (e.g. "достигать / добиваться").
+  /// by "/", ",", or ";" (e.g. "достигать / добиваться"). "/" and ";"
+  /// always separate variants, but "," is ambiguous — textbook phrases use
+  /// commas too ("несмотря на то, что"), so a comma only splits when every
+  /// resulting piece is at most two words; otherwise it's kept as one
+  /// phrase.
   static List<String> variantsOf(String storedAnswer) {
-    return storedAnswer
-        .split(RegExp(r'[/,;]'))
-        .map(normalize)
-        .where((s) => s.isNotEmpty)
-        .toList();
+    final result = <String>[];
+    for (final chunk in storedAnswer.split(RegExp(r'[/;]'))) {
+      final trimmed = chunk.trim();
+      if (trimmed.isEmpty) continue;
+
+      final commaParts = trimmed.split(',').map((p) => p.trim()).where((p) => p.isNotEmpty).toList();
+      final isSynonymList = commaParts.length > 1 && commaParts.every((p) => _wordCount(p) <= 2);
+
+      if (isSynonymList) {
+        result.addAll(commaParts.map(normalize));
+      } else {
+        result.add(normalize(trimmed));
+      }
+    }
+    return result.where((s) => s.isNotEmpty).toList();
   }
+
+  static int _wordCount(String s) => s.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).length;
 
   /// [userInput] must be non-empty — an explicit skip is a UI-level action,
   /// not something this checks for.
