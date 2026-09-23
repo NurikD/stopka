@@ -1,17 +1,38 @@
-# stopka
+# Стопка
 
-A new Flutter project.
+Приложение-спутник для тех, кто учит английский на очных курсах. Диктант
+слов до нуля ошибок, интервальное повторение (FSRS), практика в
+предложениях — весь основной цикл работает офлайн; ИИ (Gemini) нужен
+только для распознавания фото со словами и обогащения карточек.
 
-## Getting Started
+Подробности продукта и архитектурные решения — в `PLAN.md`, визуальная
+система — в `DESIGN.md`.
 
-This project is a starting point for a Flutter application.
+## Стек
 
-A few resources to get you started if this is your first Flutter project:
+- Flutter (stable) / Dart 3, Material 3
+- Riverpod — состояние и DI, `go_router` — навигация
+- `drift` (SQLite) — локальная база, миграции по версиям схемы
+- `fsrs` — интервальное повторение
+- Gemini API (`dio`) — распознавание фото и обогащение карточек, ключ хранится в `flutter_secure_storage`
+- `flutter_tts` — офлайн-озвучка
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## Запуск
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```
+flutter pub get
+flutter run
+```
+
+Ключ Gemini вводится в приложении (Настройки → Gemini API), не в коде и не
+в git. Получить ключ: [ai.google.dev](https://ai.google.dev/gemini-api/docs/api-key).
+
+## Разработка
+
+```
+flutter analyze
+flutter test
+```
+
+Приоритетная платформа — Android; iOS не должен ломаться, но не тестируется
+в первую очередь.
