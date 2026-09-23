@@ -171,7 +171,11 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
         );
     answer.answerId = repoAnswer.id;
 
-    await Future.delayed(AppMotion.checkDuration + const Duration(milliseconds: 500));
+    // Only the transition itself is skipped under reduce-motion — the
+    // pause here is reading time for the result, not decorative motion.
+    final reduceMotion = mounted && MediaQuery.disableAnimationsOf(context);
+    final transitionDuration = reduceMotion ? Duration.zero : AppMotion.checkDuration;
+    await Future.delayed(transitionDuration + const Duration(milliseconds: 500));
     if (!mounted) return;
 
     if (_index + 1 < _stack.length) {
@@ -267,6 +271,10 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
 
   Widget _buildRound(BuildContext context) {
     final colors = context.colors;
+    // DESIGN.md: "MediaQuery.disableAnimations уважается — при включённом
+    // системном «уменьшить движение» переходы становятся мгновенными."
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
+    final checkDuration = reduceMotion ? Duration.zero : AppMotion.checkDuration;
     return Column(
       children: [
         Padding(
@@ -291,7 +299,7 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
         ),
         Expanded(
           child: AnimatedSwitcher(
-            duration: AppMotion.checkDuration,
+            duration: checkDuration,
             switchInCurve: AppMotion.checkCurve,
             switchOutCurve: AppMotion.checkCurve,
             child: _phase == _Phase.showingResult ? _buildResultReveal(context) : _buildInput(context),
