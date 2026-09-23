@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/db/app_database.dart';
+import '../../data/repositories/card_state_repository_impl.dart';
 import '../../data/repositories/course_repository_impl.dart';
 import '../../data/repositories/dictation_repository_impl.dart';
 import '../../data/repositories/llm_cache_repository_impl.dart';
@@ -9,6 +10,7 @@ import '../../data/repositories/unit_repository_impl.dart';
 import '../../data/repositories/word_card_repository_impl.dart';
 import '../../data/repositories/word_set_repository_impl.dart';
 import '../../domain/models/profile.dart';
+import '../../domain/repositories/card_state_repository.dart';
 import '../../domain/repositories/course_repository.dart';
 import '../../domain/repositories/dictation_repository.dart';
 import '../../domain/repositories/llm_cache_repository.dart';
@@ -23,6 +25,7 @@ import '../llm/card_enrichment_service.dart';
 import '../llm/gemini_llm_client.dart';
 import '../llm/llm_client.dart';
 import '../llm/word_recognition_service.dart';
+import '../srs/srs_engine.dart';
 import '../tts/tts_service.dart';
 
 final appDatabaseProvider = Provider<AppDatabase>((ref) {
@@ -97,3 +100,10 @@ final dictationRepositoryProvider = Provider<DictationRepository>((ref) {
 final answerAppealServiceProvider = Provider<AnswerAppealService>((ref) {
   return AnswerAppealService(ref.watch(llmClientProvider));
 });
+
+final cardStateRepositoryProvider = Provider<CardStateRepository>((ref) {
+  final ownerId = ref.watch(currentOwnerIdProvider) ?? '';
+  return DriftCardStateRepository(ref.watch(appDatabaseProvider), ownerId);
+});
+
+final srsEngineProvider = Provider<SrsEngine>((ref) => SrsEngine());
