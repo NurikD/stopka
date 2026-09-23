@@ -104,6 +104,9 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
             partOfSpeech: e.partOfSpeech,
             examples: e.examples,
           ));
+    }).catchError((_) {
+      // The word is already saved with whatever the user typed; a failed
+      // background enrichment (e.g. no Gemini key yet) isn't fatal here.
     });
   }
 
