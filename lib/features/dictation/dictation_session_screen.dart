@@ -38,6 +38,11 @@ class DictationSessionScreen extends ConsumerStatefulWidget {
   /// When set, restricts the session to just these cards — used by "Повторить проблемные".
   final List<WordCard>? onlyCards;
 
+  /// When both are set, continues an existing session instead of starting
+  /// a fresh one — see DictationSetupScreen's "Продолжить" path.
+  final DictationEngine? resumedEngine;
+  final String? resumedSessionId;
+
   const DictationSessionScreen({
     super.key,
     required this.setId,
@@ -45,7 +50,24 @@ class DictationSessionScreen extends ConsumerStatefulWidget {
     required this.stackSize,
     required this.requiredStreak,
     this.onlyCards,
+    this.resumedEngine,
+    this.resumedSessionId,
   });
+
+  /// Builds the DictationWord list a set's cards turn into for a given
+  /// direction — shared by a fresh session and by DictationSetupScreen
+  /// when it needs to replay history to resume or close out a session.
+  static List<DictationWord> buildWords(List<WordCard> cards, DictationDirection direction) {
+    final ruToEn = direction == DictationDirection.ruEn;
+    return cards
+        .map((c) => DictationWord(
+              cardId: c.id,
+              prompt: ruToEn ? c.translation : c.term,
+              correctAnswer: ruToEn ? c.term : c.translation,
+            ))
+        .where((w) => w.prompt.isNotEmpty && w.correctAnswer.isNotEmpty)
+        .toList();
+  }
 
   @override
   ConsumerState<DictationSessionScreen> createState() => _DictationSessionScreenState();
@@ -83,22 +105,21 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
     final cards = widget.onlyCards ?? await ref.read(wordCardRepositoryProvider).watchCards(widget.setId).first;
     _cardsById = {for (final c in cards) c.id: c};
 
-    final words = cards.map((c) {
-      final ruToEn = widget.direction == DictationDirection.ruEn;
-      return DictationWord(
-        cardId: c.id,
-        prompt: ruToEn ? c.translation : c.term,
-        correctAnswer: ruToEn ? c.term : c.translation,
-      );
-    }).where((w) => w.prompt.isNotEmpty && w.correctAnswer.isNotEmpty).toList();
+    if (widget.resumedEngine != null && widget.resumedSessionId != null) {
+      _engine = widget.resumedEngine!;
+      _sessionId = widget.resumedSessionId!;
+    } else {
+      final words = DictationSessionScreen.buildWords(cards, widget.direction);
+      _engine = DictationEngine(words: words, stackSize: widget.stackSize, requiredStreak: widget.requiredStreak);
 
-    _engine = DictationEngine(words: words, stackSize: widget.stackSize, requiredStreak: widget.requiredStreak);
-
-    final session = await ref.read(dictationRepositoryProvider).startSession(
-          setId: widget.setId,
-          direction: widget.direction,
-        );
-    _sessionId = session.id;
+      final session = await ref.read(dictationRepositoryProvider).startSession(
+            setId: widget.setId,
+            direction: widget.direction,
+            stackSize: widget.stackSize,
+            requiredStreak: widget.requiredStreak,
+          );
+      _sessionId = session.id;
+    }
 
     if (!mounted) return;
     _startNextStack();

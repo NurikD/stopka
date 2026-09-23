@@ -62,7 +62,12 @@ class _FakeDictationRepository implements DictationRepository {
   bool finished = false;
 
   @override
-  Future<DictationSession> startSession({required String setId, required DictationDirection direction}) async {
+  Future<DictationSession> startSession({
+    required String setId,
+    required DictationDirection direction,
+    required int stackSize,
+    required int requiredStreak,
+  }) async {
     return DictationSession(
       id: 'session1',
       setId: setId,
@@ -70,8 +75,13 @@ class _FakeDictationRepository implements DictationRepository {
       startedAt: DateTime.now(),
       roundsCount: 0,
       totalWords: 0,
+      stackSize: stackSize,
+      requiredStreak: requiredStreak,
     );
   }
+
+  @override
+  Future<DictationSession?> findUnfinishedSession(String setId) => throw UnimplementedError();
 
   @override
   Future<DictationAnswer> recordAnswer({
