@@ -24,6 +24,8 @@ import '../llm/api_key_store.dart';
 import '../llm/card_enrichment_service.dart';
 import '../llm/gemini_llm_client.dart';
 import '../llm/llm_client.dart';
+import '../llm/llm_request_counter.dart';
+import '../llm/throttled_llm_client.dart';
 import '../llm/word_recognition_service.dart';
 import '../srs/srs_engine.dart';
 import '../srs/srs_settings_store.dart';
@@ -77,8 +79,11 @@ final llmCacheRepositoryProvider = Provider<LlmCacheRepository>((ref) {
 
 final apiKeyStoreProvider = Provider<ApiKeyStore>((ref) => ApiKeyStore());
 
+final llmRequestCounterProvider = Provider<LlmRequestCounter>((ref) => LlmRequestCounter());
+
 final llmClientProvider = Provider<LlmClient>((ref) {
-  return GeminiLlmClient(ref.watch(apiKeyStoreProvider));
+  final gemini = GeminiLlmClient(ref.watch(apiKeyStoreProvider));
+  return ThrottledLlmClient(gemini, ref.watch(llmRequestCounterProvider));
 });
 
 final eventLoggerProvider = Provider<EventLogger>((ref) => NoopEventLogger());
