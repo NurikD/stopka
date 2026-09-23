@@ -6,11 +6,13 @@ import '../../core/theme/app_theme_extension.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/ghost_button.dart';
 import '../../core/widgets/sticky_action_bar.dart';
 import '../../core/widgets/primary_button.dart';
 import '../../domain/models/unit.dart';
 import '../../domain/models/word_card.dart';
 import '../../domain/models/word_set.dart';
+import '../dictation/dictation_setup_screen.dart';
 import 'add_words/add_words_screen.dart';
 import 'card_form_sheet.dart';
 
@@ -61,69 +63,77 @@ class _UnitDetailScreenState extends ConsumerState<UnitDetailScreen> {
     final setId = _setId;
     final unit = _unit;
 
-    return Scaffold(
-      appBar: AppBar(title: Text(unit == null ? 'Юнит' : '${unit.code} · ${unit.title}'.trim())),
-      body: setId == null
-          ? const Center(child: CircularProgressIndicator())
-          : StreamBuilder<List<WordCard>>(
-              stream: ref.watch(wordCardRepositoryProvider).watchCards(setId),
-              builder: (context, snapshot) {
-                final allCards = snapshot.data ?? const [];
-                final cards = _query.isEmpty
-                    ? allCards
-                    : allCards
-                        .where((c) =>
-                            c.term.toLowerCase().contains(_query.toLowerCase()) ||
-                            c.translation.toLowerCase().contains(_query.toLowerCase()))
-                        .toList();
+    if (setId == null) {
+      return Scaffold(
+        appBar: AppBar(title: Text(unit == null ? 'Юнит' : '${unit.code} · ${unit.title}'.trim())),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+    return StreamBuilder<List<WordCard>>(
+      stream: ref.watch(wordCardRepositoryProvider).watchCards(setId),
+      builder: (context, snapshot) {
+        final allCards = snapshot.data ?? const [];
+        final cards = _query.isEmpty
+            ? allCards
+            : allCards
+                .where((c) =>
+                    c.term.toLowerCase().contains(_query.toLowerCase()) ||
+                    c.translation.toLowerCase().contains(_query.toLowerCase()))
+                .toList();
 
-                if (allCards.isEmpty) {
-                  return EmptyState(
-                    message: 'Сфоткайте список слов с урока — разберу и переведу. '
-                        'Или добавьте слова вручную/вставкой.',
-                    actionLabel: 'Добавить слова',
-                    onAction: () => _openAddWords(context, setId, unit),
-                  );
-                }
-
-                return Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, 0),
-                      child: TextField(
-                        decoration: const InputDecoration(
-                          hintText: 'Поиск по слову или переводу',
-                          prefixIcon: Icon(Icons.search),
-                          border: OutlineInputBorder(),
+        return Scaffold(
+          appBar: AppBar(title: Text(unit == null ? 'Юнит' : '${unit.code} · ${unit.title}'.trim())),
+          body: snapshot.connectionState == ConnectionState.waiting
+              ? const Center(child: CircularProgressIndicator())
+              : allCards.isEmpty
+                  ? EmptyState(
+                      message: 'Сфоткайте список слов с урока — разберу и переведу. '
+                          'Или добавьте слова вручную/вставкой.',
+                      actionLabel: 'Добавить слова',
+                      onAction: () => _openAddWords(context, setId, unit),
+                    )
+                  : Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, 0),
+                          child: TextField(
+                            decoration: const InputDecoration(
+                              hintText: 'Поиск по слову или переводу',
+                              prefixIcon: Icon(Icons.search),
+                              border: OutlineInputBorder(),
+                            ),
+                            onChanged: (v) => setState(() => _query = v),
+                          ),
                         ),
-                        onChanged: (v) => setState(() => _query = v),
-                      ),
+                        Expanded(
+                          child: ListView.builder(
+                            padding: const EdgeInsets.all(AppSpacing.lg),
+                            itemCount: cards.length,
+                            itemBuilder: (context, i) => _CardTile(card: cards[i]),
+                          ),
+                        ),
+                      ],
                     ),
-                    Expanded(
-                      child: ListView.builder(
-                        padding: const EdgeInsets.all(AppSpacing.lg),
-                        itemCount: cards.length,
-                        itemBuilder: (context, i) => _CardTile(card: cards[i]),
-                      ),
+          bottomNavigationBar: StickyActionBar(
+            children: [
+              if (allCards.isNotEmpty)
+                GhostButton(
+                  label: 'Диктант',
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => DictationSetupScreen(setId: setId, setTitle: unit?.code ?? 'слова'),
                     ),
-                  ],
-                );
-              },
-            ),
-      bottomNavigationBar: setId == null
-          ? null
-          : StickyActionBar(
-              children: [
-                PrimaryButton(
-                  label: 'Добавить слова',
-                  onPressed: () => _openAddWords(context, setId, unit),
+                  ),
                 ),
-              ],
-            ),
+              PrimaryButton(
+                label: 'Добавить слова',
+                onPressed: () => _openAddWords(context, setId, unit),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
