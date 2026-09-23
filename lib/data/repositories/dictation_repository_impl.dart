@@ -15,6 +15,8 @@ domain.DictationSession _sessionToDomain(DictationSessionRow row) {
     finishedAt: row.finishedAt,
     roundsCount: row.roundsCount,
     totalWords: row.totalWords,
+    stackSize: row.stackSize,
+    requiredStreak: row.requiredStreak,
   );
 }
 
@@ -48,15 +50,29 @@ class DriftDictationRepository implements DictationRepository {
   Future<domain.DictationSession> startSession({
     required String setId,
     required domain.DictationDirection direction,
+    required int stackSize,
+    required int requiredStreak,
   }) async {
     final row = await _db.into(_db.dictationSessions).insertReturning(
           DictationSessionsCompanion.insert(
             setId: setId,
             direction: db.DictationDirection.values.byName(direction.name),
+            stackSize: Value(stackSize),
+            requiredStreak: Value(requiredStreak),
             ownerId: _ownerId,
           ),
         );
     return _sessionToDomain(row);
+  }
+
+  @override
+  Future<domain.DictationSession?> findUnfinishedSession(String setId) async {
+    final row = await (_db.select(_db.dictationSessions)
+          ..where((t) => t.deletedAt.isNull() & t.setId.equals(setId) & t.finishedAt.isNull())
+          ..orderBy([(t) => OrderingTerm(expression: t.startedAt, mode: OrderingMode.desc)])
+          ..limit(1))
+        .getSingleOrNull();
+    return row == null ? null : _sessionToDomain(row);
   }
 
   @override
