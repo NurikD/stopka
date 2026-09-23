@@ -26,6 +26,7 @@ import '../llm/gemini_llm_client.dart';
 import '../llm/llm_client.dart';
 import '../llm/word_recognition_service.dart';
 import '../srs/srs_engine.dart';
+import '../srs/srs_settings_store.dart';
 import '../tts/tts_service.dart';
 
 final appDatabaseProvider = Provider<AppDatabase>((ref) {
@@ -107,3 +108,5 @@ final cardStateRepositoryProvider = Provider<CardStateRepository>((ref) {
 });
 
 final srsEngineProvider = Provider<SrsEngine>((ref) => SrsEngine());
+
+final srsSettingsStoreProvider = Provider<SrsSettingsStore>((ref) => SrsSettingsStore());
