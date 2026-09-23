@@ -5281,6 +5281,906 @@ class DictationAnswersCompanion extends UpdateCompanion<DictationAnswerRow> {
   }
 }
 
+class $CardStatesTable extends CardStates
+    with TableInfo<$CardStatesTable, CardStateRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CardStatesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: () => const Uuid().v4(),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _ownerIdMeta = const VerificationMeta(
+    'ownerId',
+  );
+  @override
+  late final GeneratedColumn<String> ownerId = GeneratedColumn<String>(
+    'owner_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _cardIdMeta = const VerificationMeta('cardId');
+  @override
+  late final GeneratedColumn<String> cardId = GeneratedColumn<String>(
+    'card_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES cards (id)',
+    ),
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<DictationDirection, String>
+  direction = GeneratedColumn<String>(
+    'direction',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  ).withConverter<DictationDirection>($CardStatesTable.$converterdirection);
+  static const VerificationMeta _dueMeta = const VerificationMeta('due');
+  @override
+  late final GeneratedColumn<DateTime> due = GeneratedColumn<DateTime>(
+    'due',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _stabilityMeta = const VerificationMeta(
+    'stability',
+  );
+  @override
+  late final GeneratedColumn<double> stability = GeneratedColumn<double>(
+    'stability',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _difficultyMeta = const VerificationMeta(
+    'difficulty',
+  );
+  @override
+  late final GeneratedColumn<double> difficulty = GeneratedColumn<double>(
+    'difficulty',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _stepMeta = const VerificationMeta('step');
+  @override
+  late final GeneratedColumn<int> step = GeneratedColumn<int>(
+    'step',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _repsMeta = const VerificationMeta('reps');
+  @override
+  late final GeneratedColumn<int> reps = GeneratedColumn<int>(
+    'reps',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _lapsesMeta = const VerificationMeta('lapses');
+  @override
+  late final GeneratedColumn<int> lapses = GeneratedColumn<int>(
+    'lapses',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<SrsCardStateColumn, String>
+  state = GeneratedColumn<String>(
+    'state',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('learning'),
+  ).withConverter<SrsCardStateColumn>($CardStatesTable.$converterstate);
+  static const VerificationMeta _lastReviewMeta = const VerificationMeta(
+    'lastReview',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastReview = GeneratedColumn<DateTime>(
+    'last_review',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    ownerId,
+    syncedAt,
+    cardId,
+    direction,
+    due,
+    stability,
+    difficulty,
+    step,
+    reps,
+    lapses,
+    state,
+    lastReview,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'card_states';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CardStateRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('owner_id')) {
+      context.handle(
+        _ownerIdMeta,
+        ownerId.isAcceptableOrUnknown(data['owner_id']!, _ownerIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_ownerIdMeta);
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
+    if (data.containsKey('card_id')) {
+      context.handle(
+        _cardIdMeta,
+        cardId.isAcceptableOrUnknown(data['card_id']!, _cardIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cardIdMeta);
+    }
+    if (data.containsKey('due')) {
+      context.handle(
+        _dueMeta,
+        due.isAcceptableOrUnknown(data['due']!, _dueMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dueMeta);
+    }
+    if (data.containsKey('stability')) {
+      context.handle(
+        _stabilityMeta,
+        stability.isAcceptableOrUnknown(data['stability']!, _stabilityMeta),
+      );
+    }
+    if (data.containsKey('difficulty')) {
+      context.handle(
+        _difficultyMeta,
+        difficulty.isAcceptableOrUnknown(data['difficulty']!, _difficultyMeta),
+      );
+    }
+    if (data.containsKey('step')) {
+      context.handle(
+        _stepMeta,
+        step.isAcceptableOrUnknown(data['step']!, _stepMeta),
+      );
+    }
+    if (data.containsKey('reps')) {
+      context.handle(
+        _repsMeta,
+        reps.isAcceptableOrUnknown(data['reps']!, _repsMeta),
+      );
+    }
+    if (data.containsKey('lapses')) {
+      context.handle(
+        _lapsesMeta,
+        lapses.isAcceptableOrUnknown(data['lapses']!, _lapsesMeta),
+      );
+    }
+    if (data.containsKey('last_review')) {
+      context.handle(
+        _lastReviewMeta,
+        lastReview.isAcceptableOrUnknown(data['last_review']!, _lastReviewMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CardStateRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CardStateRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      ownerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}owner_id'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
+      cardId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}card_id'],
+      )!,
+      direction: $CardStatesTable.$converterdirection.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}direction'],
+        )!,
+      ),
+      due: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}due'],
+      )!,
+      stability: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}stability'],
+      ),
+      difficulty: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}difficulty'],
+      ),
+      step: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}step'],
+      ),
+      reps: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}reps'],
+      )!,
+      lapses: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}lapses'],
+      )!,
+      state: $CardStatesTable.$converterstate.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}state'],
+        )!,
+      ),
+      lastReview: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_review'],
+      ),
+    );
+  }
+
+  @override
+  $CardStatesTable createAlias(String alias) {
+    return $CardStatesTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<DictationDirection, String, String>
+  $converterdirection = const EnumNameConverter<DictationDirection>(
+    DictationDirection.values,
+  );
+  static JsonTypeConverter2<SrsCardStateColumn, String, String>
+  $converterstate = const EnumNameConverter<SrsCardStateColumn>(
+    SrsCardStateColumn.values,
+  );
+}
+
+class CardStateRow extends DataClass implements Insertable<CardStateRow> {
+  final String id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  final String ownerId;
+  final DateTime? syncedAt;
+  final String cardId;
+  final DictationDirection direction;
+  final DateTime due;
+  final double? stability;
+  final double? difficulty;
+  final int? step;
+  final int reps;
+  final int lapses;
+  final SrsCardStateColumn state;
+  final DateTime? lastReview;
+  const CardStateRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    required this.ownerId,
+    this.syncedAt,
+    required this.cardId,
+    required this.direction,
+    required this.due,
+    this.stability,
+    this.difficulty,
+    this.step,
+    required this.reps,
+    required this.lapses,
+    required this.state,
+    this.lastReview,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    map['owner_id'] = Variable<String>(ownerId);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
+    map['card_id'] = Variable<String>(cardId);
+    {
+      map['direction'] = Variable<String>(
+        $CardStatesTable.$converterdirection.toSql(direction),
+      );
+    }
+    map['due'] = Variable<DateTime>(due);
+    if (!nullToAbsent || stability != null) {
+      map['stability'] = Variable<double>(stability);
+    }
+    if (!nullToAbsent || difficulty != null) {
+      map['difficulty'] = Variable<double>(difficulty);
+    }
+    if (!nullToAbsent || step != null) {
+      map['step'] = Variable<int>(step);
+    }
+    map['reps'] = Variable<int>(reps);
+    map['lapses'] = Variable<int>(lapses);
+    {
+      map['state'] = Variable<String>(
+        $CardStatesTable.$converterstate.toSql(state),
+      );
+    }
+    if (!nullToAbsent || lastReview != null) {
+      map['last_review'] = Variable<DateTime>(lastReview);
+    }
+    return map;
+  }
+
+  CardStatesCompanion toCompanion(bool nullToAbsent) {
+    return CardStatesCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      ownerId: Value(ownerId),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
+      cardId: Value(cardId),
+      direction: Value(direction),
+      due: Value(due),
+      stability: stability == null && nullToAbsent
+          ? const Value.absent()
+          : Value(stability),
+      difficulty: difficulty == null && nullToAbsent
+          ? const Value.absent()
+          : Value(difficulty),
+      step: step == null && nullToAbsent ? const Value.absent() : Value(step),
+      reps: Value(reps),
+      lapses: Value(lapses),
+      state: Value(state),
+      lastReview: lastReview == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastReview),
+    );
+  }
+
+  factory CardStateRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CardStateRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      ownerId: serializer.fromJson<String>(json['ownerId']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+      cardId: serializer.fromJson<String>(json['cardId']),
+      direction: $CardStatesTable.$converterdirection.fromJson(
+        serializer.fromJson<String>(json['direction']),
+      ),
+      due: serializer.fromJson<DateTime>(json['due']),
+      stability: serializer.fromJson<double?>(json['stability']),
+      difficulty: serializer.fromJson<double?>(json['difficulty']),
+      step: serializer.fromJson<int?>(json['step']),
+      reps: serializer.fromJson<int>(json['reps']),
+      lapses: serializer.fromJson<int>(json['lapses']),
+      state: $CardStatesTable.$converterstate.fromJson(
+        serializer.fromJson<String>(json['state']),
+      ),
+      lastReview: serializer.fromJson<DateTime?>(json['lastReview']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'ownerId': serializer.toJson<String>(ownerId),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+      'cardId': serializer.toJson<String>(cardId),
+      'direction': serializer.toJson<String>(
+        $CardStatesTable.$converterdirection.toJson(direction),
+      ),
+      'due': serializer.toJson<DateTime>(due),
+      'stability': serializer.toJson<double?>(stability),
+      'difficulty': serializer.toJson<double?>(difficulty),
+      'step': serializer.toJson<int?>(step),
+      'reps': serializer.toJson<int>(reps),
+      'lapses': serializer.toJson<int>(lapses),
+      'state': serializer.toJson<String>(
+        $CardStatesTable.$converterstate.toJson(state),
+      ),
+      'lastReview': serializer.toJson<DateTime?>(lastReview),
+    };
+  }
+
+  CardStateRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+    String? ownerId,
+    Value<DateTime?> syncedAt = const Value.absent(),
+    String? cardId,
+    DictationDirection? direction,
+    DateTime? due,
+    Value<double?> stability = const Value.absent(),
+    Value<double?> difficulty = const Value.absent(),
+    Value<int?> step = const Value.absent(),
+    int? reps,
+    int? lapses,
+    SrsCardStateColumn? state,
+    Value<DateTime?> lastReview = const Value.absent(),
+  }) => CardStateRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    ownerId: ownerId ?? this.ownerId,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+    cardId: cardId ?? this.cardId,
+    direction: direction ?? this.direction,
+    due: due ?? this.due,
+    stability: stability.present ? stability.value : this.stability,
+    difficulty: difficulty.present ? difficulty.value : this.difficulty,
+    step: step.present ? step.value : this.step,
+    reps: reps ?? this.reps,
+    lapses: lapses ?? this.lapses,
+    state: state ?? this.state,
+    lastReview: lastReview.present ? lastReview.value : this.lastReview,
+  );
+  CardStateRow copyWithCompanion(CardStatesCompanion data) {
+    return CardStateRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+      cardId: data.cardId.present ? data.cardId.value : this.cardId,
+      direction: data.direction.present ? data.direction.value : this.direction,
+      due: data.due.present ? data.due.value : this.due,
+      stability: data.stability.present ? data.stability.value : this.stability,
+      difficulty: data.difficulty.present
+          ? data.difficulty.value
+          : this.difficulty,
+      step: data.step.present ? data.step.value : this.step,
+      reps: data.reps.present ? data.reps.value : this.reps,
+      lapses: data.lapses.present ? data.lapses.value : this.lapses,
+      state: data.state.present ? data.state.value : this.state,
+      lastReview: data.lastReview.present
+          ? data.lastReview.value
+          : this.lastReview,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CardStateRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('cardId: $cardId, ')
+          ..write('direction: $direction, ')
+          ..write('due: $due, ')
+          ..write('stability: $stability, ')
+          ..write('difficulty: $difficulty, ')
+          ..write('step: $step, ')
+          ..write('reps: $reps, ')
+          ..write('lapses: $lapses, ')
+          ..write('state: $state, ')
+          ..write('lastReview: $lastReview')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    ownerId,
+    syncedAt,
+    cardId,
+    direction,
+    due,
+    stability,
+    difficulty,
+    step,
+    reps,
+    lapses,
+    state,
+    lastReview,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CardStateRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.ownerId == this.ownerId &&
+          other.syncedAt == this.syncedAt &&
+          other.cardId == this.cardId &&
+          other.direction == this.direction &&
+          other.due == this.due &&
+          other.stability == this.stability &&
+          other.difficulty == this.difficulty &&
+          other.step == this.step &&
+          other.reps == this.reps &&
+          other.lapses == this.lapses &&
+          other.state == this.state &&
+          other.lastReview == this.lastReview);
+}
+
+class CardStatesCompanion extends UpdateCompanion<CardStateRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<String> ownerId;
+  final Value<DateTime?> syncedAt;
+  final Value<String> cardId;
+  final Value<DictationDirection> direction;
+  final Value<DateTime> due;
+  final Value<double?> stability;
+  final Value<double?> difficulty;
+  final Value<int?> step;
+  final Value<int> reps;
+  final Value<int> lapses;
+  final Value<SrsCardStateColumn> state;
+  final Value<DateTime?> lastReview;
+  final Value<int> rowid;
+  const CardStatesCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.ownerId = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.cardId = const Value.absent(),
+    this.direction = const Value.absent(),
+    this.due = const Value.absent(),
+    this.stability = const Value.absent(),
+    this.difficulty = const Value.absent(),
+    this.step = const Value.absent(),
+    this.reps = const Value.absent(),
+    this.lapses = const Value.absent(),
+    this.state = const Value.absent(),
+    this.lastReview = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CardStatesCompanion.insert({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    required String ownerId,
+    this.syncedAt = const Value.absent(),
+    required String cardId,
+    required DictationDirection direction,
+    required DateTime due,
+    this.stability = const Value.absent(),
+    this.difficulty = const Value.absent(),
+    this.step = const Value.absent(),
+    this.reps = const Value.absent(),
+    this.lapses = const Value.absent(),
+    this.state = const Value.absent(),
+    this.lastReview = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : ownerId = Value(ownerId),
+       cardId = Value(cardId),
+       direction = Value(direction),
+       due = Value(due);
+  static Insertable<CardStateRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<String>? ownerId,
+    Expression<DateTime>? syncedAt,
+    Expression<String>? cardId,
+    Expression<String>? direction,
+    Expression<DateTime>? due,
+    Expression<double>? stability,
+    Expression<double>? difficulty,
+    Expression<int>? step,
+    Expression<int>? reps,
+    Expression<int>? lapses,
+    Expression<String>? state,
+    Expression<DateTime>? lastReview,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (ownerId != null) 'owner_id': ownerId,
+      if (syncedAt != null) 'synced_at': syncedAt,
+      if (cardId != null) 'card_id': cardId,
+      if (direction != null) 'direction': direction,
+      if (due != null) 'due': due,
+      if (stability != null) 'stability': stability,
+      if (difficulty != null) 'difficulty': difficulty,
+      if (step != null) 'step': step,
+      if (reps != null) 'reps': reps,
+      if (lapses != null) 'lapses': lapses,
+      if (state != null) 'state': state,
+      if (lastReview != null) 'last_review': lastReview,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CardStatesCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
+    Value<String>? ownerId,
+    Value<DateTime?>? syncedAt,
+    Value<String>? cardId,
+    Value<DictationDirection>? direction,
+    Value<DateTime>? due,
+    Value<double?>? stability,
+    Value<double?>? difficulty,
+    Value<int?>? step,
+    Value<int>? reps,
+    Value<int>? lapses,
+    Value<SrsCardStateColumn>? state,
+    Value<DateTime?>? lastReview,
+    Value<int>? rowid,
+  }) {
+    return CardStatesCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      ownerId: ownerId ?? this.ownerId,
+      syncedAt: syncedAt ?? this.syncedAt,
+      cardId: cardId ?? this.cardId,
+      direction: direction ?? this.direction,
+      due: due ?? this.due,
+      stability: stability ?? this.stability,
+      difficulty: difficulty ?? this.difficulty,
+      step: step ?? this.step,
+      reps: reps ?? this.reps,
+      lapses: lapses ?? this.lapses,
+      state: state ?? this.state,
+      lastReview: lastReview ?? this.lastReview,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (ownerId.present) {
+      map['owner_id'] = Variable<String>(ownerId.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    if (cardId.present) {
+      map['card_id'] = Variable<String>(cardId.value);
+    }
+    if (direction.present) {
+      map['direction'] = Variable<String>(
+        $CardStatesTable.$converterdirection.toSql(direction.value),
+      );
+    }
+    if (due.present) {
+      map['due'] = Variable<DateTime>(due.value);
+    }
+    if (stability.present) {
+      map['stability'] = Variable<double>(stability.value);
+    }
+    if (difficulty.present) {
+      map['difficulty'] = Variable<double>(difficulty.value);
+    }
+    if (step.present) {
+      map['step'] = Variable<int>(step.value);
+    }
+    if (reps.present) {
+      map['reps'] = Variable<int>(reps.value);
+    }
+    if (lapses.present) {
+      map['lapses'] = Variable<int>(lapses.value);
+    }
+    if (state.present) {
+      map['state'] = Variable<String>(
+        $CardStatesTable.$converterstate.toSql(state.value),
+      );
+    }
+    if (lastReview.present) {
+      map['last_review'] = Variable<DateTime>(lastReview.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CardStatesCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('cardId: $cardId, ')
+          ..write('direction: $direction, ')
+          ..write('due: $due, ')
+          ..write('stability: $stability, ')
+          ..write('difficulty: $difficulty, ')
+          ..write('step: $step, ')
+          ..write('reps: $reps, ')
+          ..write('lapses: $lapses, ')
+          ..write('state: $state, ')
+          ..write('lastReview: $lastReview, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -5295,6 +6195,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $DictationAnswersTable dictationAnswers = $DictationAnswersTable(
     this,
   );
+  late final $CardStatesTable cardStates = $CardStatesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -5308,6 +6209,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     llmCaches,
     dictationSessions,
     dictationAnswers,
+    cardStates,
   ];
 }
 
@@ -7224,6 +8126,24 @@ final class $$CardsTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$CardStatesTable, List<CardStateRow>>
+  _cardStatesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.cardStates,
+    aliasName: 'cards__id__card_states__card_id',
+  );
+
+  $$CardStatesTableProcessedTableManager get cardStatesRefs {
+    final manager = $$CardStatesTableTableManager(
+      $_db,
+      $_db.cardStates,
+    ).filter((f) => f.cardId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_cardStatesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$CardsTableFilterComposer extends Composer<_$AppDatabase, $CardsTable> {
@@ -7338,6 +8258,31 @@ class $$CardsTableFilterComposer extends Composer<_$AppDatabase, $CardsTable> {
           }) => $$DictationAnswersTableFilterComposer(
             $db: $db,
             $table: $db.dictationAnswers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> cardStatesRefs(
+    Expression<bool> Function($$CardStatesTableFilterComposer f) f,
+  ) {
+    final $$CardStatesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.cardStates,
+      getReferencedColumn: (t) => t.cardId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CardStatesTableFilterComposer(
+            $db: $db,
+            $table: $db.cardStates,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -7547,6 +8492,31 @@ class $$CardsTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> cardStatesRefs<T extends Object>(
+    Expression<T> Function($$CardStatesTableAnnotationComposer a) f,
+  ) {
+    final $$CardStatesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.cardStates,
+      getReferencedColumn: (t) => t.cardId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CardStatesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.cardStates,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$CardsTableTableManager
@@ -7562,7 +8532,11 @@ class $$CardsTableTableManager
           $$CardsTableUpdateCompanionBuilder,
           (CardRow, $$CardsTableReferences),
           CardRow,
-          PrefetchHooks Function({bool setId, bool dictationAnswersRefs})
+          PrefetchHooks Function({
+            bool setId,
+            bool dictationAnswersRefs,
+            bool cardStatesRefs,
+          })
         > {
   $$CardsTableTableManager(_$AppDatabase db, $CardsTable table)
     : super(
@@ -7652,11 +8626,16 @@ class $$CardsTableTableManager
               )
               .toList(),
           prefetchHooksCallback:
-              ({setId = false, dictationAnswersRefs = false}) {
+              ({
+                setId = false,
+                dictationAnswersRefs = false,
+                cardStatesRefs = false,
+              }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (dictationAnswersRefs) db.dictationAnswers,
+                    if (cardStatesRefs) db.cardStates,
                   ],
                   addJoins:
                       <
@@ -7712,6 +8691,27 @@ class $$CardsTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (cardStatesRefs)
+                        await $_getPrefetchedData<
+                          CardRow,
+                          $CardsTable,
+                          CardStateRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$CardsTableReferences
+                              ._cardStatesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$CardsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).cardStatesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.cardId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -7732,7 +8732,11 @@ typedef $$CardsTableProcessedTableManager =
       $$CardsTableUpdateCompanionBuilder,
       (CardRow, $$CardsTableReferences),
       CardRow,
-      PrefetchHooks Function({bool setId, bool dictationAnswersRefs})
+      PrefetchHooks Function({
+        bool setId,
+        bool dictationAnswersRefs,
+        bool cardStatesRefs,
+      })
     >;
 typedef $$LlmCachesTableCreateCompanionBuilder = LlmCachesCompanion Function({
   Value<String> id,
@@ -9124,6 +10128,534 @@ typedef $$DictationAnswersTableProcessedTableManager =
       DictationAnswerRow,
       PrefetchHooks Function({bool sessionId, bool cardId})
     >;
+typedef $$CardStatesTableCreateCompanionBuilder = CardStatesCompanion Function({
+  Value<String> id,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<DateTime?> deletedAt,
+  required String ownerId,
+  Value<DateTime?> syncedAt,
+  required String cardId,
+  required DictationDirection direction,
+  required DateTime due,
+  Value<double?> stability,
+  Value<double?> difficulty,
+  Value<int?> step,
+  Value<int> reps,
+  Value<int> lapses,
+  Value<SrsCardStateColumn> state,
+  Value<DateTime?> lastReview,
+  Value<int> rowid,
+});
+typedef $$CardStatesTableUpdateCompanionBuilder = CardStatesCompanion Function({
+  Value<String> id,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<DateTime?> deletedAt,
+  Value<String> ownerId,
+  Value<DateTime?> syncedAt,
+  Value<String> cardId,
+  Value<DictationDirection> direction,
+  Value<DateTime> due,
+  Value<double?> stability,
+  Value<double?> difficulty,
+  Value<int?> step,
+  Value<int> reps,
+  Value<int> lapses,
+  Value<SrsCardStateColumn> state,
+  Value<DateTime?> lastReview,
+  Value<int> rowid,
+});
+
+final class $$CardStatesTableReferences
+    extends BaseReferences<_$AppDatabase, $CardStatesTable, CardStateRow> {
+  $$CardStatesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $CardsTable _cardIdTable(_$AppDatabase db) =>
+      db.cards.createAlias('card_states__card_id__cards__id');
+
+  $$CardsTableProcessedTableManager get cardId {
+    final $_column = $_itemColumn<String>('card_id')!;
+
+    final manager = $$CardsTableTableManager(
+      $_db,
+      $_db.cards,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_cardIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$CardStatesTableFilterComposer
+    extends Composer<_$AppDatabase, $CardStatesTable> {
+  $$CardStatesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ownerId => $composableBuilder(
+    column: $table.ownerId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<DictationDirection, DictationDirection, String>
+  get direction => $composableBuilder(
+    column: $table.direction,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<DateTime> get due => $composableBuilder(
+    column: $table.due,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get stability => $composableBuilder(
+    column: $table.stability,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get difficulty => $composableBuilder(
+    column: $table.difficulty,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get step => $composableBuilder(
+    column: $table.step,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get reps => $composableBuilder(
+    column: $table.reps,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get lapses => $composableBuilder(
+    column: $table.lapses,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<SrsCardStateColumn, SrsCardStateColumn, String>
+  get state => $composableBuilder(
+    column: $table.state,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastReview => $composableBuilder(
+    column: $table.lastReview,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$CardsTableFilterComposer get cardId {
+    final $$CardsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.cardId,
+      referencedTable: $db.cards,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CardsTableFilterComposer(
+            $db: $db,
+            $table: $db.cards,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$CardStatesTableOrderingComposer
+    extends Composer<_$AppDatabase, $CardStatesTable> {
+  $$CardStatesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ownerId => $composableBuilder(
+    column: $table.ownerId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get direction => $composableBuilder(
+    column: $table.direction,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get due => $composableBuilder(
+    column: $table.due,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get stability => $composableBuilder(
+    column: $table.stability,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get difficulty => $composableBuilder(
+    column: $table.difficulty,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get step => $composableBuilder(
+    column: $table.step,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get reps => $composableBuilder(
+    column: $table.reps,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get lapses => $composableBuilder(
+    column: $table.lapses,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get state => $composableBuilder(
+    column: $table.state,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastReview => $composableBuilder(
+    column: $table.lastReview,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$CardsTableOrderingComposer get cardId {
+    final $$CardsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.cardId,
+      referencedTable: $db.cards,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CardsTableOrderingComposer(
+            $db: $db,
+            $table: $db.cards,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$CardStatesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CardStatesTable> {
+  $$CardStatesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get ownerId =>
+      $composableBuilder(column: $table.ownerId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<DictationDirection, String> get direction =>
+      $composableBuilder(column: $table.direction, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get due =>
+      $composableBuilder(column: $table.due, builder: (column) => column);
+
+  GeneratedColumn<double> get stability =>
+      $composableBuilder(column: $table.stability, builder: (column) => column);
+
+  GeneratedColumn<double> get difficulty => $composableBuilder(
+    column: $table.difficulty,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get step =>
+      $composableBuilder(column: $table.step, builder: (column) => column);
+
+  GeneratedColumn<int> get reps =>
+      $composableBuilder(column: $table.reps, builder: (column) => column);
+
+  GeneratedColumn<int> get lapses =>
+      $composableBuilder(column: $table.lapses, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<SrsCardStateColumn, String> get state =>
+      $composableBuilder(column: $table.state, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastReview => $composableBuilder(
+    column: $table.lastReview,
+    builder: (column) => column,
+  );
+
+  $$CardsTableAnnotationComposer get cardId {
+    final $$CardsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.cardId,
+      referencedTable: $db.cards,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CardsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.cards,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$CardStatesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CardStatesTable,
+          CardStateRow,
+          $$CardStatesTableFilterComposer,
+          $$CardStatesTableOrderingComposer,
+          $$CardStatesTableAnnotationComposer,
+          $$CardStatesTableCreateCompanionBuilder,
+          $$CardStatesTableUpdateCompanionBuilder,
+          (CardStateRow, $$CardStatesTableReferences),
+          CardStateRow,
+          PrefetchHooks Function({bool cardId})
+        > {
+  $$CardStatesTableTableManager(_$AppDatabase db, $CardStatesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CardStatesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CardStatesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CardStatesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<String> ownerId = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<String> cardId = const Value.absent(),
+                Value<DictationDirection> direction = const Value.absent(),
+                Value<DateTime> due = const Value.absent(),
+                Value<double?> stability = const Value.absent(),
+                Value<double?> difficulty = const Value.absent(),
+                Value<int?> step = const Value.absent(),
+                Value<int> reps = const Value.absent(),
+                Value<int> lapses = const Value.absent(),
+                Value<SrsCardStateColumn> state = const Value.absent(),
+                Value<DateTime?> lastReview = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CardStatesCompanion(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                ownerId: ownerId,
+                syncedAt: syncedAt,
+                cardId: cardId,
+                direction: direction,
+                due: due,
+                stability: stability,
+                difficulty: difficulty,
+                step: step,
+                reps: reps,
+                lapses: lapses,
+                state: state,
+                lastReview: lastReview,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                required String ownerId,
+                Value<DateTime?> syncedAt = const Value.absent(),
+                required String cardId,
+                required DictationDirection direction,
+                required DateTime due,
+                Value<double?> stability = const Value.absent(),
+                Value<double?> difficulty = const Value.absent(),
+                Value<int?> step = const Value.absent(),
+                Value<int> reps = const Value.absent(),
+                Value<int> lapses = const Value.absent(),
+                Value<SrsCardStateColumn> state = const Value.absent(),
+                Value<DateTime?> lastReview = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CardStatesCompanion.insert(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                ownerId: ownerId,
+                syncedAt: syncedAt,
+                cardId: cardId,
+                direction: direction,
+                due: due,
+                stability: stability,
+                difficulty: difficulty,
+                step: step,
+                reps: reps,
+                lapses: lapses,
+                state: state,
+                lastReview: lastReview,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$CardStatesTable, CardStateRow>(table),
+                  $$CardStatesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({cardId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (cardId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.cardId,
+                        referencedTable: $$CardStatesTableReferences
+                            ._cardIdTable(db),
+                        referencedColumn: $$CardStatesTableReferences
+                            ._cardIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$CardStatesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CardStatesTable,
+      CardStateRow,
+      $$CardStatesTableFilterComposer,
+      $$CardStatesTableOrderingComposer,
+      $$CardStatesTableAnnotationComposer,
+      $$CardStatesTableCreateCompanionBuilder,
+      $$CardStatesTableUpdateCompanionBuilder,
+      (CardStateRow, $$CardStatesTableReferences),
+      CardStateRow,
+      PrefetchHooks Function({bool cardId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -9144,4 +10676,6 @@ class $AppDatabaseManager {
       $$DictationSessionsTableTableManager(_db, _db.dictationSessions);
   $$DictationAnswersTableTableManager get dictationAnswers =>
       $$DictationAnswersTableTableManager(_db, _db.dictationAnswers);
+  $$CardStatesTableTableManager get cardStates =>
+      $$CardStatesTableTableManager(_db, _db.cardStates);
 }

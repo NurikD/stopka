@@ -103,3 +103,24 @@ class DictationAnswers extends Table with SyncColumns {
   late final verdict = textEnum<DictationVerdictColumn>()();
   late final checkedBy = textEnum<DictationCheckedBy>().withDefault(const Constant('local'))();
 }
+
+enum SrsCardStateColumn { learning, review, relearning }
+
+/// SRS scheduling state, one row per (card, direction) — a card can be due
+/// for RU→EN before it's due for EN→RU. [step] isn't in PLAN.md's data
+/// model but is required to correctly resume package:fsrs's learning-step
+/// position across app restarts; [reps]/[lapses] are tracked by the app,
+/// since the fsrs package itself doesn't expose them.
+@DataClassName('CardStateRow')
+class CardStates extends Table with SyncColumns {
+  late final cardId = text().references(Cards, #id)();
+  late final direction = textEnum<DictationDirection>()();
+  late final due = dateTime()();
+  late final stability = real().nullable()();
+  late final difficulty = real().nullable()();
+  late final step = integer().nullable()();
+  late final reps = integer().withDefault(const Constant(0))();
+  late final lapses = integer().withDefault(const Constant(0))();
+  late final state = textEnum<SrsCardStateColumn>().withDefault(const Constant('learning'))();
+  late final lastReview = dateTime().nullable()();
+}
