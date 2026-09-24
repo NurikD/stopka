@@ -1,65 +1,95 @@
 import 'package:flutter/material.dart';
 
-/// Type scale from DESIGN.md (module 1.25). English text (words, examples,
-/// screen titles) uses Literata; Russian interface text uses Golos Text.
-/// Styles here carry no colour — apply [AppColorTokens.textPrimary] or
-/// `.textMuted` at the call site so the same style works in both themes.
+/// Type scale from DESIGN_v2.md. Russian interface text is Onest; anything
+/// English (words, dictation input, counters, unit codes) is JetBrains Mono
+/// so letters line up in columns and a missing letter is visible at a
+/// glance. Styles carry no colour — apply a token at the call site.
+///
+/// `height` is line-height divided by font size, i.e. "36/40" -> 40 / 36.
 class AppTypography {
-  static const _literata = 'Literata';
-  static const _golosText = 'GolosText';
-  static const _notoSans = 'NotoSans';
+  static const _onest = 'Onest';
+  static const _mono = 'JetBrainsMono';
+  static const _ipa = 'NotoSans';
 
-  /// The word in the dictation card. Literata Medium.
-  static const hero = TextStyle(
-    fontFamily: _literata,
-    fontWeight: FontWeight.w500,
-    fontSize: 40,
-    height: 44 / 40,
+  /// The dictation word, big numbers.
+  static const display = TextStyle(
+    fontFamily: _onest,
+    fontWeight: FontWeight.w600,
+    fontSize: 36,
+    height: 40 / 36,
+    letterSpacing: -1,
   );
 
-  /// Screen titles. Literata Regular.
+  /// Screen title.
   static const title = TextStyle(
-    fontFamily: _literata,
-    fontWeight: FontWeight.w400,
-    fontSize: 28,
-    height: 34 / 28,
+    fontFamily: _onest,
+    fontWeight: FontWeight.w600,
+    fontSize: 32,
+    height: 36 / 32,
+    letterSpacing: -0.8,
   );
 
-  static const subtitle = TextStyle(
-    fontFamily: _golosText,
-    fontWeight: FontWeight.w500,
+  /// Heading of a reading text.
+  static const heading = TextStyle(
+    fontFamily: _onest,
+    fontWeight: FontWeight.w600,
     fontSize: 20,
-    height: 28 / 20,
+    height: 25 / 20,
   );
 
-  static const body = TextStyle(
-    fontFamily: _golosText,
+  /// Reading text and explanations.
+  static const bodyText = TextStyle(
+    fontFamily: _onest,
     fontWeight: FontWeight.w400,
-    fontSize: 16,
-    height: 24 / 16,
+    fontSize: 15,
+    height: 25 / 15,
   );
 
-  /// Buttons and field labels.
+  /// Block names and buttons.
   static const label = TextStyle(
-    fontFamily: _golosText,
-    fontWeight: FontWeight.w500,
-    fontSize: 14,
-    height: 20 / 14,
+    fontFamily: _onest,
+    fontWeight: FontWeight.w600,
+    fontSize: 15,
+    height: 20 / 15,
   );
 
-  /// Transcription, counters — pair with `textMuted`.
   static const caption = TextStyle(
-    fontFamily: _golosText,
+    fontFamily: _onest,
     fontWeight: FontWeight.w400,
     fontSize: 13,
     height: 18 / 13,
   );
 
-  /// Same size/role as [caption] but in a font with guaranteed IPA glyph
-  /// coverage (ɜː, ʃ, ð, ...) — Literata/Golos Text don't guarantee this.
-  /// Verify glyphs render (not tofu boxes) before shipping a build.
+  /// Dictation input.
+  static const monoInput = TextStyle(
+    fontFamily: _mono,
+    fontWeight: FontWeight.w500,
+    fontSize: 26,
+    height: 30 / 26,
+    letterSpacing: 1,
+  );
+
+  /// An English word in lists and in the review.
+  static const monoWord = TextStyle(
+    fontFamily: _mono,
+    fontWeight: FontWeight.w500,
+    fontSize: 19,
+    height: 24 / 19,
+    letterSpacing: 0.5,
+  );
+
+  /// Counters, 01-04, "enter — проверить". Weight varies 400..600 by use.
+  static const monoMeta = TextStyle(
+    fontFamily: _mono,
+    fontWeight: FontWeight.w500,
+    fontSize: 11,
+    height: 15 / 11,
+  );
+
+  /// IPA transcription — needs a font with guaranteed phonetic glyphs.
+  /// Verify ɜː ʃ ð ə render (not tofu boxes) before shipping a build.
   static const transcription = TextStyle(
-    fontFamily: _notoSans,
+    fontFamily: _ipa,
     fontWeight: FontWeight.w400,
     fontSize: 13,
     height: 18 / 13,
