@@ -27,7 +27,10 @@ import '../llm/gemini_llm_client.dart';
 import '../llm/llm_client.dart';
 import '../llm/llm_request_counter.dart';
 import '../llm/throttled_llm_client.dart';
+import '../llm/personal_words_service.dart';
+import '../llm/unit_page_service.dart';
 import '../llm/word_recognition_service.dart';
+import '../onboarding/onboarding_service.dart';
 import '../srs/srs_engine.dart';
 import '../srs/srs_settings_store.dart';
 import '../theme/theme_mode_store.dart';
@@ -96,6 +99,41 @@ final wordRecognitionServiceProvider = Provider<WordRecognitionService>((ref) {
 
 final cardEnrichmentServiceProvider = Provider<CardEnrichmentService>((ref) {
   return CardEnrichmentService(ref.watch(llmClientProvider), ref.watch(llmCacheRepositoryProvider));
+});
+
+final unitPageServiceProvider = Provider<UnitPageService>((ref) {
+  return UnitPageService(ref.watch(llmClientProvider));
+});
+
+final personalWordsServiceProvider = Provider<PersonalWordsService>((ref) {
+  return PersonalWordsService(ref.watch(llmClientProvider));
+});
+
+/// Whether a Gemini key is stored. Nothing is blocked without one; AI
+/// features read this to say honestly that they need a key.
+final hasApiKeyProvider = FutureProvider.autoDispose<bool>((ref) async {
+  final key = await ref.watch(apiKeyStoreProvider).getApiKey();
+  return key != null && key.trim().isNotEmpty;
+});
+
+final onboardingServiceProvider = Provider<OnboardingService>((ref) {
+  final personal = ref.watch(personalWordsServiceProvider);
+  return OnboardingService(
+    profiles: ref.watch(profileRepositoryProvider),
+    courses: ref.watch(courseRepositoryProvider),
+    units: ref.watch(unitRepositoryProvider),
+    wordSets: ref.watch(wordSetRepositoryProvider),
+    cards: ref.watch(wordCardRepositoryProvider),
+    personalWords: ({required level, required interests, required topic}) async {
+      // Without a key the personal list is impossible; the service then
+      // falls back to the offline words.
+      if (!await ref.read(apiKeyStoreProvider).hasKey()) throw StateError('no key');
+      // A slow model must not hold the first minute hostage.
+      return personal
+          .generate(level: level, interests: interests, topic: topic)
+          .timeout(const Duration(seconds: 20));
+    },
+  );
 });
 
 final ttsServiceProvider = Provider<TtsService>((ref) => TtsService());

@@ -14,6 +14,8 @@ class ApiKeyStore {
 
   Future<String?> getApiKey() => _storage.read(key: _apiKeyKey);
 
+  Future<bool> hasKey() async => (await getApiKey())?.trim().isNotEmpty ?? false;
+
   Future<void> setApiKey(String value) => _storage.write(key: _apiKeyKey, value: value);
 
   Future<void> clearApiKey() => _storage.delete(key: _apiKeyKey);
