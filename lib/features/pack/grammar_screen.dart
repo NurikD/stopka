@@ -82,6 +82,21 @@ class _GrammarBody extends ConsumerWidget {
         const SizedBox(height: AppSpacing.s14),
         ExerciseFlow(
           items: content.exercises,
+          onAppeal: (exercise, given) async {
+            if (!await ref.read(apiKeyStoreProvider).hasKey()) {
+              return const AppealOutcome(
+                accepted: false,
+                note: 'Проверка ответа через ИИ работает с ключом Gemini — добавьте его в «Профиле».',
+              );
+            }
+            final result = await ref.read(answerAppealServiceProvider).appeal(
+                  term: exercise.prompt,
+                  correctAnswer: exercise.answer,
+                  userAnswer: given,
+                  direction: 'RU -> EN (whole sentence)',
+                );
+            return AppealOutcome(accepted: result.accepted, note: result.explanationRu);
+          },
           onAnswer: (i, answer, correct) async {
             await repo.logAttempt(
               pack.packId,

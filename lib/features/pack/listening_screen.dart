@@ -48,10 +48,16 @@ class _ListeningBody extends ConsumerStatefulWidget {
 }
 
 class _ListeningBodyState extends ConsumerState<_ListeningBody> {
-  late final TtsService _tts = ref.read(ttsServiceProvider);
+  late final TtsService _tts;
   double _rate = normalSpeechRate;
   bool _playing = false;
   bool _answered = false; // the text opens only after the questions
+
+  @override
+  void initState() {
+    super.initState();
+    _tts = ref.read(ttsServiceProvider);
+  }
 
   @override
   void dispose() {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/dictation/answer_checker.dart';
+import '../../core/llm/llm_exception.dart';
 import '../../core/providers/core_providers.dart';
 import '../../core/srs/auto_rating.dart';
 import '../../core/srs/srs_engine.dart' as engine;
@@ -32,7 +33,7 @@ enum _Phase { loading, reviewing, done }
 /// The review loop: show the prompt, the learner types the answer, and the
 /// checker — not the learner — decides the rating. Only a Russian answer
 /// (English prompt), where synonyms are legitimate, can be overruled by the
-/// learner with "Засчитать".
+/// learner ask the AI ("Мой ответ тоже верный?") — never grade themselves.
 class SrsReviewScreen extends ConsumerStatefulWidget {
   const SrsReviewScreen({super.key});
 
@@ -47,6 +48,8 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
   final _controller = TextEditingController();
   DictationVerdict? _verdict; // null while the learner is still answering
   bool _overruled = false;
+  bool _appealed = false;
+  bool _appealing = false;
 
   @override
   void initState() {
@@ -69,6 +72,7 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
           ? DictationVerdict.skipped
           : AnswerChecker.check(userInput: input, correctAnswer: _answer);
       _overruled = false;
+      _appealed = false;
     });
   }
 
@@ -105,6 +109,38 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
   String get _answer =>
       _ruToEn ? _current.card.term : _current.card.translation;
 
+  Future<void> _appeal() async {
+    final messenger = ScaffoldMessenger.of(context);
+    if (!await ref.read(apiKeyStoreProvider).hasKey()) {
+      messenger.showSnackBar(const SnackBar(
+        content: Text('Проверка ответа через ИИ работает с ключом Gemini — добавьте его в «Профиле».'),
+      ));
+      return;
+    }
+    setState(() => _appealing = true);
+    try {
+      final result = await ref.read(answerAppealServiceProvider).appeal(
+            term: _current.card.term,
+            correctAnswer: _answer,
+            userAnswer: _controller.text.trim(),
+            direction: 'EN -> RU',
+          );
+      if (!mounted) return;
+      setState(() {
+        _appealing = false;
+        _appealed = true;
+        _overruled = result.accepted;
+      });
+      messenger.showSnackBar(SnackBar(
+        content: Text(result.accepted ? 'ИИ согласен: ${result.explanationRu}' : result.explanationRu),
+      ));
+    } on LlmException catch (e) {
+      if (!mounted) return;
+      setState(() => _appealing = false);
+      messenger.showSnackBar(SnackBar(content: Text(e.messageRu)));
+    }
+  }
+
   Future<void> _next() async {
     final verdict = _verdict;
     if (verdict == null) return;
@@ -140,6 +176,7 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
     setState(() {
       _verdict = null;
       _overruled = false;
+      _appealed = false;
       if (_index + 1 < _queue.length) {
         _index++;
       } else {
@@ -263,7 +300,7 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
     final accepted = _overruled || verdict == DictationVerdict.correct;
 
     final (String label, Color color) = _overruled
-        ? ('Засчитано', colors.success)
+        ? ('Засчитано ИИ', colors.success)
         : switch (verdict) {
             DictationVerdict.correct => ('Верно', colors.success),
             DictationVerdict.typo => ('Почти, опечатка', colors.markLine),
@@ -318,14 +355,17 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
       );
     }
     final canOverrule =
-        !_ruToEn && !_overruled && verdict != DictationVerdict.correct;
+        !_ruToEn &&
+        !_appealed &&
+        !_overruled &&
+        verdict != DictationVerdict.correct;
     return StickyActionBar(
       flexes: canOverrule ? const [1, 2] : null,
       children: [
         if (canOverrule)
           GhostButton(
-            label: 'Засчитать',
-            onPressed: () => setState(() => _overruled = true),
+            label: _appealing ? 'Проверяю…' : 'Мой ответ тоже верный?',
+            onPressed: _appealing ? null : _appeal,
           ),
         PrimaryButton(
           label: 'Дальше',

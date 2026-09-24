@@ -50,7 +50,6 @@ class PackService {
       if (pack == null) return;
       final status = pack.statusOf(part);
       if (status == PartStatus.ready || isGenerating(packId, part)) continue;
-      if (status == PartStatus.failed) continue; // retried only on request
       await generatePart(packId, key, part);
     }
   }

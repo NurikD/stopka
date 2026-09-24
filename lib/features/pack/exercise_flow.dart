@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/llm/llm_exception.dart';
 import '../../core/pack/exercise_check.dart';
 import '../../core/pack/pack_content.dart';
 import '../../core/text/russian_plural.dart';
@@ -21,6 +22,14 @@ Exercise exerciseFromQuestion(Question q) => Exercise(
   why: q.why,
 );
 
+/// The AI's verdict on a translation the checker rejected.
+class AppealOutcome {
+  final bool accepted;
+  final String note;
+
+  const AppealOutcome({required this.accepted, required this.note});
+}
+
 /// One exercise at a time: answer, see whether it was right and why, go on.
 /// Every finished item is reported through [onAnswer] (with the final
 /// correctness) and the whole run through [onFinished].
@@ -29,11 +38,18 @@ class ExerciseFlow extends StatefulWidget {
   final Future<void> Function(int index, String answer, bool correct) onAnswer;
   final Future<void> Function(int score, int total) onFinished;
 
+  /// "Мой ответ тоже верный?" for translations, judged by the AI. Null hides
+  /// the button. A translation can be right in another wording, but the
+  /// learner never grades themselves: only this can flip a wrong answer.
+  final Future<AppealOutcome> Function(Exercise exercise, String given)?
+  onAppeal;
+
   const ExerciseFlow({
     super.key,
     required this.items,
     required this.onAnswer,
     required this.onFinished,
+    this.onAppeal,
   });
 
   @override
@@ -46,6 +62,9 @@ class _ExerciseFlowState extends State<ExerciseFlow> {
   int _score = 0;
   String? _given; // null while unanswered
   bool _overruled = false;
+  bool _appealed = false;
+  bool _appealing = false;
+  String? _appealNote;
   bool _finished = false;
 
   Exercise get _item => widget.items[_index];
@@ -76,11 +95,32 @@ class _ExerciseFlowState extends State<ExerciseFlow> {
         _index++;
         _given = null;
         _overruled = false;
+        _appealed = false;
+        _appealNote = null;
       });
     } else {
       setState(() => _finished = true);
       await widget.onFinished(_score, widget.items.length);
     }
+  }
+
+  Future<void> _appeal() async {
+    final appeal = widget.onAppeal;
+    if (appeal == null || _given == null) return;
+    setState(() => _appealing = true);
+    AppealOutcome outcome;
+    try {
+      outcome = await appeal(_item, _given!);
+    } on LlmException catch (e) {
+      outcome = AppealOutcome(accepted: false, note: e.messageRu);
+    }
+    if (!mounted) return;
+    setState(() {
+      _appealing = false;
+      _appealed = true;
+      _overruled = outcome.accepted;
+      _appealNote = outcome.note;
+    });
   }
 
   @override
@@ -154,7 +194,7 @@ class _ExerciseFlowState extends State<ExerciseFlow> {
         if (answered) ...[
           const SizedBox(height: AppSpacing.s14),
           Text(
-            _correct ? (_overruled ? 'Засчитано' : 'Верно') : 'Неверно',
+            _correct ? (_overruled ? 'Засчитано ИИ' : 'Верно') : 'Неверно',
             style: AppTypography.label.copyWith(
               color: _correct ? colors.success : colors.danger,
             ),
@@ -177,12 +217,22 @@ class _ExerciseFlowState extends State<ExerciseFlow> {
             ),
           ],
           const SizedBox(height: AppSpacing.s18),
-          // A translation can be right in another wording; the learner may
-          // overrule the checker there, nowhere else.
-          if (!_correct && item.kind == ExerciseKind.translate) ...[
+          if (_appealNote != null && _appealNote!.isNotEmpty) ...[
+            Text(
+              _appealNote!,
+              style: AppTypography.caption.copyWith(color: colors.muted),
+            ),
+            const SizedBox(height: AppSpacing.s10),
+          ],
+          // A translation can be right in another wording; the AI, not the
+          // learner, decides, and only once per answer.
+          if (!_correct &&
+              !_appealed &&
+              item.kind == ExerciseKind.translate &&
+              widget.onAppeal != null) ...[
             GhostButton(
-              label: 'Засчитать',
-              onPressed: () => setState(() => _overruled = true),
+              label: _appealing ? 'Проверяю…' : 'Мой ответ тоже верный?',
+              onPressed: _appealing ? null : _appeal,
             ),
             const SizedBox(height: AppSpacing.s8),
           ],

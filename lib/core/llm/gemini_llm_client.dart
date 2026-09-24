@@ -1,3 +1,4 @@
+// ignore_for_file: prefer_initializing_formals -- named params stay public while fields are private.
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -13,7 +14,23 @@ class GeminiLlmClient implements LlmClient {
   final ApiKeyStore _keyStore;
   final Dio _dio;
 
-  GeminiLlmClient(this._keyStore, {Dio? dio}) : _dio = dio ?? Dio();
+  /// Pauses before each retry of a transient server error (500/502/503/504).
+  /// Gemini answers 503 "high demand" now and then; it usually passes within
+  /// seconds, so a couple of patient retries hide it from the learner.
+  final List<Duration> _retryDelays;
+
+  GeminiLlmClient(
+    this._keyStore, {
+    Dio? dio,
+    List<Duration> retryDelays = const [
+      Duration(seconds: 2),
+      Duration(seconds: 5),
+    ],
+  }) : _dio = dio ?? Dio(),
+       _retryDelays = retryDelays;
+
+  static bool _isTransient(int? status) =>
+      status == 500 || status == 502 || status == 503 || status == 504;
 
   Future<String> _requireApiKey() async {
     final key = await _keyStore.getApiKey();
@@ -92,25 +109,40 @@ class GeminiLlmClient implements LlmClient {
     required String key,
     required Map<String, Object?> body,
   }) async {
-    try {
-      final response = await _dio.post(
-        '$_baseUrl/models/$model:generateContent',
-        queryParameters: {'key': key},
-        data: body,
-      );
-      final candidates = response.data['candidates'] as List?;
-      if (candidates == null || candidates.isEmpty) {
-        throw const LlmException('ИИ вернул пустой ответ. Попробуйте ещё раз.');
+    for (var attempt = 0; ; attempt++) {
+      try {
+        return await _postOnce(model: model, key: key, body: body);
+      } on DioException catch (e) {
+        if (_isTransient(e.response?.statusCode) &&
+            attempt < _retryDelays.length) {
+          await Future<void>.delayed(_retryDelays[attempt]);
+          continue;
+        }
+        throw _mapDioError(e);
       }
-      final parts = candidates.first['content']?['parts'] as List?;
-      final text = parts?.map((p) => p['text'] ?? '').join('');
-      if (text == null || text.isEmpty) {
-        throw const LlmException('ИИ вернул пустой ответ. Попробуйте ещё раз.');
-      }
-      return text;
-    } on DioException catch (e) {
-      throw _mapDioError(e);
     }
+  }
+
+  Future<String> _postOnce({
+    required String model,
+    required String key,
+    required Map<String, Object?> body,
+  }) async {
+    final response = await _dio.post(
+      '$_baseUrl/models/$model:generateContent',
+      queryParameters: {'key': key},
+      data: body,
+    );
+    final candidates = response.data['candidates'] as List?;
+    if (candidates == null || candidates.isEmpty) {
+      throw const LlmException('ИИ вернул пустой ответ. Попробуйте ещё раз.');
+    }
+    final parts = candidates.first['content']?['parts'] as List?;
+    final text = parts?.map((p) => p['text'] ?? '').join('');
+    if (text == null || text.isEmpty) {
+      throw const LlmException('ИИ вернул пустой ответ. Попробуйте ещё раз.');
+    }
+    return text;
   }
 
   @override
@@ -135,10 +167,19 @@ class GeminiLlmClient implements LlmClient {
       );
     }
     if (status == 400 || status == 403) {
-      return const LlmException('Неверный ключ Gemini API. Проверьте его в настройках.');
+      return const LlmException(
+        'Неверный ключ Gemini API. Проверьте его в настройках.',
+      );
     }
     if (status == null) {
-      return const LlmException('Нет соединения с интернетом. Проверьте сеть и попробуйте снова.');
+      return const LlmException(
+        'Нет соединения с интернетом. Проверьте сеть и попробуйте снова.',
+      );
+    }
+    if (status == 503) {
+      return const LlmException(
+        'Сервис ИИ сейчас перегружен (код 503). Это временно — повторите через минуту.',
+      );
     }
     return LlmException('Ошибка запроса к ИИ (код $status). Попробуйте позже.');
   }
