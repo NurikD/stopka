@@ -8,6 +8,7 @@ import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
 import '../../core/widgets/app_card.dart';
 import '../../domain/models/unit_pack.dart';
+import 'appeal.dart';
 import 'exercise_flow.dart';
 import 'pack_context.dart';
 
@@ -82,21 +83,7 @@ class _GrammarBody extends ConsumerWidget {
         const SizedBox(height: AppSpacing.s14),
         ExerciseFlow(
           items: content.exercises,
-          onAppeal: (exercise, given) async {
-            if (!await ref.read(apiKeyStoreProvider).hasKey()) {
-              return const AppealOutcome(
-                accepted: false,
-                note: 'Проверка ответа через ИИ работает с ключом Gemini — добавьте его в «Профиле».',
-              );
-            }
-            final result = await ref.read(answerAppealServiceProvider).appeal(
-                  term: exercise.prompt,
-                  correctAnswer: exercise.answer,
-                  userAnswer: given,
-                  direction: 'RU -> EN (whole sentence)',
-                );
-            return AppealOutcome(accepted: result.accepted, note: result.explanationRu);
-          },
+          onAppeal: (exercise, given) => appealTranslation(ref, exercise, given),
           onAnswer: (i, answer, correct) async {
             await repo.logAttempt(
               pack.packId,

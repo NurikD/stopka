@@ -31,6 +31,7 @@ import '../llm/llm_request_counter.dart';
 import '../llm/throttled_llm_client.dart';
 import '../llm/personal_words_service.dart';
 import '../llm/unit_page_service.dart';
+import '../llm/weak_practice_service.dart';
 import '../llm/writing_check_service.dart';
 import '../llm/word_recognition_service.dart';
 import '../onboarding/onboarding_service.dart';
@@ -159,6 +160,10 @@ final packServiceProvider = Provider<PackService>((ref) {
     source: ref.watch(contentSourceProvider),
     hasKey: store.hasKey,
   );
+});
+
+final weakPracticeServiceProvider = Provider<WeakPracticeService>((ref) {
+  return WeakPracticeService(ref.watch(llmClientProvider));
 });
 
 final writingCheckServiceProvider = Provider<WritingCheckService>((ref) {

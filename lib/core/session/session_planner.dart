@@ -33,12 +33,17 @@ class PlannerInput {
 
   final DateTime now;
 
+  /// Parts the learner has been struggling with lately (see
+  /// SessionStatsRepository.weakParts).
+  final Set<PackPart> weakParts;
+
   const PlannerInput({
     required this.reviewCards,
     required this.unlearnedWords,
     required this.readyParts,
     required this.lastDone,
     required this.now,
+    this.weakParts = const {},
   });
 }
 
@@ -49,8 +54,10 @@ const int maxMinutes = 17;
 /// Reviews are capped so one block never eats the session.
 const int maxReviewCards = 20;
 
-/// Writing comes round again after this many days.
+/// Writing comes round again after this many days, or every day while it is
+/// a weak spot.
 const Duration writingEvery = Duration(days: 2);
+const Duration weakWritingEvery = Duration(days: 1);
 
 const List<PackPart> _rotation = [PackPart.reading, PackPart.listening, PackPart.grammar];
 
@@ -62,8 +69,9 @@ int _partMinutes(PackPart part) => switch (part) {
     };
 
 /// Builds today's session (see PLAN_v2.md "Занятие"): due words first, then
-/// a dictation of new words, writing when it is due, and one of reading /
-/// listening / grammar — whichever was left alone the longest. Stops adding
+/// a dictation of new words, writing when it is due (daily while weak), and
+/// one of reading / listening / grammar — a weak one first, otherwise
+/// whichever was left alone the longest. Stops adding
 /// blocks once the session would run past [maxMinutes]; the first block is
 /// always kept.
 List<SessionStep> planSession(PlannerInput input) {
@@ -81,15 +89,24 @@ List<SessionStep> planSession(PlannerInput input) {
   }
 
   final writingLast = input.lastDone[PackPart.writing];
-  final writingDue = writingLast == null || input.now.difference(writingLast) >= writingEvery;
+  final writingGap = input.weakParts.contains(PackPart.writing) ? weakWritingEvery : writingEvery;
+  final writingDue = writingLast == null || input.now.difference(writingLast) >= writingGap;
   if (input.readyParts.contains(PackPart.writing) && writingDue) {
     candidates.add(SessionStep(SessionStepKind.writing, _partMinutes(PackPart.writing)));
   }
 
   final available = _rotation.where(input.readyParts.contains).toList();
   if (available.isNotEmpty) {
-    // Never done counts as the oldest; ties keep the rotation order.
+    final today = DateTime(input.now.year, input.now.month, input.now.day);
+    // A weak part goes first, unless it was already done today (so it does
+    // not come back every session). Otherwise: the one left alone longest.
+    bool urgent(PackPart part) {
+      final last = input.lastDone[part];
+      return input.weakParts.contains(part) && (last == null || last.isBefore(today));
+    }
+
     available.sort((a, b) {
+      if (urgent(a) != urgent(b)) return urgent(a) ? -1 : 1;
       final la = input.lastDone[a];
       final lb = input.lastDone[b];
       if (la == null && lb == null) return _rotation.indexOf(a).compareTo(_rotation.indexOf(b));

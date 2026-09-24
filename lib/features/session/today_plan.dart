@@ -104,8 +104,13 @@ final todayPlanProvider = FutureProvider.autoDispose<TodayPlan?>((ref) async {
         if (packData?.statusOf(part) == PartStatus.ready) part,
     };
 
+    final weak = await ref
+        .watch(sessionStatsRepositoryProvider)
+        .weakParts(now.subtract(const Duration(days: 7)));
+
     final steps = planSession(
       PlannerInput(
+        weakParts: weak,
         reviewCards: reviewCards,
         unlearnedWords: unlearned,
         readyParts: ready,
