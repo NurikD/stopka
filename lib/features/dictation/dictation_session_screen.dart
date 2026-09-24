@@ -278,23 +278,23 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, 0),
+          padding: const EdgeInsets.fromLTRB(AppSpacing.s14, AppSpacing.s10, AppSpacing.s14, 0),
           child: Row(
             children: [
               Text(
                 'Раунд ${_engine.roundIndex} · слово ${_index + 1} из ${_stack.length}',
-                style: AppTypography.caption.copyWith(color: colors.textMuted),
+                style: AppTypography.caption.copyWith(color: colors.muted),
               ),
               const Spacer(),
             ],
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s14),
           child: LinearProgressIndicator(
             value: (_index + (_phase == _Phase.showingResult ? 1 : 0)) / _stack.length,
             color: colors.accent,
-            backgroundColor: colors.hairline,
+            backgroundColor: colors.line,
           ),
         ),
         Expanded(
@@ -326,18 +326,18 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
           child: Text(
             _currentWord.prompt,
             textAlign: TextAlign.center,
-            style: AppTypography.hero.copyWith(color: colors.textPrimary),
+            style: AppTypography.display.copyWith(color: colors.ink),
           ),
         ),
-        const SizedBox(height: AppSpacing.xxl),
+        const SizedBox(height: AppSpacing.s30),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s14),
           child: TextField(
             controller: _inputController,
             focusNode: _focusNode,
             autofocus: true,
             textAlign: TextAlign.center,
-            style: AppTypography.subtitle.copyWith(color: colors.textPrimary),
+            style: AppTypography.heading.copyWith(color: colors.ink),
             decoration: const InputDecoration(hintText: 'ваш ответ', border: UnderlineInputBorder()),
             onSubmitted: (_) => _submit(skipped: false),
           ),
@@ -350,10 +350,10 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
     final colors = context.colors;
     final answer = _lastAnswer!;
     final color = switch (answer.verdict) {
-      DictationVerdict.correct => colors.statusCorrect,
-      DictationVerdict.typo => colors.statusTypo,
-      DictationVerdict.wrong => colors.statusWrong,
-      DictationVerdict.skipped => colors.statusSkipped,
+      DictationVerdict.correct => colors.success,
+      DictationVerdict.typo => colors.markLine,
+      DictationVerdict.wrong => colors.danger,
+      DictationVerdict.skipped => colors.muted,
     };
     final label = switch (answer.verdict) {
       DictationVerdict.correct => 'Верно',
@@ -368,8 +368,8 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
         children: [
           Text(label, style: AppTypography.title.copyWith(color: color)),
           if (answer.verdict != DictationVerdict.correct) ...[
-            const SizedBox(height: AppSpacing.md),
-            Text('верно: ${answer.word.correctAnswer}', style: AppTypography.subtitle.copyWith(color: colors.textPrimary)),
+            const SizedBox(height: AppSpacing.s10),
+            Text('верно: ${answer.word.correctAnswer}', style: AppTypography.heading.copyWith(color: colors.ink)),
           ],
         ],
       ),
@@ -384,20 +384,20 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
+          padding: const EdgeInsets.all(AppSpacing.s14),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 '$correctCount из ${_currentStackAnswers.length}',
-                style: AppTypography.hero.copyWith(color: colors.statusCorrect, fontSize: 32, height: 1.1),
+                style: AppTypography.display.copyWith(color: colors.success, fontSize: 32, height: 1.1),
               ),
               if (mistakes.isNotEmpty)
                 Padding(
-                  padding: const EdgeInsets.only(top: AppSpacing.xs),
+                  padding: const EdgeInsets.only(top: AppSpacing.s4),
                   child: Text(
                     '${mistakes.length} слов вернутся в стопку',
-                    style: AppTypography.body.copyWith(color: colors.textMuted),
+                    style: AppTypography.bodyText.copyWith(color: colors.muted),
                   ),
                 ),
             ],
@@ -406,10 +406,10 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
         Expanded(
           child: mistakes.isEmpty
               ? Center(
-                  child: Text('Всё верно в этом раунде!', style: AppTypography.body.copyWith(color: colors.textMuted)),
+                  child: Text('Всё верно в этом раунде!', style: AppTypography.bodyText.copyWith(color: colors.muted)),
                 )
               : ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s14),
                   itemCount: mistakes.length,
                   itemBuilder: (context, i) {
                     final a = mistakes[i];
@@ -432,7 +432,7 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
                         ),
                         if (a.verdict == DictationVerdict.wrong || a.verdict == DictationVerdict.typo)
                           Padding(
-                            padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                            padding: const EdgeInsets.only(bottom: AppSpacing.s10),
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: TextButton(

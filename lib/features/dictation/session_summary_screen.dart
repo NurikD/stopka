@@ -34,32 +34,32 @@ class SessionSummaryScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Итог диктанта')),
       body: ListView(
-        padding: const EdgeInsets.all(AppSpacing.lg),
+        padding: const EdgeInsets.all(AppSpacing.s14),
         children: [
-          Text('Готово!', style: AppTypography.title.copyWith(color: colors.textPrimary)),
-          const SizedBox(height: AppSpacing.sm),
+          Text('Готово!', style: AppTypography.title.copyWith(color: colors.ink)),
+          const SizedBox(height: AppSpacing.s8),
           Text(
             '$totalWords слов выучено за $roundsCount ${_roundsWord(roundsCount)}.',
-            style: AppTypography.body.copyWith(color: colors.textMuted),
+            style: AppTypography.bodyText.copyWith(color: colors.muted),
           ),
           if (problemCards.isNotEmpty) ...[
-            const SizedBox(height: AppSpacing.xl),
-            Text('Самые проблемные слова', style: AppTypography.subtitle.copyWith(color: colors.textPrimary)),
-            const SizedBox(height: AppSpacing.sm),
+            const SizedBox(height: AppSpacing.s22),
+            Text('Самые проблемные слова', style: AppTypography.heading.copyWith(color: colors.ink)),
+            const SizedBox(height: AppSpacing.s8),
             for (final card in problemCards)
               Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                padding: const EdgeInsets.only(bottom: AppSpacing.s8),
                 child: Row(
                   children: [
                     Expanded(
                       child: Text(
                         '${card.term} — ${card.translation}',
-                        style: AppTypography.body.copyWith(color: colors.textPrimary),
+                        style: AppTypography.bodyText.copyWith(color: colors.ink),
                       ),
                     ),
                     IconButton(
                       icon: const Icon(Icons.volume_up_outlined),
-                      color: colors.textMuted,
+                      color: colors.muted,
                       onPressed: () => ref.read(ttsServiceProvider).speak(card.term),
                     ),
                   ],

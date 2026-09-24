@@ -45,26 +45,26 @@ class TodayScreen extends ConsumerWidget {
               }
 
               return Padding(
-                padding: const EdgeInsets.all(AppSpacing.lg),
+                padding: const EdgeInsets.all(AppSpacing.s14),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       RussianDate.longFormat(DateTime.now()),
-                      style: AppTypography.caption.copyWith(color: colors.textMuted),
+                      style: AppTypography.caption.copyWith(color: colors.muted),
                     ),
-                    const SizedBox(height: AppSpacing.lg),
+                    const SizedBox(height: AppSpacing.s14),
                     WordCard(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             '$total',
-                            style: AppTypography.hero.copyWith(color: colors.textPrimary),
+                            style: AppTypography.display.copyWith(color: colors.ink),
                           ),
                           Text(
                             'слов к повторению',
-                            style: AppTypography.body.copyWith(color: colors.textMuted),
+                            style: AppTypography.bodyText.copyWith(color: colors.muted),
                           ),
                         ],
                       ),

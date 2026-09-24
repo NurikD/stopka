@@ -118,10 +118,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Настройки')),
       body: ListView(
-        padding: const EdgeInsets.all(AppSpacing.lg),
+        padding: const EdgeInsets.all(AppSpacing.s14),
         children: [
-          Text('Gemini API', style: AppTypography.subtitle.copyWith(color: context.colors.textPrimary)),
-          const SizedBox(height: AppSpacing.sm),
+          Text('Gemini API', style: AppTypography.heading.copyWith(color: context.colors.ink)),
+          const SizedBox(height: AppSpacing.s8),
           TextField(
             controller: _keyController,
             obscureText: _obscureKey,
@@ -149,23 +149,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               if (value != null) setState(() => _model = value);
             },
           ),
-          const SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: AppSpacing.s14),
           Row(
             children: [
               PrimaryButton(label: 'Сохранить', onPressed: _save, loading: _saving),
-              const SizedBox(width: AppSpacing.md),
+              const SizedBox(width: AppSpacing.s10),
               GhostButton(
                 label: 'Проверить ключ',
                 onPressed: _checkStatus == _KeyCheckStatus.checking ? null : _checkKey,
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.md),
+          const SizedBox(height: AppSpacing.s10),
           _buildCheckStatus(context),
-          const SizedBox(height: AppSpacing.xl),
+          const SizedBox(height: AppSpacing.s22),
           Text(
             'Запросов к ИИ сегодня: $_requestsToday',
-            style: AppTypography.caption.copyWith(color: context.colors.textMuted),
+            style: AppTypography.caption.copyWith(color: context.colors.muted),
           ),
         ],
       ),
@@ -181,17 +181,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       case _KeyCheckStatus.valid:
         return Text(
           'Ключ работает.',
-          style: AppTypography.body.copyWith(color: colors.statusCorrect),
+          style: AppTypography.bodyText.copyWith(color: colors.success),
         );
       case _KeyCheckStatus.invalid:
         return Text(
           _checkErrorMessage ?? 'Ключ недействителен. Проверьте его и попробуйте снова.',
-          style: AppTypography.body.copyWith(color: colors.statusWrong),
+          style: AppTypography.bodyText.copyWith(color: colors.danger),
         );
       case _KeyCheckStatus.error:
         return Text(
           _checkErrorMessage ?? 'Не удалось проверить ключ.',
-          style: AppTypography.body.copyWith(color: colors.statusWrong),
+          style: AppTypography.bodyText.copyWith(color: colors.danger),
         );
     }
   }

@@ -31,13 +31,13 @@ class ResultRow extends StatelessWidget {
   Color _verdictColor(AppColorTokens colors) {
     switch (verdict) {
       case ResultVerdict.correct:
-        return colors.statusCorrect;
+        return colors.success;
       case ResultVerdict.typo:
-        return colors.statusTypo;
+        return colors.markLine;
       case ResultVerdict.wrong:
-        return colors.statusWrong;
+        return colors.danger;
       case ResultVerdict.skipped:
-        return colors.statusSkipped;
+        return colors.muted;
     }
   }
 
@@ -46,7 +46,7 @@ class ResultRow extends StatelessWidget {
     final colors = context.colors;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.s8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -55,18 +55,18 @@ class ResultRow extends StatelessWidget {
               Expanded(
                 child: Text(
                   term,
-                  style: AppTypography.subtitle.copyWith(
+                  style: AppTypography.heading.copyWith(
                     fontFamily: 'Literata',
-                    color: colors.textPrimary,
+                    color: colors.ink,
                   ),
                 ),
               ),
-              Text(transcription, style: AppTypography.transcription.copyWith(color: colors.textMuted)),
+              Text(transcription, style: AppTypography.transcription.copyWith(color: colors.muted)),
               if (onPlayAudio != null)
                 IconButton(
                   onPressed: onPlayAudio,
                   icon: const Icon(Icons.volume_up_outlined),
-                  color: colors.textMuted,
+                  color: colors.muted,
                   iconSize: 20,
                   constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
                 ),
@@ -75,7 +75,7 @@ class ResultRow extends StatelessWidget {
           if (verdict != ResultVerdict.correct && userAnswer != null && userAnswer!.isNotEmpty)
             Text(
               'вы: $userAnswer',
-              style: AppTypography.body.copyWith(
+              style: AppTypography.bodyText.copyWith(
                 color: _verdictColor(colors),
                 decoration: TextDecoration.lineThrough,
               ),
@@ -83,9 +83,9 @@ class ResultRow extends StatelessWidget {
           if (verdict != ResultVerdict.correct)
             Text(
               'верно: $correctAnswer',
-              style: AppTypography.body.copyWith(color: colors.textPrimary),
+              style: AppTypography.bodyText.copyWith(color: colors.ink),
             ),
-          Divider(height: AppSpacing.lg, color: colors.hairline),
+          Divider(height: AppSpacing.s14, color: colors.line),
         ],
       ),
     );

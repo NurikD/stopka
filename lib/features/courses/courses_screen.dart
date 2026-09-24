@@ -42,7 +42,7 @@ class CoursesScreen extends ConsumerWidget {
             );
           }
           return ListView.builder(
-            padding: const EdgeInsets.all(AppSpacing.lg),
+            padding: const EdgeInsets.all(AppSpacing.s14),
             itemCount: courses.length,
             itemBuilder: (context, i) => _CourseTile(course: courses[i]),
           );
@@ -61,15 +61,15 @@ class _CourseTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.md),
+      padding: const EdgeInsets.only(bottom: AppSpacing.s10),
       child: InkWell(
-        borderRadius: BorderRadius.circular(AppRadius.panel),
+        borderRadius: BorderRadius.circular(AppRadius.card),
         onTap: () => context.go('/courses/${course.id}'),
         child: Container(
-          padding: const EdgeInsets.all(AppSpacing.lg),
+          padding: const EdgeInsets.all(AppSpacing.s14),
           decoration: BoxDecoration(
             color: colors.surface,
-            borderRadius: BorderRadius.circular(AppRadius.panel),
+            borderRadius: BorderRadius.circular(AppRadius.card),
           ),
           child: Row(
             children: [
@@ -77,12 +77,12 @@ class _CourseTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(course.title, style: AppTypography.subtitle.copyWith(color: colors.textPrimary)),
+                    Text(course.title, style: AppTypography.heading.copyWith(color: colors.ink)),
                     if (course.publisher.isNotEmpty) ...[
-                      const SizedBox(height: AppSpacing.xs),
+                      const SizedBox(height: AppSpacing.s4),
                       Text(
                         course.publisher,
-                        style: AppTypography.caption.copyWith(color: colors.textMuted),
+                        style: AppTypography.caption.copyWith(color: colors.muted),
                       ),
                     ],
                   ],

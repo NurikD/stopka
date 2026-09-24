@@ -59,38 +59,38 @@ class _UnitFormSheetState extends ConsumerState<_UnitFormSheet> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.lg,
-        AppSpacing.lg,
-        AppSpacing.lg + MediaQuery.of(context).viewInsets.bottom,
+        AppSpacing.s14,
+        AppSpacing.s14,
+        AppSpacing.s14,
+        AppSpacing.s14 + MediaQuery.of(context).viewInsets.bottom,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text('Новый юнит', style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: AppSpacing.s14),
           TextField(
             controller: _codeController,
             autofocus: true,
             decoration: const InputDecoration(labelText: 'Код (например, 4B)', border: OutlineInputBorder()),
           ),
-          const SizedBox(height: AppSpacing.md),
+          const SizedBox(height: AppSpacing.s10),
           TextField(
             controller: _titleController,
             decoration: const InputDecoration(labelText: 'Название (необязательно)', border: OutlineInputBorder()),
           ),
-          const SizedBox(height: AppSpacing.md),
+          const SizedBox(height: AppSpacing.s10),
           TextField(
             controller: _grammarController,
             decoration: const InputDecoration(labelText: 'Грамматика', border: OutlineInputBorder()),
           ),
-          const SizedBox(height: AppSpacing.md),
+          const SizedBox(height: AppSpacing.s10),
           TextField(
             controller: _vocabController,
             decoration: const InputDecoration(labelText: 'Лексика', border: OutlineInputBorder()),
           ),
-          const SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: AppSpacing.s14),
           PrimaryButton(label: 'Создать юнит', onPressed: _save, loading: _saving),
         ],
       ),

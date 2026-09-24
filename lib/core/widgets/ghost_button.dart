@@ -20,10 +20,10 @@ class GhostButton extends StatelessWidget {
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
-          foregroundColor: colors.textPrimary,
-          side: BorderSide(color: colors.hairline),
+          foregroundColor: colors.ink,
+          side: BorderSide(color: colors.line),
           shape: const StadiumBorder(),
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s22),
         ),
         child: Text(label, style: AppTypography.label),
       ),

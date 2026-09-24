@@ -133,7 +133,7 @@ class _DictationSetupScreenState extends ConsumerState<DictationSetupScreen> {
 
   Widget _buildResumeChoice(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.all(AppSpacing.s14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -143,9 +143,9 @@ class _DictationSetupScreenState extends ConsumerState<DictationSetupScreen> {
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleLarge,
           ),
-          const SizedBox(height: AppSpacing.xl),
+          const SizedBox(height: AppSpacing.s22),
           PrimaryButton(label: 'Продолжить', onPressed: _resolving ? null : _continueSession, loading: _resolving),
-          const SizedBox(height: AppSpacing.md),
+          const SizedBox(height: AppSpacing.s10),
           GhostButton(label: 'Начать заново', onPressed: _resolving ? null : _startOver),
         ],
       ),
@@ -154,10 +154,10 @@ class _DictationSetupScreenState extends ConsumerState<DictationSetupScreen> {
 
   Widget _buildConfig(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.all(AppSpacing.s14),
       children: [
         Text('Направление', style: Theme.of(context).textTheme.titleLarge),
-        const SizedBox(height: AppSpacing.sm),
+        const SizedBox(height: AppSpacing.s8),
         SegmentedButton<DictationDirection>(
           segments: const [
             ButtonSegment(value: DictationDirection.ruEn, label: Text('RU → EN')),
@@ -166,7 +166,7 @@ class _DictationSetupScreenState extends ConsumerState<DictationSetupScreen> {
           selected: {_direction},
           onSelectionChanged: (s) => setState(() => _direction = s.first),
         ),
-        const SizedBox(height: AppSpacing.xl),
+        const SizedBox(height: AppSpacing.s22),
         Text('Размер стопки', style: Theme.of(context).textTheme.titleLarge),
         Slider(
           value: _stackSize.toDouble(),
@@ -176,7 +176,7 @@ class _DictationSetupScreenState extends ConsumerState<DictationSetupScreen> {
           label: '$_stackSize',
           onChanged: (v) => setState(() => _stackSize = v.round()),
         ),
-        const SizedBox(height: AppSpacing.md),
+        const SizedBox(height: AppSpacing.s10),
         Text('Верных подряд для освоения слова', style: Theme.of(context).textTheme.titleLarge),
         SegmentedButton<int>(
           segments: const [
@@ -186,7 +186,7 @@ class _DictationSetupScreenState extends ConsumerState<DictationSetupScreen> {
           selected: {_requiredStreak},
           onSelectionChanged: (s) => setState(() => _requiredStreak = s.first),
         ),
-        const SizedBox(height: AppSpacing.xxl),
+        const SizedBox(height: AppSpacing.s30),
         PrimaryButton(
           label: 'Начать диктант',
           onPressed: () => Navigator.of(context).pushReplacement(

@@ -53,17 +53,17 @@ class _CourseFormSheetState extends ConsumerState<_CourseFormSheet> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.lg,
-        AppSpacing.lg,
-        AppSpacing.lg + MediaQuery.of(context).viewInsets.bottom,
+        AppSpacing.s14,
+        AppSpacing.s14,
+        AppSpacing.s14,
+        AppSpacing.s14 + MediaQuery.of(context).viewInsets.bottom,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text('Новый курс', style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: AppSpacing.s14),
           TextField(
             controller: _titleController,
             autofocus: true,
@@ -73,7 +73,7 @@ class _CourseFormSheetState extends ConsumerState<_CourseFormSheet> {
               border: OutlineInputBorder(),
             ),
           ),
-          const SizedBox(height: AppSpacing.md),
+          const SizedBox(height: AppSpacing.s10),
           DropdownButtonFormField<String>(
             initialValue: _level,
             decoration: const InputDecoration(labelText: 'Уровень', border: OutlineInputBorder()),
@@ -82,7 +82,7 @@ class _CourseFormSheetState extends ConsumerState<_CourseFormSheet> {
               if (v != null) setState(() => _level = v);
             },
           ),
-          const SizedBox(height: AppSpacing.md),
+          const SizedBox(height: AppSpacing.s10),
           TextField(
             controller: _publisherController,
             decoration: const InputDecoration(
@@ -90,7 +90,7 @@ class _CourseFormSheetState extends ConsumerState<_CourseFormSheet> {
               border: OutlineInputBorder(),
             ),
           ),
-          const SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: AppSpacing.s14),
           PrimaryButton(label: 'Создать курс', onPressed: _save, loading: _saving),
         ],
       ),

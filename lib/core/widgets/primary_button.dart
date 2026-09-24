@@ -30,7 +30,7 @@ class PrimaryButton extends StatelessWidget {
           foregroundColor: colors.onPrimary,
           disabledBackgroundColor: colors.primary.withValues(alpha: 0.4),
           shape: const StadiumBorder(),
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s22),
         ),
         child: loading
             ? SizedBox(

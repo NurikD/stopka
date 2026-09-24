@@ -125,7 +125,7 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
   Widget _buildDone(BuildContext context) {
     final colors = context.colors;
     return Center(
-      child: Text('На сегодня всё!', style: AppTypography.title.copyWith(color: colors.textPrimary)),
+      child: Text('На сегодня всё!', style: AppTypography.title.copyWith(color: colors.ink)),
     );
   }
 
@@ -134,43 +134,43 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, 0),
+          padding: const EdgeInsets.fromLTRB(AppSpacing.s14, AppSpacing.s10, AppSpacing.s14, 0),
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
               '${_index + 1} из ${_queue.length}',
-              style: AppTypography.caption.copyWith(color: colors.textMuted),
+              style: AppTypography.caption.copyWith(color: colors.muted),
             ),
           ),
         ),
         Expanded(
           child: Center(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s14),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(_prompt, textAlign: TextAlign.center, style: AppTypography.hero.copyWith(color: colors.textPrimary)),
+                  Text(_prompt, textAlign: TextAlign.center, style: AppTypography.display.copyWith(color: colors.ink)),
                   if (_revealed) ...[
-                    const SizedBox(height: AppSpacing.xl),
-                    Divider(color: colors.hairline),
-                    const SizedBox(height: AppSpacing.xl),
+                    const SizedBox(height: AppSpacing.s22),
+                    Divider(color: colors.line),
+                    const SizedBox(height: AppSpacing.s22),
                     Text(
                       _answer,
                       textAlign: TextAlign.center,
-                      style: AppTypography.subtitle.copyWith(color: colors.accent),
+                      style: AppTypography.heading.copyWith(color: colors.accent),
                     ),
                     if (_current.card.transcription.isNotEmpty) ...[
-                      const SizedBox(height: AppSpacing.sm),
+                      const SizedBox(height: AppSpacing.s8),
                       Text(
                         _current.card.transcription,
-                        style: AppTypography.transcription.copyWith(color: colors.textMuted),
+                        style: AppTypography.transcription.copyWith(color: colors.muted),
                       ),
                     ],
-                    const SizedBox(height: AppSpacing.sm),
+                    const SizedBox(height: AppSpacing.s8),
                     IconButton(
                       icon: const Icon(Icons.volume_up_outlined),
-                      color: colors.textMuted,
+                      color: colors.muted,
                       onPressed: () => ref.read(ttsServiceProvider).speak(_current.card.term),
                     ),
                   ],
@@ -217,9 +217,9 @@ class _RatingButton extends StatelessWidget {
     return OutlinedButton(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
-        foregroundColor: colors.textPrimary,
-        side: BorderSide(color: colors.hairline),
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+        foregroundColor: colors.ink,
+        side: BorderSide(color: colors.line),
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.s8),
       ),
       child: Text(label, style: AppTypography.label, textAlign: TextAlign.center),
     );

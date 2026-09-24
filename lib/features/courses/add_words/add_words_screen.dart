@@ -263,12 +263,12 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
 
   Widget _buildChooser(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.all(AppSpacing.s14),
       children: [
         PrimaryButton(label: 'Добавить вручную', onPressed: () => setState(() => _mode = _Mode.manual)),
-        const SizedBox(height: AppSpacing.md),
+        const SizedBox(height: AppSpacing.s10),
         GhostButton(label: 'Вставить список слов', onPressed: () => setState(() => _mode = _Mode.pasteInput)),
-        const SizedBox(height: AppSpacing.md),
+        const SizedBox(height: AppSpacing.s10),
         GhostButton(label: 'Сфотографировать список', onPressed: _showPhotoSourceSheet),
       ],
     );
@@ -306,14 +306,14 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
   Widget _buildManual(BuildContext context) {
     final colors = context.colors;
     return ListView(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.all(AppSpacing.s14),
       children: [
         TextField(
           controller: _manualTermController,
           autofocus: true,
           decoration: const InputDecoration(labelText: 'Слово', border: OutlineInputBorder()),
         ),
-        const SizedBox(height: AppSpacing.sm),
+        const SizedBox(height: AppSpacing.s8),
         TextField(
           controller: _manualTranslationController,
           decoration: const InputDecoration(
@@ -322,13 +322,13 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
           ),
           onSubmitted: (_) => _addManualWord(),
         ),
-        const SizedBox(height: AppSpacing.sm),
+        const SizedBox(height: AppSpacing.s8),
         PrimaryButton(label: 'Добавить', onPressed: _addManualWord, loading: _addingManual),
         if (_addedThisSession.isNotEmpty) ...[
-          const SizedBox(height: AppSpacing.md),
+          const SizedBox(height: AppSpacing.s10),
           Text(
             'Добавлено: ${_addedThisSession.join(', ')}',
-            style: AppTypography.caption.copyWith(color: colors.textMuted),
+            style: AppTypography.caption.copyWith(color: colors.muted),
           ),
         ],
       ],
@@ -337,15 +337,15 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
 
   Widget _buildPasteInput(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.all(AppSpacing.s14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             'По одному слову на строку или через запятую. Формат "word - перевод" тоже понимаю.',
-            style: AppTypography.caption.copyWith(color: context.colors.textMuted),
+            style: AppTypography.caption.copyWith(color: context.colors.muted),
           ),
-          const SizedBox(height: AppSpacing.md),
+          const SizedBox(height: AppSpacing.s10),
           TextField(
             controller: _pasteController,
             autofocus: true,
@@ -353,7 +353,7 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
             maxLines: 12,
             decoration: const InputDecoration(border: OutlineInputBorder()),
           ),
-          const SizedBox(height: AppSpacing.md),
+          const SizedBox(height: AppSpacing.s10),
           PrimaryButton(label: 'Разобрать', onPressed: _parsePaste),
         ],
       ),
@@ -366,12 +366,12 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
       children: [
         Expanded(
           child: ListView.builder(
-            padding: const EdgeInsets.all(AppSpacing.lg),
+            padding: const EdgeInsets.all(AppSpacing.s14),
             itemCount: _draft.length,
             itemBuilder: (context, i) {
               final entry = _draft[i];
               return Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                padding: const EdgeInsets.only(bottom: AppSpacing.s10),
                 child: Row(
                   children: [
                     Expanded(
@@ -381,7 +381,7 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
                         onChanged: (v) => entry.term = v,
                       ),
                     ),
-                    const SizedBox(width: AppSpacing.sm),
+                    const SizedBox(width: AppSpacing.s8),
                     Expanded(
                       child: TextFormField(
                         initialValue: entry.translation,
@@ -390,7 +390,7 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.close, color: colors.textMuted),
+                      icon: Icon(Icons.close, color: colors.muted),
                       onPressed: () => setState(() => _draft.removeAt(i)),
                     ),
                   ],

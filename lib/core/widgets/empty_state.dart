@@ -25,17 +25,17 @@ class EmptyState extends StatelessWidget {
     final colors = context.colors;
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
+        padding: const EdgeInsets.all(AppSpacing.s22),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               message,
               textAlign: TextAlign.center,
-              style: AppTypography.body.copyWith(color: colors.textMuted),
+              style: AppTypography.bodyText.copyWith(color: colors.muted),
             ),
             if (actionLabel != null && onAction != null) ...[
-              const SizedBox(height: AppSpacing.lg),
+              const SizedBox(height: AppSpacing.s14),
               PrimaryButton(label: actionLabel!, onPressed: onAction),
             ],
           ],

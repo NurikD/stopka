@@ -96,7 +96,7 @@ class _UnitDetailScreenState extends ConsumerState<UnitDetailScreen> {
                   : Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, 0),
+                          padding: const EdgeInsets.fromLTRB(AppSpacing.s14, AppSpacing.s10, AppSpacing.s14, 0),
                           child: TextField(
                             decoration: const InputDecoration(
                               hintText: 'Поиск по слову или переводу',
@@ -108,7 +108,7 @@ class _UnitDetailScreenState extends ConsumerState<UnitDetailScreen> {
                         ),
                         Expanded(
                           child: ListView.builder(
-                            padding: const EdgeInsets.all(AppSpacing.lg),
+                            padding: const EdgeInsets.all(AppSpacing.s14),
                             itemCount: cards.length,
                             itemBuilder: (context, i) => _CardTile(card: cards[i]),
                           ),
@@ -164,25 +164,25 @@ class _CardTile extends ConsumerWidget {
       direction: DismissDirection.endToStart,
       background: Container(
         alignment: Alignment.centerRight,
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-        margin: const EdgeInsets.only(bottom: AppSpacing.md),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s14),
+        margin: const EdgeInsets.only(bottom: AppSpacing.s10),
         decoration: BoxDecoration(
-          color: colors.statusWrong,
-          borderRadius: BorderRadius.circular(AppRadius.panel),
+          color: colors.danger,
+          borderRadius: BorderRadius.circular(AppRadius.card),
         ),
         child: const Icon(Icons.delete_outline, color: Colors.white),
       ),
       onDismissed: (_) => ref.read(wordCardRepositoryProvider).deleteCard(card.id),
       child: Padding(
-        padding: const EdgeInsets.only(bottom: AppSpacing.md),
+        padding: const EdgeInsets.only(bottom: AppSpacing.s10),
         child: InkWell(
-          borderRadius: BorderRadius.circular(AppRadius.panel),
+          borderRadius: BorderRadius.circular(AppRadius.card),
           onTap: () => showCardFormSheet(context, ref, card: card),
           child: Container(
-            padding: const EdgeInsets.all(AppSpacing.lg),
+            padding: const EdgeInsets.all(AppSpacing.s14),
             decoration: BoxDecoration(
               color: colors.surface,
-              borderRadius: BorderRadius.circular(AppRadius.panel),
+              borderRadius: BorderRadius.circular(AppRadius.card),
             ),
             child: Row(
               children: [
@@ -194,16 +194,16 @@ class _CardTile extends ConsumerWidget {
                         children: [
                           Text(
                             card.term,
-                            style: AppTypography.subtitle.copyWith(
+                            style: AppTypography.heading.copyWith(
                               fontFamily: 'Literata',
-                              color: colors.textPrimary,
+                              color: colors.ink,
                             ),
                           ),
                           if (card.transcription.isNotEmpty) ...[
-                            const SizedBox(width: AppSpacing.sm),
+                            const SizedBox(width: AppSpacing.s8),
                             Text(
                               card.transcription,
-                              style: AppTypography.transcription.copyWith(color: colors.textMuted),
+                              style: AppTypography.transcription.copyWith(color: colors.muted),
                             ),
                           ],
                         ],
@@ -211,14 +211,14 @@ class _CardTile extends ConsumerWidget {
                       if (card.translation.isNotEmpty)
                         Text(
                           card.translation,
-                          style: AppTypography.body.copyWith(color: colors.textMuted),
+                          style: AppTypography.bodyText.copyWith(color: colors.muted),
                         ),
                     ],
                   ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.volume_up_outlined),
-                  color: colors.textMuted,
+                  color: colors.muted,
                   onPressed: () => ref.read(ttsServiceProvider).speak(card.term),
                 ),
               ],

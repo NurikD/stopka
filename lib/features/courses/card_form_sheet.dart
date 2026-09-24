@@ -59,37 +59,37 @@ class _CardFormSheetState extends ConsumerState<_CardFormSheet> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.lg,
-        AppSpacing.lg,
-        AppSpacing.lg + MediaQuery.of(context).viewInsets.bottom,
+        AppSpacing.s14,
+        AppSpacing.s14,
+        AppSpacing.s14,
+        AppSpacing.s14 + MediaQuery.of(context).viewInsets.bottom,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text('Редактировать слово', style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: AppSpacing.s14),
           TextField(
             controller: _termController,
             decoration: const InputDecoration(labelText: 'Слово', border: OutlineInputBorder()),
           ),
-          const SizedBox(height: AppSpacing.md),
+          const SizedBox(height: AppSpacing.s10),
           TextField(
             controller: _translationController,
             decoration: const InputDecoration(labelText: 'Перевод', border: OutlineInputBorder()),
           ),
-          const SizedBox(height: AppSpacing.md),
+          const SizedBox(height: AppSpacing.s10),
           TextField(
             controller: _transcriptionController,
             decoration: const InputDecoration(labelText: 'Транскрипция', border: OutlineInputBorder()),
           ),
-          const SizedBox(height: AppSpacing.md),
+          const SizedBox(height: AppSpacing.s10),
           TextField(
             controller: _partOfSpeechController,
             decoration: const InputDecoration(labelText: 'Часть речи', border: OutlineInputBorder()),
           ),
-          const SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: AppSpacing.s14),
           PrimaryButton(label: 'Сохранить', onPressed: _save, loading: _saving),
         ],
       ),

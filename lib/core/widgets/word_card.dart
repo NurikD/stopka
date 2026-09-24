@@ -13,7 +13,7 @@ class WordCard extends StatelessWidget {
   const WordCard({
     super.key,
     required this.child,
-    this.padding = const EdgeInsets.all(AppSpacing.lg),
+    this.padding = const EdgeInsets.all(AppSpacing.s14),
   });
 
   @override
@@ -24,7 +24,7 @@ class WordCard extends StatelessWidget {
       padding: padding,
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.hero),
+        borderRadius: BorderRadius.circular(AppRadius.card),
       ),
       child: child,
     );

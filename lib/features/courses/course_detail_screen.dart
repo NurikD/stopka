@@ -47,7 +47,7 @@ class CourseDetailScreen extends ConsumerWidget {
             );
           }
           return ListView.builder(
-            padding: const EdgeInsets.all(AppSpacing.lg),
+            padding: const EdgeInsets.all(AppSpacing.s14),
             itemCount: units.length,
             itemBuilder: (context, i) => _UnitTile(courseId: courseId, unit: units[i]),
           );
@@ -67,30 +67,30 @@ class _UnitTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.md),
+      padding: const EdgeInsets.only(bottom: AppSpacing.s10),
       child: InkWell(
-        borderRadius: BorderRadius.circular(AppRadius.panel),
+        borderRadius: BorderRadius.circular(AppRadius.card),
         onTap: () => context.go('/courses/$courseId/units/${unit.id}'),
         child: Container(
-          padding: const EdgeInsets.all(AppSpacing.lg),
+          padding: const EdgeInsets.all(AppSpacing.s14),
           decoration: BoxDecoration(
             color: colors.surface,
-            borderRadius: BorderRadius.circular(AppRadius.panel),
+            borderRadius: BorderRadius.circular(AppRadius.card),
           ),
           child: Row(
             children: [
               UnitChip(label: unit.code),
-              const SizedBox(width: AppSpacing.md),
+              const SizedBox(width: AppSpacing.s10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (unit.title.isNotEmpty)
-                      Text(unit.title, style: AppTypography.subtitle.copyWith(color: colors.textPrimary)),
+                      Text(unit.title, style: AppTypography.heading.copyWith(color: colors.ink)),
                     if (unit.grammarTopic.isNotEmpty || unit.vocabTopic.isNotEmpty)
                       Text(
                         [unit.grammarTopic, unit.vocabTopic].where((s) => s.isNotEmpty).join(' · '),
-                        style: AppTypography.caption.copyWith(color: colors.textMuted),
+                        style: AppTypography.caption.copyWith(color: colors.muted),
                       ),
                   ],
                 ),
