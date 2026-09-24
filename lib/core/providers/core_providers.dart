@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' show ThemeMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/db/app_database.dart';
@@ -29,6 +30,7 @@ import '../llm/throttled_llm_client.dart';
 import '../llm/word_recognition_service.dart';
 import '../srs/srs_engine.dart';
 import '../srs/srs_settings_store.dart';
+import '../theme/theme_mode_store.dart';
 import '../tts/tts_service.dart';
 
 final appDatabaseProvider = Provider<AppDatabase>((ref) {
@@ -115,3 +117,32 @@ final cardStateRepositoryProvider = Provider<CardStateRepository>((ref) {
 final srsEngineProvider = Provider<SrsEngine>((ref) => SrsEngine());
 
 final srsSettingsStoreProvider = Provider<SrsSettingsStore>((ref) => SrsSettingsStore());
+
+final themeModeStoreProvider = Provider<ThemeModeStore>((ref) => ThemeModeStore());
+
+/// The user's manual theme choice. Starts as "follow the system" and swaps
+/// to the saved value as soon as it has been read.
+class ThemeModeController extends Notifier<ThemeMode> {
+  bool _chosenByUser = false;
+
+  @override
+  ThemeMode build() {
+    _chosenByUser = false;
+    _load();
+    return ThemeMode.system;
+  }
+
+  Future<void> _load() async {
+    final saved = await ref.read(themeModeStoreProvider).load();
+    // A choice made while the saved value was still loading wins.
+    if (ref.mounted && !_chosenByUser) state = saved;
+  }
+
+  Future<void> set(ThemeMode mode) async {
+    _chosenByUser = true;
+    state = mode;
+    await ref.read(themeModeStoreProvider).save(mode);
+  }
+}
+
+final themeModeProvider = NotifierProvider<ThemeModeController, ThemeMode>(ThemeModeController.new);
