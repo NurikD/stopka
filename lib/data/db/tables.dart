@@ -26,6 +26,11 @@ class Profiles extends Table with SyncColumns {
   late final displayName = text()();
   late final nativeLang = text()();
   late final uiLang = text()();
+  late final level = text().withDefault(const Constant(''))();
+  // Comma-separated interest ids picked in onboarding.
+  late final interests = text().withDefault(const Constant(''))();
+  late final currentTopic = text().withDefault(const Constant(''))();
+  late final onboardedAt = dateTime().nullable()();
 }
 
 @DataClassName('CourseRow')

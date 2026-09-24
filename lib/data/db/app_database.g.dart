@@ -107,6 +107,51 @@ class $ProfilesTable extends Profiles
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _levelMeta = const VerificationMeta('level');
+  @override
+  late final GeneratedColumn<String> level = GeneratedColumn<String>(
+    'level',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _interestsMeta = const VerificationMeta(
+    'interests',
+  );
+  @override
+  late final GeneratedColumn<String> interests = GeneratedColumn<String>(
+    'interests',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _currentTopicMeta = const VerificationMeta(
+    'currentTopic',
+  );
+  @override
+  late final GeneratedColumn<String> currentTopic = GeneratedColumn<String>(
+    'current_topic',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _onboardedAtMeta = const VerificationMeta(
+    'onboardedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> onboardedAt = GeneratedColumn<DateTime>(
+    'onboarded_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -118,6 +163,10 @@ class $ProfilesTable extends Profiles
     displayName,
     nativeLang,
     uiLang,
+    level,
+    interests,
+    currentTopic,
+    onboardedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -193,6 +242,36 @@ class $ProfilesTable extends Profiles
     } else if (isInserting) {
       context.missing(_uiLangMeta);
     }
+    if (data.containsKey('level')) {
+      context.handle(
+        _levelMeta,
+        level.isAcceptableOrUnknown(data['level']!, _levelMeta),
+      );
+    }
+    if (data.containsKey('interests')) {
+      context.handle(
+        _interestsMeta,
+        interests.isAcceptableOrUnknown(data['interests']!, _interestsMeta),
+      );
+    }
+    if (data.containsKey('current_topic')) {
+      context.handle(
+        _currentTopicMeta,
+        currentTopic.isAcceptableOrUnknown(
+          data['current_topic']!,
+          _currentTopicMeta,
+        ),
+      );
+    }
+    if (data.containsKey('onboarded_at')) {
+      context.handle(
+        _onboardedAtMeta,
+        onboardedAt.isAcceptableOrUnknown(
+          data['onboarded_at']!,
+          _onboardedAtMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -238,6 +317,22 @@ class $ProfilesTable extends Profiles
         DriftSqlType.string,
         data['${effectivePrefix}ui_lang'],
       )!,
+      level: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}level'],
+      )!,
+      interests: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}interests'],
+      )!,
+      currentTopic: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}current_topic'],
+      )!,
+      onboardedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}onboarded_at'],
+      ),
     );
   }
 
@@ -257,6 +352,10 @@ class ProfileRow extends DataClass implements Insertable<ProfileRow> {
   final String displayName;
   final String nativeLang;
   final String uiLang;
+  final String level;
+  final String interests;
+  final String currentTopic;
+  final DateTime? onboardedAt;
   const ProfileRow({
     required this.id,
     required this.createdAt,
@@ -267,6 +366,10 @@ class ProfileRow extends DataClass implements Insertable<ProfileRow> {
     required this.displayName,
     required this.nativeLang,
     required this.uiLang,
+    required this.level,
+    required this.interests,
+    required this.currentTopic,
+    this.onboardedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -284,6 +387,12 @@ class ProfileRow extends DataClass implements Insertable<ProfileRow> {
     map['display_name'] = Variable<String>(displayName);
     map['native_lang'] = Variable<String>(nativeLang);
     map['ui_lang'] = Variable<String>(uiLang);
+    map['level'] = Variable<String>(level);
+    map['interests'] = Variable<String>(interests);
+    map['current_topic'] = Variable<String>(currentTopic);
+    if (!nullToAbsent || onboardedAt != null) {
+      map['onboarded_at'] = Variable<DateTime>(onboardedAt);
+    }
     return map;
   }
 
@@ -302,6 +411,12 @@ class ProfileRow extends DataClass implements Insertable<ProfileRow> {
       displayName: Value(displayName),
       nativeLang: Value(nativeLang),
       uiLang: Value(uiLang),
+      level: Value(level),
+      interests: Value(interests),
+      currentTopic: Value(currentTopic),
+      onboardedAt: onboardedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(onboardedAt),
     );
   }
 
@@ -320,6 +435,10 @@ class ProfileRow extends DataClass implements Insertable<ProfileRow> {
       displayName: serializer.fromJson<String>(json['displayName']),
       nativeLang: serializer.fromJson<String>(json['nativeLang']),
       uiLang: serializer.fromJson<String>(json['uiLang']),
+      level: serializer.fromJson<String>(json['level']),
+      interests: serializer.fromJson<String>(json['interests']),
+      currentTopic: serializer.fromJson<String>(json['currentTopic']),
+      onboardedAt: serializer.fromJson<DateTime?>(json['onboardedAt']),
     );
   }
   @override
@@ -335,6 +454,10 @@ class ProfileRow extends DataClass implements Insertable<ProfileRow> {
       'displayName': serializer.toJson<String>(displayName),
       'nativeLang': serializer.toJson<String>(nativeLang),
       'uiLang': serializer.toJson<String>(uiLang),
+      'level': serializer.toJson<String>(level),
+      'interests': serializer.toJson<String>(interests),
+      'currentTopic': serializer.toJson<String>(currentTopic),
+      'onboardedAt': serializer.toJson<DateTime?>(onboardedAt),
     };
   }
 
@@ -348,6 +471,10 @@ class ProfileRow extends DataClass implements Insertable<ProfileRow> {
     String? displayName,
     String? nativeLang,
     String? uiLang,
+    String? level,
+    String? interests,
+    String? currentTopic,
+    Value<DateTime?> onboardedAt = const Value.absent(),
   }) => ProfileRow(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -358,6 +485,10 @@ class ProfileRow extends DataClass implements Insertable<ProfileRow> {
     displayName: displayName ?? this.displayName,
     nativeLang: nativeLang ?? this.nativeLang,
     uiLang: uiLang ?? this.uiLang,
+    level: level ?? this.level,
+    interests: interests ?? this.interests,
+    currentTopic: currentTopic ?? this.currentTopic,
+    onboardedAt: onboardedAt.present ? onboardedAt.value : this.onboardedAt,
   );
   ProfileRow copyWithCompanion(ProfilesCompanion data) {
     return ProfileRow(
@@ -374,6 +505,14 @@ class ProfileRow extends DataClass implements Insertable<ProfileRow> {
           ? data.nativeLang.value
           : this.nativeLang,
       uiLang: data.uiLang.present ? data.uiLang.value : this.uiLang,
+      level: data.level.present ? data.level.value : this.level,
+      interests: data.interests.present ? data.interests.value : this.interests,
+      currentTopic: data.currentTopic.present
+          ? data.currentTopic.value
+          : this.currentTopic,
+      onboardedAt: data.onboardedAt.present
+          ? data.onboardedAt.value
+          : this.onboardedAt,
     );
   }
 
@@ -388,7 +527,11 @@ class ProfileRow extends DataClass implements Insertable<ProfileRow> {
           ..write('syncedAt: $syncedAt, ')
           ..write('displayName: $displayName, ')
           ..write('nativeLang: $nativeLang, ')
-          ..write('uiLang: $uiLang')
+          ..write('uiLang: $uiLang, ')
+          ..write('level: $level, ')
+          ..write('interests: $interests, ')
+          ..write('currentTopic: $currentTopic, ')
+          ..write('onboardedAt: $onboardedAt')
           ..write(')'))
         .toString();
   }
@@ -404,6 +547,10 @@ class ProfileRow extends DataClass implements Insertable<ProfileRow> {
     displayName,
     nativeLang,
     uiLang,
+    level,
+    interests,
+    currentTopic,
+    onboardedAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -417,7 +564,11 @@ class ProfileRow extends DataClass implements Insertable<ProfileRow> {
           other.syncedAt == this.syncedAt &&
           other.displayName == this.displayName &&
           other.nativeLang == this.nativeLang &&
-          other.uiLang == this.uiLang);
+          other.uiLang == this.uiLang &&
+          other.level == this.level &&
+          other.interests == this.interests &&
+          other.currentTopic == this.currentTopic &&
+          other.onboardedAt == this.onboardedAt);
 }
 
 class ProfilesCompanion extends UpdateCompanion<ProfileRow> {
@@ -430,6 +581,10 @@ class ProfilesCompanion extends UpdateCompanion<ProfileRow> {
   final Value<String> displayName;
   final Value<String> nativeLang;
   final Value<String> uiLang;
+  final Value<String> level;
+  final Value<String> interests;
+  final Value<String> currentTopic;
+  final Value<DateTime?> onboardedAt;
   final Value<int> rowid;
   const ProfilesCompanion({
     this.id = const Value.absent(),
@@ -441,6 +596,10 @@ class ProfilesCompanion extends UpdateCompanion<ProfileRow> {
     this.displayName = const Value.absent(),
     this.nativeLang = const Value.absent(),
     this.uiLang = const Value.absent(),
+    this.level = const Value.absent(),
+    this.interests = const Value.absent(),
+    this.currentTopic = const Value.absent(),
+    this.onboardedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ProfilesCompanion.insert({
@@ -453,6 +612,10 @@ class ProfilesCompanion extends UpdateCompanion<ProfileRow> {
     required String displayName,
     required String nativeLang,
     required String uiLang,
+    this.level = const Value.absent(),
+    this.interests = const Value.absent(),
+    this.currentTopic = const Value.absent(),
+    this.onboardedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : ownerId = Value(ownerId),
        displayName = Value(displayName),
@@ -468,6 +631,10 @@ class ProfilesCompanion extends UpdateCompanion<ProfileRow> {
     Expression<String>? displayName,
     Expression<String>? nativeLang,
     Expression<String>? uiLang,
+    Expression<String>? level,
+    Expression<String>? interests,
+    Expression<String>? currentTopic,
+    Expression<DateTime>? onboardedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -480,6 +647,10 @@ class ProfilesCompanion extends UpdateCompanion<ProfileRow> {
       if (displayName != null) 'display_name': displayName,
       if (nativeLang != null) 'native_lang': nativeLang,
       if (uiLang != null) 'ui_lang': uiLang,
+      if (level != null) 'level': level,
+      if (interests != null) 'interests': interests,
+      if (currentTopic != null) 'current_topic': currentTopic,
+      if (onboardedAt != null) 'onboarded_at': onboardedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -494,6 +665,10 @@ class ProfilesCompanion extends UpdateCompanion<ProfileRow> {
     Value<String>? displayName,
     Value<String>? nativeLang,
     Value<String>? uiLang,
+    Value<String>? level,
+    Value<String>? interests,
+    Value<String>? currentTopic,
+    Value<DateTime?>? onboardedAt,
     Value<int>? rowid,
   }) {
     return ProfilesCompanion(
@@ -506,6 +681,10 @@ class ProfilesCompanion extends UpdateCompanion<ProfileRow> {
       displayName: displayName ?? this.displayName,
       nativeLang: nativeLang ?? this.nativeLang,
       uiLang: uiLang ?? this.uiLang,
+      level: level ?? this.level,
+      interests: interests ?? this.interests,
+      currentTopic: currentTopic ?? this.currentTopic,
+      onboardedAt: onboardedAt ?? this.onboardedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -540,6 +719,18 @@ class ProfilesCompanion extends UpdateCompanion<ProfileRow> {
     if (uiLang.present) {
       map['ui_lang'] = Variable<String>(uiLang.value);
     }
+    if (level.present) {
+      map['level'] = Variable<String>(level.value);
+    }
+    if (interests.present) {
+      map['interests'] = Variable<String>(interests.value);
+    }
+    if (currentTopic.present) {
+      map['current_topic'] = Variable<String>(currentTopic.value);
+    }
+    if (onboardedAt.present) {
+      map['onboarded_at'] = Variable<DateTime>(onboardedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -558,6 +749,10 @@ class ProfilesCompanion extends UpdateCompanion<ProfileRow> {
           ..write('displayName: $displayName, ')
           ..write('nativeLang: $nativeLang, ')
           ..write('uiLang: $uiLang, ')
+          ..write('level: $level, ')
+          ..write('interests: $interests, ')
+          ..write('currentTopic: $currentTopic, ')
+          ..write('onboardedAt: $onboardedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -6898,6 +7093,10 @@ typedef $$ProfilesTableCreateCompanionBuilder = ProfilesCompanion Function({
   required String displayName,
   required String nativeLang,
   required String uiLang,
+  Value<String> level,
+  Value<String> interests,
+  Value<String> currentTopic,
+  Value<DateTime?> onboardedAt,
   Value<int> rowid,
 });
 typedef $$ProfilesTableUpdateCompanionBuilder = ProfilesCompanion Function({
@@ -6910,6 +7109,10 @@ typedef $$ProfilesTableUpdateCompanionBuilder = ProfilesCompanion Function({
   Value<String> displayName,
   Value<String> nativeLang,
   Value<String> uiLang,
+  Value<String> level,
+  Value<String> interests,
+  Value<String> currentTopic,
+  Value<DateTime?> onboardedAt,
   Value<int> rowid,
 });
 
@@ -6964,6 +7167,26 @@ class $$ProfilesTableFilterComposer
 
   ColumnFilters<String> get uiLang => $composableBuilder(
     column: $table.uiLang,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get level => $composableBuilder(
+    column: $table.level,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get interests => $composableBuilder(
+    column: $table.interests,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currentTopic => $composableBuilder(
+    column: $table.currentTopic,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get onboardedAt => $composableBuilder(
+    column: $table.onboardedAt,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -7021,6 +7244,26 @@ class $$ProfilesTableOrderingComposer
     column: $table.uiLang,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get level => $composableBuilder(
+    column: $table.level,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get interests => $composableBuilder(
+    column: $table.interests,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currentTopic => $composableBuilder(
+    column: $table.currentTopic,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get onboardedAt => $composableBuilder(
+    column: $table.onboardedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ProfilesTableAnnotationComposer
@@ -7062,6 +7305,22 @@ class $$ProfilesTableAnnotationComposer
 
   GeneratedColumn<String> get uiLang =>
       $composableBuilder(column: $table.uiLang, builder: (column) => column);
+
+  GeneratedColumn<String> get level =>
+      $composableBuilder(column: $table.level, builder: (column) => column);
+
+  GeneratedColumn<String> get interests =>
+      $composableBuilder(column: $table.interests, builder: (column) => column);
+
+  GeneratedColumn<String> get currentTopic => $composableBuilder(
+    column: $table.currentTopic,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get onboardedAt => $composableBuilder(
+    column: $table.onboardedAt,
+    builder: (column) => column,
+  );
 }
 
 class $$ProfilesTableTableManager
@@ -7104,6 +7363,10 @@ class $$ProfilesTableTableManager
                 Value<String> displayName = const Value.absent(),
                 Value<String> nativeLang = const Value.absent(),
                 Value<String> uiLang = const Value.absent(),
+                Value<String> level = const Value.absent(),
+                Value<String> interests = const Value.absent(),
+                Value<String> currentTopic = const Value.absent(),
+                Value<DateTime?> onboardedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ProfilesCompanion(
                 id: id,
@@ -7115,6 +7378,10 @@ class $$ProfilesTableTableManager
                 displayName: displayName,
                 nativeLang: nativeLang,
                 uiLang: uiLang,
+                level: level,
+                interests: interests,
+                currentTopic: currentTopic,
+                onboardedAt: onboardedAt,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -7128,6 +7395,10 @@ class $$ProfilesTableTableManager
                 required String displayName,
                 required String nativeLang,
                 required String uiLang,
+                Value<String> level = const Value.absent(),
+                Value<String> interests = const Value.absent(),
+                Value<String> currentTopic = const Value.absent(),
+                Value<DateTime?> onboardedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ProfilesCompanion.insert(
                 id: id,
@@ -7139,6 +7410,10 @@ class $$ProfilesTableTableManager
                 displayName: displayName,
                 nativeLang: nativeLang,
                 uiLang: uiLang,
+                level: level,
+                interests: interests,
+                currentTopic: currentTopic,
+                onboardedAt: onboardedAt,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
