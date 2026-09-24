@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/providers/core_providers.dart';
 import '../../core/srs/srs_queue.dart';
@@ -13,6 +14,7 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/app_header_bar.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/primary_button.dart';
+import '../../core/widgets/skill_row.dart';
 import '../../core/widgets/sticky_action_bar.dart';
 import '../srs/srs_review_screen.dart';
 
@@ -25,6 +27,7 @@ class TodayScreen extends ConsumerWidget {
     final repo = ref.watch(cardStateRepositoryProvider);
     final limit = ref.watch(newCardLimitProvider).value ?? defaultNewCardLimit;
     final streak = ref.watch(streakDaysProvider).value ?? 0;
+    final doneToday = ref.watch(reviewsTodayProvider).value ?? 0;
     final now = DateTime.now();
 
     final streakMeta = streak > 0
@@ -40,53 +43,87 @@ class TodayScreen extends ConsumerWidget {
             final loaded = dueSnapshot.hasData && newSnapshot.hasData;
             final due = dueSnapshot.data ?? 0;
             final fresh = newSnapshot.data ?? 0;
-            final total = reviewQueueSize(due: due, fresh: fresh, newCardLimit: limit);
-            final servedNew = total - due;
+            final total = reviewQueueSize(
+              due: due,
+              fresh: fresh,
+              newCardLimit: limit,
+            );
+            final planned = doneToday + total;
 
             return Scaffold(
               appBar: AppHeaderBar(meta: streakMeta),
               body: !loaded
                   ? const Center(child: CircularProgressIndicator())
                   : ListView(
-                      padding: const EdgeInsets.fromLTRB(AppSpacing.screen, AppSpacing.s8, AppSpacing.screen, AppSpacing.s22),
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.screen,
+                        AppSpacing.s8,
+                        AppSpacing.screen,
+                        AppSpacing.s22,
+                      ),
                       children: [
-                        Text(RussianDate.weekdayTitle(now), style: AppTypography.title.copyWith(color: colors.ink)),
+                        Text(
+                          RussianDate.weekdayTitle(now),
+                          style: AppTypography.title.copyWith(
+                            color: colors.ink,
+                          ),
+                        ),
                         const SizedBox(height: AppSpacing.s4),
                         Text(
                           RussianDate.dayAndMonth(now),
-                          style: AppTypography.caption.copyWith(color: colors.muted),
+                          style: AppTypography.caption.copyWith(
+                            color: colors.muted,
+                          ),
                         ),
                         const SizedBox(height: AppSpacing.s22),
-                        if (total == 0)
+                        if (planned == 0)
                           const EmptyState(
-                            message: 'Пока нечего повторять — пройдите диктант в любом юните, '
+                            message:
+                                'Пока нечего повторять — пройдите диктант в любом юните, '
                                 'и выученные слова появятся здесь по расписанию.',
                           )
-                        else
+                        else ...[
+                          // Only the block that really exists. Reading, listening
+                          // and writing (02-04) arrive with the unit packs.
+                          SkillRow(
+                            number: '01',
+                            label: 'Слова',
+                            counter: '$doneToday / $planned',
+                            progress: doneToday / planned,
+                            started: doneToday > 0,
+                          ),
+                          const SizedBox(height: AppSpacing.s22),
                           AppCard(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            dashed: true,
+                            onTap: () => context.go('/courses'),
+                            child: Row(
                               children: [
-                                Text('$total', style: AppTypography.display.copyWith(color: colors.ink)),
-                                Text(
-                                  pluralRu(
-                                    total,
-                                    one: 'слово к повторению',
-                                    few: 'слова к повторению',
-                                    many: 'слов к повторению',
+                                Expanded(
+                                  child: Text(
+                                    'Слова с урока — сфоткайте лист или вставьте список',
+                                    style: AppTypography.caption.copyWith(
+                                      color: colors.muted,
+                                    ),
                                   ),
-                                  style: AppTypography.bodyText.copyWith(color: colors.muted),
                                 ),
-                                if (servedNew > 0) ...[
-                                  const SizedBox(height: AppSpacing.s10),
-                                  Text(
-                                    'из них новых: $servedNew',
-                                    style: AppTypography.monoMeta.copyWith(color: colors.muted),
+                                const SizedBox(width: AppSpacing.s14),
+                                Container(
+                                  width: 44,
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                      AppRadius.iconButton,
+                                    ),
+                                    border: Border.all(
+                                      color: colors.lineStrong,
+                                    ),
                                   ),
-                                ],
+                                  child: Icon(Icons.add, color: colors.ink),
+                                ),
                               ],
                             ),
                           ),
+                        ],
                       ],
                     ),
               bottomNavigationBar: total == 0
@@ -98,9 +135,12 @@ class TodayScreen extends ConsumerWidget {
                           trailingIcon: Icons.arrow_forward,
                           onPressed: () async {
                             await Navigator.of(context).push(
-                              MaterialPageRoute(builder: (_) => const SrsReviewScreen()),
+                              MaterialPageRoute(
+                                builder: (_) => const SrsReviewScreen(),
+                              ),
                             );
                             ref.invalidate(streakDaysProvider);
+                            ref.invalidate(reviewsTodayProvider);
                           },
                         ),
                       ],
