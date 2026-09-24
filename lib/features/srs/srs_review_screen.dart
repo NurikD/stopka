@@ -6,6 +6,10 @@ import '../../core/srs/srs_engine.dart' as engine;
 import '../../core/theme/app_theme_extension.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
+import '../../core/widgets/app_card.dart';
+import '../../core/widgets/app_header_bar.dart';
+import '../../core/widgets/primary_button.dart';
+import '../../core/widgets/stacked_card.dart';
 import '../../core/widgets/sticky_action_bar.dart';
 import '../../domain/models/card_state.dart' as domain;
 import '../../domain/models/dictation_session.dart';
@@ -21,7 +25,7 @@ class _QueueItem {
 enum _Phase { loading, reviewing, done }
 
 /// The Anki-style review loop: show the prompt, reveal the answer, rate
-/// your own recall. See PLAN.md "Интервальное повторение (принцип Anki)".
+/// your own recall.
 class SrsReviewScreen extends ConsumerStatefulWidget {
   const SrsReviewScreen({super.key});
 
@@ -67,9 +71,11 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
 
   _QueueItem get _current => _queue[_index];
 
-  String get _prompt => _current.state.direction == DictationDirection.ruEn ? _current.card.translation : _current.card.term;
+  bool get _ruToEn => _current.state.direction == DictationDirection.ruEn;
 
-  String get _answer => _current.state.direction == DictationDirection.ruEn ? _current.card.term : _current.card.translation;
+  String get _prompt => _ruToEn ? _current.card.translation : _current.card.term;
+
+  String get _answer => _ruToEn ? _current.card.term : _current.card.translation;
 
   Future<void> _rate(engine.SrsRating rating) async {
     final item = _current;
@@ -85,7 +91,12 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
       state: domain.SrsState.values.byName(result.snapshot.state.name),
       lastReview: result.snapshot.lastReview,
     );
-    await ref.read(cardStateRepositoryProvider).saveState(updated);
+    final stateRepo = ref.read(cardStateRepositoryProvider);
+    await stateRepo.saveState(updated);
+    await stateRepo.logReview(
+      cardStateId: item.state.id,
+      rating: domain.ReviewRating.values.byName(rating.name),
+    );
 
     if (!mounted) return;
     setState(() {
@@ -112,70 +123,94 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Повторение')),
+      appBar: AppHeaderBar(
+        nested: true,
+        navIcon: Icons.close,
+        title: 'Повторение',
+        meta: _phase == _Phase.reviewing ? '${_index + 1} / ${_queue.length}' : null,
+      ),
       body: switch (_phase) {
         _Phase.loading => const Center(child: CircularProgressIndicator()),
         _Phase.done => _buildDone(context),
         _Phase.reviewing => _buildReviewing(context),
       },
-      bottomNavigationBar: _phase == _Phase.reviewing ? _buildActionBar(context) : null,
+      bottomNavigationBar: switch (_phase) {
+        _Phase.reviewing => _buildActionBar(context),
+        _Phase.done => StickyActionBar(
+            children: [PrimaryButton(label: 'Готово', onPressed: () => Navigator.of(context).pop())],
+          ),
+        _Phase.loading => null,
+      },
     );
   }
 
   Widget _buildDone(BuildContext context) {
     final colors = context.colors;
     return Center(
-      child: Text('На сегодня всё!', style: AppTypography.title.copyWith(color: colors.ink)),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.screen),
+        child: AppCard(
+          dashed: true,
+          padding: const EdgeInsets.all(AppSpacing.s22),
+          child: Text(
+            'На сегодня всё',
+            textAlign: TextAlign.center,
+            style: AppTypography.heading.copyWith(color: colors.ink),
+          ),
+        ),
+      ),
     );
   }
 
   Widget _buildReviewing(BuildContext context) {
     final colors = context.colors;
-    return Column(
+    final layers = (_queue.length - _index - 1).clamp(0, 2);
+
+    // English text is mono; Russian is Onest.
+    TextStyle promptStyle(bool english) => english
+        ? AppTypography.monoWord.copyWith(fontSize: 34, height: 40 / 34, letterSpacing: 0)
+        : AppTypography.display;
+
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(AppSpacing.screen, AppSpacing.s22, AppSpacing.screen, AppSpacing.s22),
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(AppSpacing.s14, AppSpacing.s10, AppSpacing.s14, 0),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              '${_index + 1} из ${_queue.length}',
-              style: AppTypography.caption.copyWith(color: colors.muted),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s14),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(_prompt, textAlign: TextAlign.center, style: AppTypography.display.copyWith(color: colors.ink)),
-                  if (_revealed) ...[
-                    const SizedBox(height: AppSpacing.s22),
-                    Divider(color: colors.line),
-                    const SizedBox(height: AppSpacing.s22),
-                    Text(
-                      _answer,
-                      textAlign: TextAlign.center,
-                      style: AppTypography.heading.copyWith(color: colors.accent),
-                    ),
-                    if (_current.card.transcription.isNotEmpty) ...[
-                      const SizedBox(height: AppSpacing.s8),
-                      Text(
-                        _current.card.transcription,
-                        style: AppTypography.transcription.copyWith(color: colors.muted),
-                      ),
-                    ],
+        StackedCard(
+          layers: layers,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.s22),
+            child: Column(
+              children: [
+                Text(
+                  _prompt,
+                  textAlign: TextAlign.center,
+                  style: promptStyle(!_ruToEn).copyWith(color: colors.ink),
+                ),
+                if (_revealed) ...[
+                  const SizedBox(height: AppSpacing.s22),
+                  Divider(color: colors.line, height: 1),
+                  const SizedBox(height: AppSpacing.s22),
+                  Text(
+                    _answer,
+                    textAlign: TextAlign.center,
+                    style: (_ruToEn ? AppTypography.monoWord.copyWith(fontSize: 26) : AppTypography.heading)
+                        .copyWith(color: colors.accent),
+                  ),
+                  if (_current.card.transcription.isNotEmpty) ...[
                     const SizedBox(height: AppSpacing.s8),
-                    IconButton(
-                      icon: const Icon(Icons.volume_up_outlined),
-                      color: colors.muted,
-                      onPressed: () => ref.read(ttsServiceProvider).speak(_current.card.term),
+                    Text(
+                      _current.card.transcription,
+                      style: AppTypography.transcription.copyWith(color: colors.muted),
                     ),
                   ],
+                  const SizedBox(height: AppSpacing.s8),
+                  IconButton(
+                    icon: const Icon(Icons.volume_up_outlined),
+                    color: colors.muted,
+                    constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                    onPressed: () => ref.read(ttsServiceProvider).speak(_current.card.term),
+                  ),
                 ],
-              ),
+              ],
             ),
           ),
         ),
@@ -186,42 +221,59 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
   Widget _buildActionBar(BuildContext context) {
     if (!_revealed) {
       return StickyActionBar(
-        children: [
-          FilledButton(
-            onPressed: () => setState(() => _revealed = true),
-            child: const Text('Показать ответ'),
-          ),
-        ],
+        children: [PrimaryButton(label: 'Показать ответ', onPressed: () => setState(() => _revealed = true))],
       );
     }
     return StickyActionBar(
       children: [
         _RatingButton(label: 'Забыл', onPressed: () => _rate(engine.SrsRating.again)),
         _RatingButton(label: 'Трудно', onPressed: () => _rate(engine.SrsRating.hard)),
-        _RatingButton(label: 'Хорошо', onPressed: () => _rate(engine.SrsRating.good)),
+        _RatingButton(label: 'Хорошо', primary: true, onPressed: () => _rate(engine.SrsRating.good)),
         _RatingButton(label: 'Легко', onPressed: () => _rate(engine.SrsRating.easy)),
       ],
     );
   }
 }
 
+/// Four ratings share one row, so these have tighter padding than the
+/// full-width buttons. "Хорошо" is the ink-filled default.
 class _RatingButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
+  final bool primary;
 
-  const _RatingButton({required this.label, required this.onPressed});
+  const _RatingButton({required this.label, required this.onPressed, this.primary = false});
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.button));
+    const padding = EdgeInsets.symmetric(horizontal: AppSpacing.s4);
+    final text = Text(label, style: AppTypography.label, maxLines: 1, textAlign: TextAlign.center);
+
+    if (primary) {
+      return FilledButton(
+        onPressed: onPressed,
+        style: FilledButton.styleFrom(
+          minimumSize: const Size(0, 56),
+          padding: padding,
+          shape: shape,
+          backgroundColor: colors.ink,
+          foregroundColor: colors.inkOn,
+        ),
+        child: text,
+      );
+    }
     return OutlinedButton(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
-        foregroundColor: colors.ink,
-        side: BorderSide(color: colors.line),
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.s8),
+        minimumSize: const Size(0, 56),
+        padding: padding,
+        shape: shape,
+        foregroundColor: colors.muted,
+        side: BorderSide(color: colors.lineStrong),
       ),
-      child: Text(label, style: AppTypography.label, textAlign: TextAlign.center),
+      child: text,
     );
   }
 }
