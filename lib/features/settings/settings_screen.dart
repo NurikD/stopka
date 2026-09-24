@@ -8,6 +8,7 @@ import '../../core/srs/srs_settings_store.dart';
 import '../../core/theme/app_theme_extension.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
+import '../../core/tts/tts_service.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/app_header_bar.dart';
 import '../../core/widgets/ghost_button.dart';
@@ -47,6 +48,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   String? _checkErrorMessage;
   int _requestsToday = 0;
   int _newCardLimit = defaultNewCardLimit;
+  List<TtsVoice> _voices = const [];
+  String? _voice;
+  bool _hasEnglish = true;
 
   ApiKeyStore get _store => ref.read(apiKeyStoreProvider);
 
@@ -59,10 +63,29 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Future<void> _loadStoredValues() async {
     final key = await _store.getApiKey();
     final model = await _store.getModel();
-    final requestsToday = await ref.read(llmRequestCounterProvider).getTodayCount();
-    final newCardLimit = await ref.read(srsSettingsStoreProvider).getNewCardLimit();
+    final requestsToday = await ref
+        .read(llmRequestCounterProvider)
+        .getTodayCount();
+    final newCardLimit = await ref
+        .read(srsSettingsStoreProvider)
+        .getNewCardLimit();
+    final tts = ref.read(ttsServiceProvider);
+    List<TtsVoice> voices = const [];
+    var hasEnglish = true;
+    String? voice;
+    try {
+      voices = await tts.englishVoices();
+      hasEnglish = await tts.hasEnglish();
+      voice = await tts.savedVoice();
+    } catch (_) {
+      // No speech engine on this device: the section just says so.
+      hasEnglish = false;
+    }
     if (!mounted) return;
     setState(() {
+      _voices = voices;
+      _hasEnglish = hasEnglish;
+      _voice = voices.any((v) => v.name == voice) ? voice : null;
       _keyController.text = key ?? '';
       _model = model;
       _requestsToday = requestsToday;
@@ -83,14 +106,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     await _store.setModel(_model);
     if (!mounted) return;
     setState(() => _saving = false);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Настройки сохранены')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Настройки сохранены')));
   }
 
   Future<void> _setNewCardLimit(int value) async {
     setState(() => _newCardLimit = value);
     await ref.read(srsSettingsStoreProvider).setNewCardLimit(value);
+  }
+
+  Future<void> _setVoice(String? name) async {
+    setState(() => _voice = name);
+    final tts = ref.read(ttsServiceProvider);
+    await tts.saveVoice(name);
+    await tts.speak('I would like to borrow a book.');
   }
 
   Future<void> _checkKey() async {
@@ -109,7 +138,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     try {
       final ok = await ref.read(llmClientProvider).validateApiKey(key);
       if (!mounted) return;
-      setState(() => _checkStatus = ok ? _KeyCheckStatus.valid : _KeyCheckStatus.invalid);
+      setState(
+        () =>
+            _checkStatus = ok ? _KeyCheckStatus.valid : _KeyCheckStatus.invalid,
+      );
     } on LlmException catch (e) {
       if (!mounted) return;
       setState(() {
@@ -131,16 +163,28 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
 
     final modelOptions = {...knownGeminiModels, _model}.toList();
-    final limitChoices = {...newCardLimitChoices, _newCardLimit}.toList()..sort();
+    final limitChoices = {...newCardLimitChoices, _newCardLimit}.toList()
+      ..sort();
     final themeMode = ref.watch(themeModeProvider);
-    final mono = AppTypography.monoWord.copyWith(fontSize: 15, color: colors.ink);
+    final mono = AppTypography.monoWord.copyWith(
+      fontSize: 15,
+      color: colors.ink,
+    );
 
     return Scaffold(
       appBar: const AppHeaderBar(),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(AppSpacing.screen, AppSpacing.s8, AppSpacing.screen, AppSpacing.s22),
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.screen,
+          AppSpacing.s8,
+          AppSpacing.screen,
+          AppSpacing.s22,
+        ),
         children: [
-          Text('Профиль', style: AppTypography.title.copyWith(color: colors.ink)),
+          Text(
+            'Профиль',
+            style: AppTypography.title.copyWith(color: colors.ink),
+          ),
           const SizedBox(height: AppSpacing.s22),
           AppCard(
             child: LabeledField(
@@ -152,7 +196,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ChoiceOption(ThemeMode.system, 'Как в системе'),
                 ],
                 selected: themeMode,
-                onChanged: (mode) => ref.read(themeModeProvider.notifier).set(mode),
+                onChanged: (mode) =>
+                    ref.read(themeModeProvider.notifier).set(mode),
               ),
             ),
           ),
@@ -172,7 +217,63 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Gemini API', style: AppTypography.heading.copyWith(color: colors.ink)),
+                Text(
+                  'Озвучка',
+                  style: AppTypography.heading.copyWith(color: colors.ink),
+                ),
+                const SizedBox(height: AppSpacing.s14),
+                if (!_hasEnglish)
+                  Text(
+                    'На телефоне не установлен английский голос, поэтому слова читаются с чужим акцентом. '
+                    'Откройте настройки телефона → Язык и ввод → Синтез речи → Google → Установить голосовые данные → English (US).',
+                    style: AppTypography.bodyText.copyWith(
+                      color: colors.danger,
+                    ),
+                  )
+                else if (_voices.isEmpty)
+                  Text(
+                    'Английские голоса не найдены. Голос выбирает система.',
+                    style: AppTypography.bodyText.copyWith(color: colors.muted),
+                  )
+                else ...[
+                  LabeledField(
+                    label: 'Голос',
+                    child: DropdownButtonFormField<String?>(
+                      initialValue: _voice,
+                      style: mono,
+                      dropdownColor: colors.surface,
+                      items: [
+                        const DropdownMenuItem<String?>(
+                          value: null,
+                          child: Text('Автоматически'),
+                        ),
+                        for (final v in _voices)
+                          DropdownMenuItem<String?>(
+                            value: v.name,
+                            child: Text('${v.name} · ${v.locale}'),
+                          ),
+                      ],
+                      onChanged: _setVoice,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.s8),
+                  Text(
+                    'Выбор сразу проигрывает пример. Если звучит плохо, попробуйте другой голос.',
+                    style: AppTypography.caption.copyWith(color: colors.muted),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.s10),
+          AppCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Gemini API',
+                  style: AppTypography.heading.copyWith(color: colors.ink),
+                ),
                 const SizedBox(height: AppSpacing.s14),
                 LabeledField(
                   label: 'Ключ',
@@ -186,12 +287,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     decoration: InputDecoration(
                       hintText: 'Вставьте ключ',
                       suffixIcon: IconButton(
-                        icon: Icon(_obscureKey ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+                        icon: Icon(
+                          _obscureKey
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                        ),
                         color: colors.muted,
-                        onPressed: () => setState(() => _obscureKey = !_obscureKey),
+                        onPressed: () =>
+                            setState(() => _obscureKey = !_obscureKey),
                       ),
                     ),
-                    onChanged: (_) => setState(() => _checkStatus = _KeyCheckStatus.idle),
+                    onChanged: (_) =>
+                        setState(() => _checkStatus = _KeyCheckStatus.idle),
                   ),
                 ),
                 const SizedBox(height: AppSpacing.s14),
@@ -201,7 +308,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     initialValue: _model,
                     style: mono,
                     dropdownColor: colors.surface,
-                    items: modelOptions.map((m) => DropdownMenuItem(value: m, child: Text(m))).toList(),
+                    items: modelOptions
+                        .map((m) => DropdownMenuItem(value: m, child: Text(m)))
+                        .toList(),
                     onChanged: (value) {
                       if (value != null) setState(() => _model = value);
                     },
@@ -210,12 +319,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 const SizedBox(height: AppSpacing.s18),
                 Row(
                   children: [
-                    Expanded(child: PrimaryButton(label: 'Сохранить', onPressed: _save, loading: _saving)),
+                    Expanded(
+                      child: PrimaryButton(
+                        label: 'Сохранить',
+                        onPressed: _save,
+                        loading: _saving,
+                      ),
+                    ),
                     const SizedBox(width: AppSpacing.s10),
                     Expanded(
                       child: GhostButton(
                         label: 'Проверить ключ',
-                        onPressed: _checkStatus == _KeyCheckStatus.checking ? null : _checkKey,
+                        onPressed: _checkStatus == _KeyCheckStatus.checking
+                            ? null
+                            : _checkKey,
                       ),
                     ),
                   ],
@@ -240,10 +357,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       _KeyCheckStatus.idle || _KeyCheckStatus.checking => (null, colors.muted),
       _KeyCheckStatus.valid => ('Ключ работает.', colors.success),
       _KeyCheckStatus.invalid => (
-          _checkErrorMessage ?? 'Ключ недействителен. Проверьте его и попробуйте снова.',
-          colors.danger,
-        ),
-      _KeyCheckStatus.error => (_checkErrorMessage ?? 'Не удалось проверить ключ.', colors.danger),
+        _checkErrorMessage ??
+            'Ключ недействителен. Проверьте его и попробуйте снова.',
+        colors.danger,
+      ),
+      _KeyCheckStatus.error => (
+        _checkErrorMessage ?? 'Не удалось проверить ключ.',
+        colors.danger,
+      ),
     };
     if (text == null) return const SizedBox.shrink();
     return Padding(
