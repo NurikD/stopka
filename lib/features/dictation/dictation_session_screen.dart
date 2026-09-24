@@ -32,7 +32,11 @@ class _RoundAnswer {
   final DictationVerdict verdict;
   String? answerId; // set once persisted, used by the AI-appeal update
 
-  _RoundAnswer({required this.word, required this.userInput, required this.verdict});
+  _RoundAnswer({
+    required this.word,
+    required this.userInput,
+    required this.verdict,
+  });
 }
 
 class DictationSessionScreen extends ConsumerStatefulWidget {
@@ -63,23 +67,30 @@ class DictationSessionScreen extends ConsumerStatefulWidget {
   /// Builds the DictationWord list a set's cards turn into for a given
   /// direction — shared by a fresh session and by DictationSetupScreen
   /// when it needs to replay history to resume or close out a session.
-  static List<DictationWord> buildWords(List<WordCard> cards, DictationDirection direction) {
+  static List<DictationWord> buildWords(
+    List<WordCard> cards,
+    DictationDirection direction,
+  ) {
     final ruToEn = direction == DictationDirection.ruEn;
     return cards
-        .map((c) => DictationWord(
-              cardId: c.id,
-              prompt: ruToEn ? c.translation : c.term,
-              correctAnswer: ruToEn ? c.term : c.translation,
-            ))
+        .map(
+          (c) => DictationWord(
+            cardId: c.id,
+            prompt: ruToEn ? c.translation : c.term,
+            correctAnswer: ruToEn ? c.term : c.translation,
+          ),
+        )
         .where((w) => w.prompt.isNotEmpty && w.correctAnswer.isNotEmpty)
         .toList();
   }
 
   @override
-  ConsumerState<DictationSessionScreen> createState() => _DictationSessionScreenState();
+  ConsumerState<DictationSessionScreen> createState() =>
+      _DictationSessionScreenState();
 }
 
-class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen> {
+class _DictationSessionScreenState
+    extends ConsumerState<DictationSessionScreen> {
   _Phase _phase = _Phase.loading;
   late DictationEngine _engine;
   late String _sessionId;
@@ -108,7 +119,12 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
   }
 
   Future<void> _bootstrap() async {
-    final cards = widget.onlyCards ?? await ref.read(wordCardRepositoryProvider).watchCards(widget.setId).first;
+    final cards =
+        widget.onlyCards ??
+        await ref
+            .read(wordCardRepositoryProvider)
+            .watchCards(widget.setId)
+            .first;
     _cardsById = {for (final c in cards) c.id: c};
 
     if (widget.resumedEngine != null && widget.resumedSessionId != null) {
@@ -116,9 +132,15 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
       _sessionId = widget.resumedSessionId!;
     } else {
       final words = DictationSessionScreen.buildWords(cards, widget.direction);
-      _engine = DictationEngine(words: words, stackSize: widget.stackSize, requiredStreak: widget.requiredStreak);
+      _engine = DictationEngine(
+        words: words,
+        stackSize: widget.stackSize,
+        requiredStreak: widget.requiredStreak,
+      );
 
-      final session = await ref.read(dictationRepositoryProvider).startSession(
+      final session = await ref
+          .read(dictationRepositoryProvider)
+          .startSession(
             setId: widget.setId,
             direction: widget.direction,
             stackSize: widget.stackSize,
@@ -147,14 +169,25 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
     final userInput = skipped ? '' : _inputController.text;
     final verdict = skipped
         ? DictationVerdict.skipped
-        : AnswerChecker.check(userInput: userInput, correctAnswer: _currentWord.correctAnswer);
+        : AnswerChecker.check(
+            userInput: userInput,
+            correctAnswer: _currentWord.correctAnswer,
+          );
 
     _engine.recordAnswer(_currentWord.cardId, verdict);
     if (verdict != DictationVerdict.correct) {
-      _mistakeCounts.update(_currentWord.cardId, (v) => v + 1, ifAbsent: () => 1);
+      _mistakeCounts.update(
+        _currentWord.cardId,
+        (v) => v + 1,
+        ifAbsent: () => 1,
+      );
     }
 
-    final answer = _RoundAnswer(word: _currentWord, userInput: userInput, verdict: verdict);
+    final answer = _RoundAnswer(
+      word: _currentWord,
+      userInput: userInput,
+      verdict: verdict,
+    );
     _currentStackAnswers.add(answer);
 
     if (verdict == DictationVerdict.correct) {
@@ -168,7 +201,9 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
       _phase = _Phase.showingResult;
     });
 
-    final repoAnswer = await ref.read(dictationRepositoryProvider).recordAnswer(
+    final repoAnswer = await ref
+        .read(dictationRepositoryProvider)
+        .recordAnswer(
           sessionId: _sessionId,
           cardId: _currentWord.cardId,
           roundIndex: _engine.roundIndex,
@@ -180,8 +215,12 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
     // Only the transition itself is skipped under reduce-motion — the
     // pause here is reading time for the result, not decorative motion.
     final reduceMotion = mounted && MediaQuery.disableAnimationsOf(context);
-    final transitionDuration = reduceMotion ? Duration.zero : AppMotion.checkDuration;
-    await Future.delayed(transitionDuration + const Duration(milliseconds: 500));
+    final transitionDuration = reduceMotion
+        ? Duration.zero
+        : AppMotion.checkDuration;
+    await Future.delayed(
+      transitionDuration + const Duration(milliseconds: 500),
+    );
     if (!mounted) return;
 
     if (_index + 1 < _stack.length) {
@@ -202,7 +241,9 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
   Future<void> _onStackReviewContinue() async {
     if (_engine.isFinished) {
       setState(() => _phase = _Phase.finishing);
-      await ref.read(dictationRepositoryProvider).finishSession(
+      await ref
+          .read(dictationRepositoryProvider)
+          .finishSession(
             _sessionId,
             roundsCount: _engine.roundIndex,
             totalWords: _engine.masteredWords.length,
@@ -217,10 +258,12 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
       }
 
       if (!mounted) return;
-      final problemCardIds = (_mistakeCounts.entries.toList()..sort((a, b) => b.value.compareTo(a.value)))
-          .take(10)
-          .map((e) => e.key)
-          .toList();
+      final problemCardIds =
+          (_mistakeCounts.entries.toList()
+                ..sort((a, b) => b.value.compareTo(a.value)))
+              .take(10)
+              .map((e) => e.key)
+              .toList();
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (_) => SessionSummaryScreen(
@@ -228,7 +271,10 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
             direction: widget.direction,
             roundsCount: _engine.roundIndex,
             totalWords: _engine.masteredWords.length,
-            problemCards: problemCardIds.map((id) => _cardsById[id]).whereType<WordCard>().toList(),
+            problemCards: problemCardIds
+                .map((id) => _cardsById[id])
+                .whereType<WordCard>()
+                .toList(),
           ),
         ),
       );
@@ -239,15 +285,23 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
 
   Future<void> _appeal(_RoundAnswer answer) async {
     try {
-      final result = await ref.read(answerAppealServiceProvider).appeal(
-            term: _cardsById[answer.word.cardId]?.term ?? answer.word.correctAnswer,
+      final result = await ref
+          .read(answerAppealServiceProvider)
+          .appeal(
+            term:
+                _cardsById[answer.word.cardId]?.term ??
+                answer.word.correctAnswer,
             correctAnswer: answer.word.correctAnswer,
             userAnswer: answer.userInput,
-            direction: widget.direction == DictationDirection.ruEn ? 'RU -> EN' : 'EN -> RU',
+            direction: widget.direction == DictationDirection.ruEn
+                ? 'RU -> EN'
+                : 'EN -> RU',
           );
       if (!mounted) return;
       if (result.accepted && answer.answerId != null) {
-        await ref.read(dictationRepositoryProvider).updateAnswerVerdict(
+        await ref
+            .read(dictationRepositoryProvider)
+            .updateAnswerVerdict(
               answer.answerId!,
               domain.DictationAnswerVerdict.correct,
               domain.DictationCheckedBy.llm,
@@ -255,11 +309,18 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
       }
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(result.accepted ? 'ИИ согласен: ${result.explanationRu}' : result.explanationRu)),
+        SnackBar(
+          content: Text(
+            result.accepted
+                ? 'ИИ согласен: ${result.explanationRu}'
+                : result.explanationRu,
+          ),
+        ),
       );
     } on LlmException catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.messageRu)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.messageRu)));
     }
   }
 
@@ -270,24 +331,40 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
       appBar: AppHeaderBar(
         nested: true,
         navIcon: Icons.close,
-        title: 'Диктант',
-        meta: inRound ? 'раунд ${_engine.roundIndex}' : null,
+        title: inRound
+            ? 'раунд ${_engine.roundIndex} · ${_two(_index + 1)}/${_two(_stack.length)}'
+            : 'диктант',
       ),
       body: switch (_phase) {
-        _Phase.loading || _Phase.finishing => const Center(child: CircularProgressIndicator()),
+        _Phase.loading ||
+        _Phase.finishing => const Center(child: CircularProgressIndicator()),
         _Phase.playing || _Phase.showingResult => _buildRound(context),
         _Phase.stackReview => _buildStackReview(context),
       },
     );
   }
 
+  String _two(int n) => n.toString().padLeft(2, '0');
+
   bool get _promptIsEnglish => widget.direction == DictationDirection.enRu;
+
+  /// "ru → en · глагол" — direction plus the card's part of speech.
+  String _promptMeta() {
+    final direction = _promptIsEnglish ? 'en → ru' : 'ru → en';
+    final pos = _cardsById[_currentWord.cardId]?.partOfSpeech ?? '';
+    return pos.isEmpty ? direction : '$direction · $pos';
+  }
+
+  /// The card's note doubles as the clarifying line under the word.
+  String get _hint => _cardsById[_currentWord.cardId]?.note ?? '';
 
   Widget _buildRound(BuildContext context) {
     final colors = context.colors;
     // DESIGN_v2: reduce-motion makes transitions instant; haptics stay.
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
-    final checkDuration = reduceMotion ? Duration.zero : AppMotion.checkDuration;
+    final checkDuration = reduceMotion
+        ? Duration.zero
+        : AppMotion.checkDuration;
 
     final showingResult = _phase == _Phase.showingResult;
     final passed = showingResult ? _index + 1 : _index;
@@ -299,56 +376,102 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
 
     // English prompts (EN -> RU) are mono like every English word.
     final promptStyle = _promptIsEnglish
-        ? AppTypography.monoWord.copyWith(fontSize: 34, height: 40 / 34, letterSpacing: 0)
+        ? AppTypography.monoWord.copyWith(
+            fontSize: 34,
+            height: 40 / 34,
+            letterSpacing: 0,
+          )
         : AppTypography.display;
 
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(AppSpacing.screen, AppSpacing.s8, AppSpacing.screen, 0),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.screen,
+            AppSpacing.s8,
+            AppSpacing.screen,
+            0,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              StackProgress(total: _stack.length, current: passed, wrong: wrong),
-              const SizedBox(height: AppSpacing.s8),
-              Text(
-                '${_index + 1} / ${_stack.length}',
-                style: AppTypography.monoMeta.copyWith(color: colors.muted),
+              StackProgress(
+                total: _stack.length,
+                current: passed,
+                wrong: wrong,
               ),
             ],
           ),
         ),
         Expanded(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(AppSpacing.screen, AppSpacing.s22, AppSpacing.screen, AppSpacing.s22),
-            children: [
-              StackedCard(
-                layers: layers,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.s30),
-                  child: Center(
-                    child: Text(
-                      _currentWord.prompt,
-                      textAlign: TextAlign.center,
-                      style: promptStyle.copyWith(color: colors.ink),
+          // The artboards centre the card and field in the free space.
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.screen,
+                AppSpacing.s22,
+                AppSpacing.screen,
+                AppSpacing.s22,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  StackedCard(
+                    layers: layers,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AppSpacing.s4,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _promptMeta(),
+                            style: AppTypography.monoMeta.copyWith(
+                              color: colors.muted,
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.s14),
+                          Text(
+                            _currentWord.prompt,
+                            style: promptStyle.copyWith(color: colors.ink),
+                          ),
+                          if (_hint.isNotEmpty) ...[
+                            const SizedBox(height: AppSpacing.s8),
+                            Text(
+                              _hint,
+                              style: AppTypography.caption.copyWith(
+                                color: colors.muted,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
+                  const SizedBox(height: AppSpacing.s22),
+                  AnimatedSwitcher(
+                    duration: checkDuration,
+                    switchInCurve: AppMotion.checkCurve,
+                    switchOutCurve: AppMotion.checkCurve,
+                    child: showingResult
+                        ? _buildResultReveal(context)
+                        : _buildInput(context),
+                  ),
+                ],
               ),
-              const SizedBox(height: AppSpacing.s22),
-              AnimatedSwitcher(
-                duration: checkDuration,
-                switchInCurve: AppMotion.checkCurve,
-                switchOutCurve: AppMotion.checkCurve,
-                child: showingResult ? _buildResultReveal(context) : _buildInput(context),
-              ),
-            ],
+            ),
           ),
         ),
         if (_phase == _Phase.playing)
           StickyActionBar(
+            flexes: const [3, 5],
             children: [
-              GhostButton(label: 'Не знаю', onPressed: () => _submit(skipped: true)),
+              GhostButton(
+                label: 'Не знаю',
+                onPressed: () => _submit(skipped: true),
+              ),
               PrimaryButton(
                 label: 'Проверить',
                 variant: PrimaryButtonVariant.accent,
@@ -401,7 +524,9 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
 
   Widget _buildStackReview(BuildContext context) {
     final colors = context.colors;
-    final mistakes = _currentStackAnswers.where((a) => a.verdict != DictationVerdict.correct).toList();
+    final mistakes = _currentStackAnswers
+        .where((a) => a.verdict != DictationVerdict.correct)
+        .toList();
     final correctCount = _currentStackAnswers.length - mistakes.length;
     final returning = pluralRu(
       mistakes.length,
@@ -414,7 +539,12 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
       children: [
         Expanded(
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(AppSpacing.screen, AppSpacing.s8, AppSpacing.screen, AppSpacing.s22),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.screen,
+              AppSpacing.s8,
+              AppSpacing.screen,
+              AppSpacing.s22,
+            ),
             children: [
               Text(
                 '$correctCount из ${_currentStackAnswers.length}',
@@ -422,7 +552,9 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
               ),
               const SizedBox(height: AppSpacing.s4),
               Text(
-                mistakes.isEmpty ? 'Всё верно в этом раунде' : '${mistakes.length} $returning в стопку',
+                mistakes.isEmpty
+                    ? 'Всё верно в этом раунде'
+                    : '${mistakes.length} $returning в стопку',
                 style: AppTypography.bodyText.copyWith(color: colors.muted),
               ),
               const SizedBox(height: AppSpacing.s22),
@@ -436,7 +568,9 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
         StickyActionBar(
           children: [
             PrimaryButton(
-              label: _engine.isFinished ? 'Завершить диктант' : 'Следующая стопка',
+              label: _engine.isFinished
+                  ? 'Завершить диктант'
+                  : 'Следующая стопка',
               onPressed: _onStackReviewContinue,
             ),
           ],
@@ -448,7 +582,10 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
   Widget _buildMistake(BuildContext context, _RoundAnswer a) {
     final colors = context.colors;
     final card = _cardsById[a.word.cardId];
-    final correct = AnswerChecker.closestVariant(userInput: a.userInput, storedAnswer: a.word.correctAnswer);
+    final correct = AnswerChecker.closestVariant(
+      userInput: a.userInput,
+      storedAnswer: a.word.correctAnswer,
+    );
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -456,25 +593,38 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
           Row(
             children: [
               Expanded(
-                child: Text(a.word.prompt, style: AppTypography.caption.copyWith(color: colors.muted)),
+                child: Text(
+                  a.word.prompt,
+                  style: AppTypography.caption.copyWith(color: colors.muted),
+                ),
               ),
               if (card != null && card.transcription.isNotEmpty)
-                Text(card.transcription, style: AppTypography.transcription.copyWith(color: colors.muted)),
+                Text(
+                  card.transcription,
+                  style: AppTypography.transcription.copyWith(
+                    color: colors.muted,
+                  ),
+                ),
               IconButton(
                 icon: const Icon(Icons.volume_up_outlined),
                 color: colors.muted,
                 constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-                onPressed: () => ref.read(ttsServiceProvider).speak(card?.term ?? correct),
+                onPressed: () =>
+                    ref.read(ttsServiceProvider).speak(card?.term ?? correct),
               ),
             ],
           ),
           DiffRow(user: a.userInput, correct: correct),
-          if (a.verdict == DictationVerdict.wrong || a.verdict == DictationVerdict.typo)
+          if (a.verdict == DictationVerdict.wrong ||
+              a.verdict == DictationVerdict.typo)
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton(
                 onPressed: () => _appeal(a),
-                child: Text('Мой ответ тоже верный?', style: AppTypography.label.copyWith(color: colors.accent)),
+                child: Text(
+                  'Мой ответ тоже верный?',
+                  style: AppTypography.label.copyWith(color: colors.accent),
+                ),
               ),
             ),
         ],
