@@ -6,12 +6,18 @@ import '../../core/dictation/answer_checker.dart';
 import '../../core/dictation/dictation_engine.dart';
 import '../../core/llm/llm_exception.dart';
 import '../../core/providers/core_providers.dart';
+import '../../core/text/russian_plural.dart';
 import '../../core/theme/app_theme_extension.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
+import '../../core/widgets/app_card.dart';
+import '../../core/widgets/app_header_bar.dart';
+import '../../core/widgets/diff_row.dart';
+import '../../core/widgets/dictation_field.dart';
 import '../../core/widgets/ghost_button.dart';
 import '../../core/widgets/primary_button.dart';
-import '../../core/widgets/result_row.dart';
+import '../../core/widgets/stack_progress.dart';
+import '../../core/widgets/stacked_card.dart';
 import '../../core/widgets/sticky_action_bar.dart';
 import '../../domain/models/dictation_answer.dart' as domain;
 import '../../domain/models/dictation_session.dart';
@@ -259,8 +265,14 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
 
   @override
   Widget build(BuildContext context) {
+    final inRound = _phase == _Phase.playing || _phase == _Phase.showingResult;
     return Scaffold(
-      appBar: AppBar(title: const Text('Диктант')),
+      appBar: AppHeaderBar(
+        nested: true,
+        navIcon: Icons.close,
+        title: 'Диктант',
+        meta: inRound ? 'раунд ${_engine.roundIndex}' : null,
+      ),
       body: switch (_phase) {
         _Phase.loading || _Phase.finishing => const Center(child: CircularProgressIndicator()),
         _Phase.playing || _Phase.showingResult => _buildRound(context),
@@ -269,47 +281,79 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
     );
   }
 
+  bool get _promptIsEnglish => widget.direction == DictationDirection.enRu;
+
   Widget _buildRound(BuildContext context) {
     final colors = context.colors;
-    // DESIGN.md: "MediaQuery.disableAnimations уважается — при включённом
-    // системном «уменьшить движение» переходы становятся мгновенными."
+    // DESIGN_v2: reduce-motion makes transitions instant; haptics stay.
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
     final checkDuration = reduceMotion ? Duration.zero : AppMotion.checkDuration;
+
+    final showingResult = _phase == _Phase.showingResult;
+    final passed = showingResult ? _index + 1 : _index;
+    final wrong = {
+      for (var i = 0; i < _currentStackAnswers.length; i++)
+        if (_currentStackAnswers[i].verdict != DictationVerdict.correct) i,
+    };
+    final layers = (_engine.unintroducedCount / widget.stackSize).ceil();
+
+    // English prompts (EN -> RU) are mono like every English word.
+    final promptStyle = _promptIsEnglish
+        ? AppTypography.monoWord.copyWith(fontSize: 34, height: 40 / 34, letterSpacing: 0)
+        : AppTypography.display;
+
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(AppSpacing.s14, AppSpacing.s10, AppSpacing.s14, 0),
-          child: Row(
+          padding: const EdgeInsets.fromLTRB(AppSpacing.screen, AppSpacing.s8, AppSpacing.screen, 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              StackProgress(total: _stack.length, current: passed, wrong: wrong),
+              const SizedBox(height: AppSpacing.s8),
               Text(
-                'Раунд ${_engine.roundIndex} · слово ${_index + 1} из ${_stack.length}',
-                style: AppTypography.caption.copyWith(color: colors.muted),
+                '${_index + 1} / ${_stack.length}',
+                style: AppTypography.monoMeta.copyWith(color: colors.muted),
               ),
-              const Spacer(),
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s14),
-          child: LinearProgressIndicator(
-            value: (_index + (_phase == _Phase.showingResult ? 1 : 0)) / _stack.length,
-            color: colors.accent,
-            backgroundColor: colors.line,
-          ),
-        ),
         Expanded(
-          child: AnimatedSwitcher(
-            duration: checkDuration,
-            switchInCurve: AppMotion.checkCurve,
-            switchOutCurve: AppMotion.checkCurve,
-            child: _phase == _Phase.showingResult ? _buildResultReveal(context) : _buildInput(context),
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(AppSpacing.screen, AppSpacing.s22, AppSpacing.screen, AppSpacing.s22),
+            children: [
+              StackedCard(
+                layers: layers,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.s30),
+                  child: Center(
+                    child: Text(
+                      _currentWord.prompt,
+                      textAlign: TextAlign.center,
+                      style: promptStyle.copyWith(color: colors.ink),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.s22),
+              AnimatedSwitcher(
+                duration: checkDuration,
+                switchInCurve: AppMotion.checkCurve,
+                switchOutCurve: AppMotion.checkCurve,
+                child: showingResult ? _buildResultReveal(context) : _buildInput(context),
+              ),
+            ],
           ),
         ),
         if (_phase == _Phase.playing)
           StickyActionBar(
             children: [
               GhostButton(label: 'Не знаю', onPressed: () => _submit(skipped: true)),
-              PrimaryButton(label: 'Проверить', onPressed: () => _submit(skipped: false)),
+              PrimaryButton(
+                label: 'Проверить',
+                variant: PrimaryButtonVariant.accent,
+                onPressed: () => _submit(skipped: false),
+              ),
             ],
           ),
       ],
@@ -317,62 +361,41 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
   }
 
   Widget _buildInput(BuildContext context) {
-    final colors = context.colors;
-    return Column(
+    return DictationField(
       key: const ValueKey('input'),
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Center(
-          child: Text(
-            _currentWord.prompt,
-            textAlign: TextAlign.center,
-            style: AppTypography.display.copyWith(color: colors.ink),
-          ),
-        ),
-        const SizedBox(height: AppSpacing.s30),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s14),
-          child: TextField(
-            controller: _inputController,
-            focusNode: _focusNode,
-            autofocus: true,
-            textAlign: TextAlign.center,
-            style: AppTypography.heading.copyWith(color: colors.ink),
-            decoration: const InputDecoration(hintText: 'ваш ответ', border: UnderlineInputBorder()),
-            onSubmitted: (_) => _submit(skipped: false),
-          ),
-        ),
-      ],
+      controller: _inputController,
+      focusNode: _focusNode,
+      onSubmitted: () => _submit(skipped: false),
     );
   }
 
   Widget _buildResultReveal(BuildContext context) {
     final colors = context.colors;
     final answer = _lastAnswer!;
-    final color = switch (answer.verdict) {
-      DictationVerdict.correct => colors.success,
-      DictationVerdict.typo => colors.markLine,
-      DictationVerdict.wrong => colors.danger,
-      DictationVerdict.skipped => colors.muted,
+    final (String label, Color color) = switch (answer.verdict) {
+      DictationVerdict.correct => ('Верно', colors.success),
+      DictationVerdict.typo => ('Почти — опечатка', colors.markLine),
+      DictationVerdict.wrong => ('Неверно', colors.danger),
+      DictationVerdict.skipped => ('Пропущено', colors.muted),
     };
-    final label = switch (answer.verdict) {
-      DictationVerdict.correct => 'Верно',
-      DictationVerdict.typo => 'Почти — опечатка',
-      DictationVerdict.wrong => 'Неверно',
-      DictationVerdict.skipped => 'Пропущено',
-    };
-    return Center(
+    return Column(
       key: const ValueKey('result'),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(label, style: AppTypography.title.copyWith(color: color)),
-          if (answer.verdict != DictationVerdict.correct) ...[
-            const SizedBox(height: AppSpacing.s10),
-            Text('верно: ${answer.word.correctAnswer}', style: AppTypography.heading.copyWith(color: colors.ink)),
-          ],
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(label, style: AppTypography.heading.copyWith(color: color)),
+        if (answer.verdict != DictationVerdict.correct) ...[
+          const SizedBox(height: AppSpacing.s14),
+          AppCard(
+            child: DiffRow(
+              user: answer.userInput,
+              correct: AnswerChecker.closestVariant(
+                userInput: answer.userInput,
+                storedAnswer: answer.word.correctAnswer,
+              ),
+            ),
+          ),
         ],
-      ),
+      ],
     );
   }
 
@@ -380,71 +403,35 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
     final colors = context.colors;
     final mistakes = _currentStackAnswers.where((a) => a.verdict != DictationVerdict.correct).toList();
     final correctCount = _currentStackAnswers.length - mistakes.length;
+    final returning = pluralRu(
+      mistakes.length,
+      one: 'слово вернётся',
+      few: 'слова вернутся',
+      many: 'слов вернутся',
+    );
 
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(AppSpacing.s14),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(AppSpacing.screen, AppSpacing.s8, AppSpacing.screen, AppSpacing.s22),
             children: [
               Text(
                 '$correctCount из ${_currentStackAnswers.length}',
-                style: AppTypography.display.copyWith(color: colors.success, fontSize: 32, height: 1.1),
+                style: AppTypography.display.copyWith(color: colors.ink),
               ),
-              if (mistakes.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: AppSpacing.s4),
-                  child: Text(
-                    '${mistakes.length} слов вернутся в стопку',
-                    style: AppTypography.bodyText.copyWith(color: colors.muted),
-                  ),
-                ),
+              const SizedBox(height: AppSpacing.s4),
+              Text(
+                mistakes.isEmpty ? 'Всё верно в этом раунде' : '${mistakes.length} $returning в стопку',
+                style: AppTypography.bodyText.copyWith(color: colors.muted),
+              ),
+              const SizedBox(height: AppSpacing.s22),
+              for (final a in mistakes) ...[
+                _buildMistake(context, a),
+                const SizedBox(height: AppSpacing.s10),
+              ],
             ],
           ),
-        ),
-        Expanded(
-          child: mistakes.isEmpty
-              ? Center(
-                  child: Text('Всё верно в этом раунде!', style: AppTypography.bodyText.copyWith(color: colors.muted)),
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s14),
-                  itemCount: mistakes.length,
-                  itemBuilder: (context, i) {
-                    final a = mistakes[i];
-                    final card = _cardsById[a.word.cardId];
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ResultRow(
-                          term: a.word.correctAnswer,
-                          transcription: card?.transcription ?? '',
-                          correctAnswer: a.word.correctAnswer,
-                          userAnswer: a.userInput,
-                          verdict: switch (a.verdict) {
-                            DictationVerdict.typo => ResultVerdict.typo,
-                            DictationVerdict.wrong => ResultVerdict.wrong,
-                            DictationVerdict.skipped => ResultVerdict.skipped,
-                            DictationVerdict.correct => ResultVerdict.correct,
-                          },
-                          onPlayAudio: () => ref.read(ttsServiceProvider).speak(card?.term ?? a.word.correctAnswer),
-                        ),
-                        if (a.verdict == DictationVerdict.wrong || a.verdict == DictationVerdict.typo)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: AppSpacing.s10),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: TextButton(
-                                onPressed: () => _appeal(a),
-                                child: const Text('Мой ответ тоже верный?'),
-                              ),
-                            ),
-                          ),
-                      ],
-                    );
-                  },
-                ),
         ),
         StickyActionBar(
           children: [
@@ -455,6 +442,43 @@ class _DictationSessionScreenState extends ConsumerState<DictationSessionScreen>
           ],
         ),
       ],
+    );
+  }
+
+  Widget _buildMistake(BuildContext context, _RoundAnswer a) {
+    final colors = context.colors;
+    final card = _cardsById[a.word.cardId];
+    final correct = AnswerChecker.closestVariant(userInput: a.userInput, storedAnswer: a.word.correctAnswer);
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(a.word.prompt, style: AppTypography.caption.copyWith(color: colors.muted)),
+              ),
+              if (card != null && card.transcription.isNotEmpty)
+                Text(card.transcription, style: AppTypography.transcription.copyWith(color: colors.muted)),
+              IconButton(
+                icon: const Icon(Icons.volume_up_outlined),
+                color: colors.muted,
+                constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                onPressed: () => ref.read(ttsServiceProvider).speak(card?.term ?? correct),
+              ),
+            ],
+          ),
+          DiffRow(user: a.userInput, correct: correct),
+          if (a.verdict == DictationVerdict.wrong || a.verdict == DictationVerdict.typo)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                onPressed: () => _appeal(a),
+                child: Text('Мой ответ тоже верный?', style: AppTypography.label.copyWith(color: colors.accent)),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
