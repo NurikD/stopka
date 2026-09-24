@@ -104,12 +104,32 @@ class DriftCardStateRepository implements CardStateRepository {
   }
 
   @override
+  Future<void> logReview({required String cardStateId, required domain.ReviewRating rating, DateTime? at}) async {
+    await _db.into(_db.reviewLogs).insert(
+          ReviewLogsCompanion.insert(
+            cardStateId: cardStateId,
+            rating: db.SrsRatingColumn.values.byName(rating.name),
+            reviewedAt: (at ?? DateTime.now()).toUtc(),
+            ownerId: _ownerId,
+          ),
+        );
+  }
+
+  @override
   Future<int> getStreakDays() async {
-    final rows = await (_db.select(_db.cardStates)
+    final logs = await (_db.select(_db.reviewLogs)
+          ..where((t) => t.deletedAt.isNull() & t.ownerId.equals(_ownerId)))
+        .get();
+    // Reviews from before the log existed only survive as lastReview; keep
+    // counting them so upgrading doesn't reset anyone's streak to zero.
+    final states = await (_db.select(_db.cardStates)
           ..where((t) => t.deletedAt.isNull() & t.ownerId.equals(_ownerId) & t.lastReview.isNotNull()))
         .get();
 
-    final reviewDays = rows.map((r) => _dateOnly(r.lastReview!.toLocal())).toSet();
+    final reviewDays = {
+      ...logs.map((l) => _dateOnly(l.reviewedAt.toLocal())),
+      ...states.map((r) => _dateOnly(r.lastReview!.toLocal())),
+    };
     if (reviewDays.isEmpty) return 0;
 
     var cursor = _dateOnly(DateTime.now());
