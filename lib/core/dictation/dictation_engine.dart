@@ -71,6 +71,10 @@ class DictationEngine {
 
   bool get isFinished => _unintroduced.isEmpty && _active.isEmpty;
 
+  /// Words that haven't appeared in any stack yet. The dictation screen
+  /// turns this into the visible pile ("сколько стопок осталось").
+  int get unintroducedCount => _unintroduced.length;
+
   List<DictationWord> get masteredWords => List.unmodifiable(_mastered);
 
   /// Builds the next stack: words still in rotation, topped up with new
