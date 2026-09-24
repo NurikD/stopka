@@ -5,6 +5,8 @@ import '../../core/providers/core_providers.dart';
 import '../../core/theme/app_theme_extension.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
+import '../../core/widgets/app_card.dart';
+import '../../core/widgets/app_header_bar.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/ghost_button.dart';
 import '../../core/widgets/sticky_action_bar.dart';
@@ -65,7 +67,7 @@ class _UnitDetailScreenState extends ConsumerState<UnitDetailScreen> {
 
     if (setId == null) {
       return Scaffold(
-        appBar: AppBar(title: Text(unit == null ? 'Юнит' : '${unit.code} · ${unit.title}'.trim())),
+        appBar: AppHeaderBar(nested: true, title: _titleFor(unit)),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
@@ -83,7 +85,7 @@ class _UnitDetailScreenState extends ConsumerState<UnitDetailScreen> {
                 .toList();
 
         return Scaffold(
-          appBar: AppBar(title: Text(unit == null ? 'Юнит' : '${unit.code} · ${unit.title}'.trim())),
+          appBar: AppHeaderBar(nested: true, title: _titleFor(unit), meta: '${allCards.length}'),
           body: snapshot.connectionState == ConnectionState.waiting
               ? const Center(child: CircularProgressIndicator())
               : allCards.isEmpty
@@ -96,19 +98,18 @@ class _UnitDetailScreenState extends ConsumerState<UnitDetailScreen> {
                   : Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(AppSpacing.s14, AppSpacing.s10, AppSpacing.s14, 0),
+                          padding: const EdgeInsets.fromLTRB(AppSpacing.screen, AppSpacing.s8, AppSpacing.screen, 0),
                           child: TextField(
                             decoration: const InputDecoration(
                               hintText: 'Поиск по слову или переводу',
                               prefixIcon: Icon(Icons.search),
-                              border: OutlineInputBorder(),
                             ),
                             onChanged: (v) => setState(() => _query = v),
                           ),
                         ),
                         Expanded(
                           child: ListView.builder(
-                            padding: const EdgeInsets.all(AppSpacing.s14),
+                            padding: const EdgeInsets.all(AppSpacing.screen),
                             itemCount: cards.length,
                             itemBuilder: (context, i) => _CardTile(card: cards[i]),
                           ),
@@ -137,6 +138,11 @@ class _UnitDetailScreenState extends ConsumerState<UnitDetailScreen> {
     );
   }
 
+  String _titleFor(Unit? unit) {
+    if (unit == null) return 'Юнит';
+    return unit.title.isEmpty ? unit.code : '${unit.code} · ${unit.title}';
+  }
+
   void _openAddWords(BuildContext context, String setId, Unit? unit) {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -159,70 +165,50 @@ class _CardTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
-    return Dismissible(
-      key: ValueKey(card.id),
-      direction: DismissDirection.endToStart,
-      background: Container(
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s14),
-        margin: const EdgeInsets.only(bottom: AppSpacing.s10),
-        decoration: BoxDecoration(
-          color: colors.danger,
-          borderRadius: BorderRadius.circular(AppRadius.card),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.s10),
+      child: Dismissible(
+        key: ValueKey(card.id),
+        direction: DismissDirection.endToStart,
+        // No danger colour here: it is reserved for the moment an answer is
+        // reviewed. Deleting is a soft delete anyway.
+        background: Container(
+          alignment: Alignment.centerRight,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s18),
+          decoration: BoxDecoration(
+            color: colors.surfaceSunk,
+            borderRadius: BorderRadius.circular(AppRadius.card),
+            border: Border.all(color: colors.line),
+          ),
+          child: Icon(Icons.delete_outline, color: colors.muted),
         ),
-        child: const Icon(Icons.delete_outline, color: Colors.white),
-      ),
-      onDismissed: (_) => ref.read(wordCardRepositoryProvider).deleteCard(card.id),
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: AppSpacing.s10),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(AppRadius.card),
+        onDismissed: (_) => ref.read(wordCardRepositoryProvider).deleteCard(card.id),
+        child: AppCard(
           onTap: () => showCardFormSheet(context, ref, card: card),
-          child: Container(
-            padding: const EdgeInsets.all(AppSpacing.s14),
-            decoration: BoxDecoration(
-              color: colors.surface,
-              borderRadius: BorderRadius.circular(AppRadius.card),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            card.term,
-                            style: AppTypography.heading.copyWith(
-                              fontFamily: 'Literata',
-                              color: colors.ink,
-                            ),
-                          ),
-                          if (card.transcription.isNotEmpty) ...[
-                            const SizedBox(width: AppSpacing.s8),
-                            Text(
-                              card.transcription,
-                              style: AppTypography.transcription.copyWith(color: colors.muted),
-                            ),
-                          ],
-                        ],
-                      ),
-                      if (card.translation.isNotEmpty)
-                        Text(
-                          card.translation,
-                          style: AppTypography.bodyText.copyWith(color: colors.muted),
-                        ),
+          padding: const EdgeInsets.fromLTRB(AppSpacing.s18, AppSpacing.s14, AppSpacing.s8, AppSpacing.s14),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(card.term, style: AppTypography.monoWord.copyWith(color: colors.ink)),
+                    if (card.transcription.isNotEmpty)
+                      Text(card.transcription, style: AppTypography.transcription.copyWith(color: colors.muted)),
+                    if (card.translation.isNotEmpty) ...[
+                      const SizedBox(height: AppSpacing.s4),
+                      Text(card.translation, style: AppTypography.bodyText.copyWith(color: colors.muted)),
                     ],
-                  ),
+                  ],
                 ),
-                IconButton(
-                  icon: const Icon(Icons.volume_up_outlined),
-                  color: colors.muted,
-                  onPressed: () => ref.read(ttsServiceProvider).speak(card.term),
-                ),
-              ],
-            ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.volume_up_outlined),
+                color: colors.muted,
+                constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                onPressed: () => ref.read(ttsServiceProvider).speak(card.term),
+              ),
+            ],
           ),
         ),
       ),
