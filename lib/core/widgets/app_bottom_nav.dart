@@ -12,8 +12,8 @@ class AppBottomNavItem {
 }
 
 /// Bottom navigation without the Material pill/fill under the active item:
-/// the active one is `ink`, the rest `muted`, and it sits on a 1px `line`
-/// top border.
+/// the active one is drawn in `accent`, the rest `muted`, on a 1px `line`
+/// top border (per the canvas artboards).
 class AppBottomNav extends StatelessWidget {
   final List<AppBottomNavItem> items;
   final int currentIndex;
@@ -46,7 +46,7 @@ class AppBottomNav extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(items[i].icon, size: 22, color: i == currentIndex ? colors.ink : colors.muted),
+                      Icon(items[i].icon, size: 22, color: i == currentIndex ? colors.accent : colors.muted),
                       const SizedBox(height: AppSpacing.s4),
                       Text(
                         items[i].label,
@@ -55,7 +55,7 @@ class AppBottomNav extends StatelessWidget {
                         style: AppTypography.caption.copyWith(
                           fontSize: 12,
                           fontWeight: i == currentIndex ? FontWeight.w600 : FontWeight.w400,
-                          color: i == currentIndex ? colors.ink : colors.muted,
+                          color: i == currentIndex ? colors.accent : colors.muted,
                         ),
                       ),
                     ],
