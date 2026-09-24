@@ -8,12 +8,12 @@ class AppShell extends StatelessWidget {
 
   const AppShell({super.key, required this.child});
 
+  // The "Словарь" tab hosts courses, units and their words.
   static const _tabs = [
-    (path: '/today', item: AppBottomNavItem(icon: Icons.today_outlined, label: 'Сегодня')),
-    (path: '/courses', item: AppBottomNavItem(icon: Icons.menu_book_outlined, label: 'Курсы')),
-    (path: '/practice', item: AppBottomNavItem(icon: Icons.edit_outlined, label: 'Практика')),
-    (path: '/mistakes', item: AppBottomNavItem(icon: Icons.error_outline, label: 'Ошибки')),
-    (path: '/settings', item: AppBottomNavItem(icon: Icons.settings_outlined, label: 'Настройки')),
+    (path: '/today', item: AppBottomNavItem(icon: Icons.home_outlined, label: 'Сегодня')),
+    (path: '/courses', item: AppBottomNavItem(icon: Icons.menu_book_outlined, label: 'Словарь')),
+    (path: '/progress', item: AppBottomNavItem(icon: Icons.bar_chart, label: 'Прогресс')),
+    (path: '/profile', item: AppBottomNavItem(icon: Icons.person_outline, label: 'Профиль')),
   ];
 
   int _currentIndex(BuildContext context) {
