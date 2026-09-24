@@ -38,7 +38,7 @@ class CoursesScreen extends ConsumerWidget {
           return ListView(
             padding: const EdgeInsets.fromLTRB(AppSpacing.screen, AppSpacing.s8, AppSpacing.screen, AppSpacing.s22),
             children: [
-              Text('Курсы', style: AppTypography.title.copyWith(color: colors.ink)),
+              Text('Словарь', style: AppTypography.title.copyWith(color: colors.ink)),
               const SizedBox(height: AppSpacing.s22),
               for (final course in courses)
                 Padding(

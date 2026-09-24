@@ -140,7 +140,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(AppSpacing.screen, AppSpacing.s8, AppSpacing.screen, AppSpacing.s22),
         children: [
-          Text('Настройки', style: AppTypography.title.copyWith(color: colors.ink)),
+          Text('Профиль', style: AppTypography.title.copyWith(color: colors.ink)),
           const SizedBox(height: AppSpacing.s22),
           AppCard(
             child: LabeledField(
