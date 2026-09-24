@@ -21,6 +21,9 @@ abstract class CardStateRepository {
   /// Appends one graded review to the history. [at] defaults to now.
   Future<void> logReview({required String cardStateId, required ReviewRating rating, DateTime? at});
 
+  /// Graded reviews logged at or after [since] — for "done today".
+  Future<int> countReviewsSince(DateTime since);
+
   /// Consecutive days (ending today or yesterday, so the streak isn't
   /// wiped the instant a new day starts) with at least one review.
   Future<int> getStreakDays();

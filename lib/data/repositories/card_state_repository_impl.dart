@@ -116,6 +116,18 @@ class DriftCardStateRepository implements CardStateRepository {
   }
 
   @override
+  Future<int> countReviewsSince(DateTime since) async {
+    final count = _db.reviewLogs.id.count();
+    final query = _db.selectOnly(_db.reviewLogs)
+      ..addColumns([count])
+      ..where(_db.reviewLogs.deletedAt.isNull() &
+          _db.reviewLogs.ownerId.equals(_ownerId) &
+          _db.reviewLogs.reviewedAt.isBiggerOrEqualValue(since.toUtc()));
+    final row = await query.getSingle();
+    return row.read(count) ?? 0;
+  }
+
+  @override
   Future<int> getStreakDays() async {
     final logs = await (_db.select(_db.reviewLogs)
           ..where((t) => t.deletedAt.isNull() & t.ownerId.equals(_ownerId)))
