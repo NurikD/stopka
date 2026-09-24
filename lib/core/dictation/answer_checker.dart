@@ -67,9 +67,9 @@ class AnswerChecker {
 
     final input = normalize(userInput);
     var best = variants.first;
-    var bestDistance = _levenshtein(input, normalize(best));
+    var bestDistance = _editDistance(input, normalize(best), countSwapAsOneEdit: false);
     for (final variant in variants.skip(1)) {
-      final distance = _levenshtein(input, normalize(variant));
+      final distance = _editDistance(input, normalize(variant), countSwapAsOneEdit: false);
       if (distance < bestDistance) {
         best = variant;
         bestDistance = distance;
@@ -90,13 +90,24 @@ class AnswerChecker {
 
     for (final variant in variants) {
       final maxDistance = _typoMaxDistanceFor(variant.length);
-      if (maxDistance > 0 && _levenshtein(normalizedInput, variant) <= maxDistance) {
-        return DictationVerdict.typo;
-      }
+      if (maxDistance == 0) continue;
+      final distance = _editDistance(
+        normalizedInput,
+        variant,
+        countSwapAsOneEdit: variant.length >= _swapFriendlyLength,
+      );
+      if (distance <= maxDistance) return DictationVerdict.typo;
     }
 
     return DictationVerdict.wrong;
   }
+
+  /// From this length on, swapping two neighbouring letters (recieve ->
+  /// receive) is one slip of the fingers. Below it, a swap is more likely a
+  /// different word (quite/quiet, angel/angle, trail/trial), so it stays a
+  /// plain two-edit difference and falls outside the typo threshold.
+  /// A heuristic: no edit distance can tell such pairs apart in general.
+  static const _swapFriendlyLength = 6;
 
   /// Word-trap pairs like quite/quiet (distance 2) or desert/dessert
   /// (distance 1) are genuinely different words, not typos — so the
@@ -108,29 +119,32 @@ class AnswerChecker {
     return 2;
   }
 
-  static int _levenshtein(String a, String b) {
+  /// Edit distance between [a] and [b]. With [countSwapAsOneEdit] a swap of
+  /// two adjacent letters costs 1 instead of 2 (optimal string alignment).
+  static int _editDistance(String a, String b, {required bool countSwapAsOneEdit}) {
     if (a == b) return 0;
     if (a.isEmpty) return b.length;
     if (b.isEmpty) return a.length;
 
-    var previousRow = List<int>.generate(b.length + 1, (i) => i);
-    var currentRow = List<int>.filled(b.length + 1, 0);
-
-    for (var i = 0; i < a.length; i++) {
-      currentRow[0] = i + 1;
-      for (var j = 0; j < b.length; j++) {
-        final cost = a[i] == b[j] ? 0 : 1;
-        currentRow[j + 1] = [
-          currentRow[j] + 1,
-          previousRow[j + 1] + 1,
-          previousRow[j] + cost,
-        ].reduce((v, e) => v < e ? v : e);
-      }
-      final tmp = previousRow;
-      previousRow = currentRow;
-      currentRow = tmp;
+    final d = List.generate(a.length + 1, (_) => List<int>.filled(b.length + 1, 0));
+    for (var i = 0; i <= a.length; i++) {
+      d[i][0] = i;
+    }
+    for (var j = 0; j <= b.length; j++) {
+      d[0][j] = j;
     }
 
-    return previousRow[b.length];
+    for (var i = 1; i <= a.length; i++) {
+      for (var j = 1; j <= b.length; j++) {
+        final cost = a[i - 1] == b[j - 1] ? 0 : 1;
+        var best = [d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost].reduce((x, y) => x < y ? x : y);
+        if (countSwapAsOneEdit && i > 1 && j > 1 && a[i - 1] == b[j - 2] && a[i - 2] == b[j - 1]) {
+          final swap = d[i - 2][j - 2] + 1;
+          if (swap < best) best = swap;
+        }
+        d[i][j] = best;
+      }
+    }
+    return d[a.length][b.length];
   }
 }
