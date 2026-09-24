@@ -52,17 +52,18 @@ class PrimaryButton extends StatelessWidget {
       ),
       child: loading
           ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: foreground))
-          : Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: trailingIcon == null ? MainAxisAlignment.center : MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(child: Text(label, style: AppTypography.label.copyWith(fontSize: 16), textAlign: TextAlign.center)),
-                if (trailingIcon != null) ...[
-                  const SizedBox(width: AppSpacing.s10),
-                  Icon(trailingIcon, size: 20),
-                ],
-              ],
-            ),
+          : trailingIcon == null
+              ? Text(label, style: AppTypography.label.copyWith(fontSize: 16), textAlign: TextAlign.center)
+              // Label at the left edge, arrow pinned to the right.
+              : Row(
+                  children: [
+                    Expanded(
+                      child: Text(label, style: AppTypography.label.copyWith(fontSize: 16)),
+                    ),
+                    const SizedBox(width: AppSpacing.s10),
+                    Icon(trailingIcon, size: 20),
+                  ],
+                ),
     );
   }
 }
