@@ -179,8 +179,6 @@ class _WritingBodyState extends ConsumerState<_WritingBody> {
           ),
         ] else
           ..._buildFeedback(colors, feedback),
-        const SizedBox(height: AppSpacing.s30),
-        BadMaterialButton(pack: widget.pack, part: PackPart.writing),
       ],
     );
   }

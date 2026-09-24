@@ -125,8 +125,6 @@ class _GrammarBody extends ConsumerWidget {
             total: total,
           ),
         ),
-        const SizedBox(height: AppSpacing.s30),
-        BadMaterialButton(pack: pack, part: PackPart.grammar),
       ],
     );
   }

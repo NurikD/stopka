@@ -140,33 +140,3 @@ class PackPartView extends ConsumerWidget {
     );
   }
 }
-
-/// "Материал плохой": throws the part away and prepares a new one.
-class BadMaterialButton extends ConsumerWidget {
-  final PackContext pack;
-  final PackPart part;
-
-  const BadMaterialButton({super.key, required this.pack, required this.part});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return GhostButton(
-      label: 'Материал плохой',
-      onPressed: () async {
-        final messenger = ScaffoldMessenger.of(context);
-        final service = ref.read(packServiceProvider);
-        final ok = await service.flagAndRegenerate(pack.packId, pack.key, part);
-        if (!ok) {
-          messenger.showSnackBar(
-            SnackBar(
-              content: Text(
-                service.lastError[PackService.slot(pack.packId, part)] ??
-                    'Не удалось подготовить новый материал.',
-              ),
-            ),
-          );
-        }
-      },
-    );
-  }
-}

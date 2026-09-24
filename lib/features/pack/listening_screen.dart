@@ -182,8 +182,6 @@ class _ListeningBodyState extends ConsumerState<_ListeningBody> {
             ),
           ),
         ],
-        const SizedBox(height: AppSpacing.s30),
-        BadMaterialButton(pack: widget.pack, part: PackPart.listening),
       ],
     );
   }

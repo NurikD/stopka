@@ -711,41 +711,5 @@ void main() {
       expect(find.text('Готово'), findsNWidgets(4));
       await _dispose(tester, env);
     });
-
-    testWidgets(
-      '"Материал плохой" replaces the part with a freshly generated one',
-      (tester) async {
-        _tall(tester);
-        final second = {
-          ...(_good()[PackPart.writing]! as Map<String, dynamic>),
-          'task': 'Write 4-6 sentences about your favourite level today.',
-        };
-        final env = await _env(
-          scripts: {
-            PackPart.reading: [_good()[PackPart.reading]!],
-            PackPart.listening: [_good()[PackPart.listening]!],
-            PackPart.grammar: [_good()[PackPart.grammar]!],
-            PackPart.writing: [second], // the stored part came from setup, so the first fetch is the replacement
-          },
-        );
-        await tester.pumpWidget(env.wrap(WritingScreen(pack: env.pack)));
-        await _settle(tester);
-        expect(find.textContaining('a game you have played'), findsOneWidget);
-        await _tap(tester, 'Материал плохой');
-        await _settle(tester);
-        await _settle(tester);
-
-        expect(
-          find.textContaining('your favourite level today'),
-          findsOneWidget,
-        );
-        expect(
-          (await env.packs.getPack(env.pack.packId))!
-              .statusOf(PackPart.writing),
-          PartStatus.ready,
-        );
-        await _dispose(tester, env);
-      },
-    );
   });
 }
