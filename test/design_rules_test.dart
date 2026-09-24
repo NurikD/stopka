@@ -101,6 +101,10 @@ void main() {
       expect(find(RegExp(r'StadiumBorder|BoxShadow|LinearGradient|RadialGradient')), isEmpty);
     });
 
+    test('no hard-coded white text: text on accent comes from onAccent', () {
+      expect(find(RegExp(r'Colors\.white')), isEmpty);
+    });
+
     test('ColorScheme.fromSeed is not used', () {
       expect(find(RegExp(r'ColorScheme\.fromSeed')), isEmpty);
     });
@@ -130,6 +134,10 @@ void main() {
 
       test('${entry.key}: inkOn on the primary button (ink)', () {
         expect(_contrast(t.inkOn, t.ink), greaterThanOrEqualTo(4.5));
+      });
+
+      test('${entry.key}: onAccent text on an accent fill', () {
+        expect(_contrast(t.onAccent, t.accent), greaterThanOrEqualTo(4.5));
       });
 
       test('${entry.key}: accent, success and danger on surface', () {
