@@ -8,7 +8,7 @@ enum PrimaryButtonVariant {
   /// The default: `ink` fill, `inkOn` text.
   ink,
 
-  /// Accent fill with white text — only for actions that check an answer.
+  /// Accent fill with `onAccent` text — only for actions that check an answer.
   accent,
 }
 
@@ -37,7 +37,7 @@ class PrimaryButton extends StatelessWidget {
     final colors = context.colors;
     final isAccent = variant == PrimaryButtonVariant.accent;
     final background = isAccent ? colors.accent : colors.ink;
-    final foreground = isAccent ? Colors.white : colors.inkOn;
+    final foreground = isAccent ? colors.onAccent : colors.inkOn;
 
     return FilledButton(
       onPressed: loading ? null : onPressed,
