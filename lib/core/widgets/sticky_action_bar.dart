@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme_extension.dart';
 import '../theme/tokens.dart';
 
-/// The bottom action bar — the one place DESIGN.md allows a shadow, so the
-/// content underneath reads as sliding away beneath it.
+/// The bottom action bar. DESIGN_v2 has no shadows anywhere, so it is
+/// separated from the content by a 1px `line` border on top.
 class StickyActionBar extends StatelessWidget {
   final List<Widget> children;
 
@@ -15,25 +15,19 @@ class StickyActionBar extends StatelessWidget {
     final colors = context.colors;
     return Container(
       padding: EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.md,
-        AppSpacing.lg,
-        AppSpacing.lg + MediaQuery.of(context).padding.bottom,
+        AppSpacing.screen,
+        AppSpacing.s14,
+        AppSpacing.screen,
+        AppSpacing.s14 + MediaQuery.of(context).padding.bottom,
       ),
       decoration: BoxDecoration(
-        color: colors.background,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.24),
-            blurRadius: 16,
-            offset: const Offset(0, -4),
-          ),
-        ],
+        color: colors.bg,
+        border: Border(top: BorderSide(color: colors.line)),
       ),
       child: Row(
         children: [
           for (var i = 0; i < children.length; i++) ...[
-            if (i > 0) const SizedBox(width: AppSpacing.md),
+            if (i > 0) const SizedBox(width: AppSpacing.s10),
             Expanded(child: children[i]),
           ],
         ],
