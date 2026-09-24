@@ -65,3 +65,8 @@ secrets.json
 # Local Claude Code tooling state
 /.claude/
 
+
+# Planning and design documents stay local
+/PLAN*.md
+/DESIGN*.md
+/TASK*.md
