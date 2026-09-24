@@ -4,15 +4,18 @@ import '../theme/app_theme_extension.dart';
 import '../theme/tokens.dart';
 import 'app_card.dart';
 
-/// A card with the pile made literal: 1-2 lower sheets peek out beneath it.
-/// [layers] is how many stacks remain after the current one (max two).
+/// A card with the pile made literal. Per the artboards, 1-2 lower sheets
+/// peek out **above** the card, each a little narrower than the one in
+/// front. [layers] is how many stacks remain after the current one (max
+/// two).
 class StackedCard extends StatelessWidget {
   final Widget child;
   final int layers;
 
   const StackedCard({super.key, required this.child, required this.layers});
 
-  static const _offset = 7.0;
+  static const _rise = 7.0;
+  static const _inset = 12.0;
 
   @override
   Widget build(BuildContext context) {
@@ -20,16 +23,16 @@ class StackedCard extends StatelessWidget {
     final count = layers.clamp(0, 2);
 
     return Padding(
-      padding: EdgeInsets.only(bottom: _offset * count),
+      padding: EdgeInsets.only(top: _rise * count),
       child: Stack(
         clipBehavior: Clip.none,
         children: [
           for (var i = count; i >= 1; i--)
             Positioned(
-              left: 0,
-              right: 0,
-              top: 0,
-              bottom: -_offset * i,
+              left: _inset * i,
+              right: _inset * i,
+              top: -_rise * i,
+              bottom: 0,
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   color: colors.surfaceSunk,
