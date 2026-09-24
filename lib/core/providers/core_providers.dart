@@ -146,3 +146,13 @@ class ThemeModeController extends Notifier<ThemeMode> {
 }
 
 final themeModeProvider = NotifierProvider<ThemeModeController, ThemeMode>(ThemeModeController.new);
+
+/// Both are cheap reads that go stale when a review finishes; the screens
+/// that show them invalidate after returning from a session.
+final newCardLimitProvider = FutureProvider.autoDispose<int>((ref) {
+  return ref.watch(srsSettingsStoreProvider).getNewCardLimit();
+});
+
+final streakDaysProvider = FutureProvider.autoDispose<int>((ref) {
+  return ref.watch(cardStateRepositoryProvider).getStreakDays();
+});
