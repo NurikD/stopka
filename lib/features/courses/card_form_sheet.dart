@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/providers/core_providers.dart';
+import '../../core/theme/app_theme_extension.dart';
 import '../../core/theme/tokens.dart';
+import '../../core/theme/typography.dart';
+import '../../core/widgets/labeled_field.dart';
 import '../../core/widgets/primary_button.dart';
 import '../../domain/models/word_card.dart';
 
@@ -57,39 +60,35 @@ class _CardFormSheetState extends ConsumerState<_CardFormSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    final colors = context.colors;
+    final mono = AppTypography.monoWord.copyWith(fontSize: 15, color: colors.ink);
+    return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(
-        AppSpacing.s14,
-        AppSpacing.s14,
-        AppSpacing.s14,
-        AppSpacing.s14 + MediaQuery.of(context).viewInsets.bottom,
+        AppSpacing.screen,
+        AppSpacing.s22,
+        AppSpacing.screen,
+        AppSpacing.s22 + MediaQuery.of(context).viewInsets.bottom,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text('Редактировать слово', style: Theme.of(context).textTheme.headlineSmall),
+          Text('Редактировать слово', style: AppTypography.heading.copyWith(color: colors.ink)),
+          const SizedBox(height: AppSpacing.s18),
+          LabeledField(label: 'Слово', child: TextField(controller: _termController, style: mono)),
           const SizedBox(height: AppSpacing.s14),
-          TextField(
-            controller: _termController,
-            decoration: const InputDecoration(labelText: 'Слово', border: OutlineInputBorder()),
-          ),
-          const SizedBox(height: AppSpacing.s10),
-          TextField(
-            controller: _translationController,
-            decoration: const InputDecoration(labelText: 'Перевод', border: OutlineInputBorder()),
-          ),
-          const SizedBox(height: AppSpacing.s10),
-          TextField(
-            controller: _transcriptionController,
-            decoration: const InputDecoration(labelText: 'Транскрипция', border: OutlineInputBorder()),
-          ),
-          const SizedBox(height: AppSpacing.s10),
-          TextField(
-            controller: _partOfSpeechController,
-            decoration: const InputDecoration(labelText: 'Часть речи', border: OutlineInputBorder()),
+          LabeledField(label: 'Перевод', child: TextField(controller: _translationController)),
+          const SizedBox(height: AppSpacing.s14),
+          LabeledField(
+            label: 'Транскрипция',
+            child: TextField(
+              controller: _transcriptionController,
+              style: AppTypography.transcription.copyWith(fontSize: 15, color: colors.ink),
+            ),
           ),
           const SizedBox(height: AppSpacing.s14),
+          LabeledField(label: 'Часть речи', child: TextField(controller: _partOfSpeechController)),
+          const SizedBox(height: AppSpacing.s22),
           PrimaryButton(label: 'Сохранить', onPressed: _save, loading: _saving),
         ],
       ),
