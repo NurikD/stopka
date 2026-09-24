@@ -1,45 +1,68 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_theme_extension.dart';
 import '../theme/tokens.dart';
 import '../theme/typography.dart';
 
-/// The pill-shaped accent button — the single filled call-to-action per
-/// screen (e.g. "Начать повторение", "Проверить"). Names the result, never
-/// "ОК"/"Отправить".
+enum PrimaryButtonVariant {
+  /// The default: `ink` fill, `inkOn` text.
+  ink,
+
+  /// Accent fill with white text — only for actions that check an answer.
+  accent,
+}
+
+/// The main button: 56 high, radius 14, no pill. Names the result
+/// ("Проверить", "Заниматься 15 минут"), never "ОК".
 class PrimaryButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
   final bool loading;
+  final PrimaryButtonVariant variant;
+
+  /// Arrow-style icon pinned to the right edge.
+  final IconData? trailingIcon;
 
   const PrimaryButton({
     super.key,
     required this.label,
     required this.onPressed,
     this.loading = false,
+    this.variant = PrimaryButtonVariant.ink,
+    this.trailingIcon,
   });
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    return SizedBox(
-      height: 48,
-      child: FilledButton(
-        onPressed: loading ? null : onPressed,
-        style: FilledButton.styleFrom(
-          backgroundColor: colors.primary,
-          foregroundColor: colors.onPrimary,
-          disabledBackgroundColor: colors.primary.withValues(alpha: 0.4),
-          shape: const StadiumBorder(),
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s22),
-        ),
-        child: loading
-            ? SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2, color: colors.onPrimary),
-              )
-            : Text(label, style: AppTypography.label),
+    final colors = context.colors;
+    final isAccent = variant == PrimaryButtonVariant.accent;
+    final background = isAccent ? colors.accent : colors.ink;
+    final foreground = isAccent ? Colors.white : colors.inkOn;
+
+    return FilledButton(
+      onPressed: loading ? null : onPressed,
+      style: FilledButton.styleFrom(
+        minimumSize: const Size(0, 56),
+        backgroundColor: background,
+        foregroundColor: foreground,
+        disabledBackgroundColor: background.withValues(alpha: 0.4),
+        disabledForegroundColor: foreground.withValues(alpha: 0.7),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s18),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.button)),
       ),
+      child: loading
+          ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: foreground))
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: trailingIcon == null ? MainAxisAlignment.center : MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(child: Text(label, style: AppTypography.label.copyWith(fontSize: 16), textAlign: TextAlign.center)),
+                if (trailingIcon != null) ...[
+                  const SizedBox(width: AppSpacing.s10),
+                  Icon(trailingIcon, size: 20),
+                ],
+              ],
+            ),
     );
   }
 }
