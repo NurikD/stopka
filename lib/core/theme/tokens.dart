@@ -1,106 +1,132 @@
 import 'package:flutter/material.dart';
 
-/// Colour tokens from DESIGN.md ("ночь и латунь"). DESIGN.md names six
-/// tokens (night, surface, brass, paper, muted, line) but reuses `paper`
-/// for two different roles across themes — text on dark, background on
-/// light. To keep call sites unambiguous, roles are split into semantic
-/// fields here; each field's doc comment names its DESIGN.md token.
+/// Colour tokens from DESIGN_v2.md. Every token has exactly one counterpart
+/// in the other theme; widgets read colours only from here (a hex literal
+/// inside features/ is a review error, enforced by test/design_rules_test).
 @immutable
 class AppColorTokens {
-  /// `night` (dark) / light background — app background.
-  final Color background;
+  /// Screen background.
+  final Color bg;
 
-  /// `surface` — cards and panels, one step lighter than [background].
+  /// Cards and fields.
   final Color surface;
 
-  /// `brass` — the single accent: active action, progress, the hero word.
+  /// Lower sheets of the visible stack.
+  final Color surfaceSunk;
+
+  /// Borders, dividers, progress track.
+  final Color line;
+
+  /// Dashes, secondary button border.
+  final Color lineStrong;
+
+  /// Primary text, primary button fill.
+  final Color ink;
+
+  /// Text on the primary button.
+  final Color inkOn;
+
+  /// Long reading text.
+  final Color body;
+
+  /// Captions, service text.
+  final Color muted;
+
+  /// Progress, focus, the key action. At most ~10% of a screen.
   final Color accent;
 
-  /// `paper` (dark) / light theme's `текст` — primary text on [background].
-  final Color textPrimary;
+  /// Grammar highlights, chips.
+  final Color accentTint;
 
-  /// `muted` — captions, transcription, secondary text.
-  final Color textMuted;
+  /// A correct answer — only at the moment of review.
+  final Color success;
 
-  /// `line` — hairlines and field borders, 1px.
-  final Color hairline;
+  /// A mistake — only at the moment of review.
+  final Color danger;
 
-  /// `jade` — dictation answer was correct.
-  final Color statusCorrect;
+  /// Background of an unfamiliar word in a text.
+  final Color markBg;
 
-  /// Reuses [accent]: a typo is "almost", not a failure.
-  final Color statusTypo;
-
-  /// `clay` — dictation answer was wrong.
-  final Color statusWrong;
-
-  /// Reuses [textMuted]: a skipped answer isn't an error.
-  final Color statusSkipped;
+  /// Underline of that word. Also used for "almost" (a typo) — the design
+  /// has no dedicated token for it.
+  final Color markLine;
 
   const AppColorTokens({
-    required this.background,
+    required this.bg,
     required this.surface,
+    required this.surfaceSunk,
+    required this.line,
+    required this.lineStrong,
+    required this.ink,
+    required this.inkOn,
+    required this.body,
+    required this.muted,
     required this.accent,
-    required this.textPrimary,
-    required this.textMuted,
-    required this.hairline,
-    required this.statusCorrect,
-    required this.statusTypo,
-    required this.statusWrong,
-    required this.statusSkipped,
+    required this.accentTint,
+    required this.success,
+    required this.danger,
+    required this.markBg,
+    required this.markLine,
   });
 
-  static const dark = AppColorTokens(
-    background: Color(0xFF0E1A2B),
-    surface: Color(0xFF16273E),
-    accent: Color(0xFFC9A227),
-    textPrimary: Color(0xFFE8EAEE),
-    textMuted: Color(0xFF8A99AE),
-    hairline: Color(0xFF24374F),
-    statusCorrect: Color(0xFF2E8B6B),
-    statusTypo: Color(0xFFC9A227),
-    statusWrong: Color(0xFFB8412F),
-    statusSkipped: Color(0xFF8A99AE),
-  );
-
   static const light = AppColorTokens(
-    background: Color(0xFFEDEFF3),
+    bg: Color(0xFFF3F2EF),
     surface: Color(0xFFFFFFFF),
-    accent: Color(0xFFA8851B),
-    textPrimary: Color(0xFF131F30),
-    textMuted: Color(0xFF5C6B80),
-    hairline: Color(0xFFD7DBE3),
-    statusCorrect: Color(0xFF2E8B6B),
-    statusTypo: Color(0xFFA8851B),
-    statusWrong: Color(0xFFB8412F),
-    statusSkipped: Color(0xFF5C6B80),
+    surfaceSunk: Color(0xFFFAFAF8),
+    line: Color(0xFFE2E1DC),
+    lineStrong: Color(0xFFC9C7C0),
+    ink: Color(0xFF17181C),
+    inkOn: Color(0xFFFFFFFF),
+    body: Color(0xFF2A2C32),
+    muted: Color(0xFF6E7076),
+    accent: Color(0xFF2B44FF),
+    accentTint: Color(0xFFE6E8FF),
+    success: Color(0xFF1F7A54),
+    danger: Color(0xFFC2412D),
+    markBg: Color(0xFFFFF0CC),
+    markLine: Color(0xFFC08A1E),
+  );
+
+  static const dark = AppColorTokens(
+    bg: Color(0xFF0F1012),
+    surface: Color(0xFF17181B),
+    surfaceSunk: Color(0xFF131417),
+    line: Color(0xFF26282C),
+    lineStrong: Color(0xFF3A3C41),
+    ink: Color(0xFFEDEBE6),
+    inkOn: Color(0xFF0F1012),
+    body: Color(0xFFD9D7D2),
+    muted: Color(0xFF8E8F94),
+    accent: Color(0xFF6E7BFF),
+    accentTint: Color(0xFF232748),
+    success: Color(0xFF3DBE87),
+    danger: Color(0xFFFF6B5A),
+    markBg: Color(0xFF3A3218),
+    markLine: Color(0xFFE0B44A),
   );
 }
 
-/// Spacing scale: 4 / 8 / 12 / 16 / 24 / 32 / 48.
+/// Spacing scale: 4 / 8 / 10 / 14 / 18 / 22 / 30. Screen side padding is
+/// [s22]; between cards [s10]; between meaningful blocks [s22] or more.
 class AppSpacing {
-  static const xs = 4.0;
-  static const sm = 8.0;
-  static const md = 12.0;
-  static const lg = 16.0;
-  static const xl = 24.0;
-  static const xxl = 32.0;
-  static const xxxl = 48.0;
+  static const s4 = 4.0;
+  static const s8 = 8.0;
+  static const s10 = 10.0;
+  static const s14 = 14.0;
+  static const s18 = 18.0;
+  static const s22 = 22.0;
+  static const s30 = 30.0;
+
+  static const screen = s22;
 }
 
-/// Radii are hierarchical, not uniform — see DESIGN.md "Форма и пространство".
+/// Radii. There are deliberately no pills in this system.
 class AppRadius {
-  /// Hero word card.
-  static const hero = 24.0;
-
-  /// Panels and input fields.
-  static const panel = 12.0;
-
-  /// Chips and unit tags.
+  static const card = 14.0;
+  static const field = 14.0;
+  static const button = 14.0;
   static const chip = 8.0;
-
-  /// Pill-shaped primary button — large enough to always render as a stadium.
-  static const pill = 999.0;
+  static const iconButton = 12.0;
 }
 
 /// The one deliberate motion in the app: the answer-check transition.
