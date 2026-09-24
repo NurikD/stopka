@@ -126,8 +126,9 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
       appBar: AppHeaderBar(
         nested: true,
         navIcon: Icons.close,
-        title: 'Повторение',
-        meta: _phase == _Phase.reviewing ? '${_index + 1} / ${_queue.length}' : null,
+        title: _phase == _Phase.reviewing
+            ? 'повторение · ${(_index + 1).toString().padLeft(2, '0')}/${_queue.length.toString().padLeft(2, '0')}'
+            : 'повторение',
       ),
       body: switch (_phase) {
         _Phase.loading => const Center(child: CircularProgressIndicator()),

@@ -85,7 +85,7 @@ class _UnitDetailScreenState extends ConsumerState<UnitDetailScreen> {
                 .toList();
 
         return Scaffold(
-          appBar: AppHeaderBar(nested: true, title: _titleFor(unit), meta: '${allCards.length}'),
+          appBar: AppHeaderBar(nested: true, title: _titleFor(unit)),
           body: snapshot.connectionState == ConnectionState.waiting
               ? const Center(child: CircularProgressIndicator())
               : allCards.isEmpty
