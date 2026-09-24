@@ -78,7 +78,11 @@ class AppColorTokens {
     ink: Color(0xFF17181C),
     inkOn: Color(0xFFFFFFFF),
     body: Color(0xFF2A2C32),
-    muted: Color(0xFF6E7076),
+    // DESIGN_v2 says #6E7076, which measures 4.42:1 on bg (#F3F2EF) and
+    // fails the same document's own 4.5:1 floor. #6C6E74 is the smallest
+    // step that passes (4.55:1); revert this line to follow the doc
+    // literally, and relax the contrast test with it.
+    muted: Color(0xFF6C6E74),
     accent: Color(0xFF2B44FF),
     accentTint: Color(0xFFE6E8FF),
     success: Color(0xFF1F7A54),
