@@ -4,6 +4,7 @@ import '../../domain/models/word_set.dart';
 import '../../domain/repositories/course_repository.dart';
 import '../../domain/repositories/unit_repository.dart';
 import '../../domain/repositories/word_set_repository.dart';
+import '../session/current_unit.dart';
 import '../text/russian_date.dart';
 
 class ShareTarget {
@@ -34,12 +35,7 @@ class ShareTargetService {
   Future<ShareTarget> resolve() async {
     final courses = await _courses.watchCourses().first;
 
-    Unit? newest;
-    for (final course in courses) {
-      for (final unit in await _units.watchUnits(course.id).first) {
-        if (newest == null || unit.createdAt.isAfter(newest.createdAt)) newest = unit;
-      }
-    }
+    Unit? newest = await findNewestUnit(_courses, _units);
 
     if (newest == null) {
       final course = courses.isNotEmpty

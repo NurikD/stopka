@@ -118,20 +118,27 @@ class DriftPackRepository implements PackRepository {
         );
   }
 
+  SimpleSelectStatement<$PackProgressesTable, PackProgressRow> _progressQuery(String packId) =>
+      _db.select(_db.packProgresses)
+        ..where((t) => t.packId.equals(packId) & t.deletedAt.isNull())
+        ..orderBy([(t) => OrderingTerm(expression: t.completedAt)]);
+
+  Map<PackPart, PackProgress> _latest(List<PackProgressRow> rows) {
+    final latest = <PackPart, PackProgress>{};
+    for (final r in rows) {
+      final part = PackPart.values.where((p) => p.name == r.part).firstOrNull;
+      if (part == null) continue;
+      latest[part] = PackProgress(part: part, completedAt: r.completedAt, score: r.score, total: r.total);
+    }
+    return latest;
+  }
+
+  @override
+  Future<Map<PackPart, PackProgress>> getProgress(String packId) async => _latest(await _progressQuery(packId).get());
+
   @override
   Stream<Map<PackPart, PackProgress>> watchProgress(String packId) {
-    final query = _db.select(_db.packProgresses)
-      ..where((t) => t.packId.equals(packId) & t.deletedAt.isNull())
-      ..orderBy([(t) => OrderingTerm(expression: t.completedAt)]);
-    return query.watch().map((rows) {
-      final latest = <PackPart, PackProgress>{};
-      for (final r in rows) {
-        final part = PackPart.values.where((p) => p.name == r.part).firstOrNull;
-        if (part == null) continue;
-        latest[part] = PackProgress(part: part, completedAt: r.completedAt, score: r.score, total: r.total);
-      }
-      return latest;
-    });
+    return _progressQuery(packId).watch().map(_latest);
   }
 
   @override

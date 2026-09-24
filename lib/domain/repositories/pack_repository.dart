@@ -18,6 +18,9 @@ abstract class PackRepository {
 
   Future<void> saveProgress(String packId, PackPart part, {required int score, required int total});
 
+  /// Latest progress per part, once.
+  Future<Map<PackPart, PackProgress>> getProgress(String packId);
+
   /// Latest progress per part.
   Stream<Map<PackPart, PackProgress>> watchProgress(String packId);
 

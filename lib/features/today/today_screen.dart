@@ -13,9 +13,13 @@ import '../../core/theme/typography.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/app_header_bar.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/ghost_button.dart';
 import '../../core/widgets/primary_button.dart';
 import '../../core/widgets/skill_row.dart';
 import '../../core/widgets/sticky_action_bar.dart';
+import '../../core/pack/pack_content.dart';
+import '../session/session_screen.dart';
+import '../session/today_plan.dart';
 import '../srs/srs_review_screen.dart';
 
 class TodayScreen extends ConsumerWidget {
@@ -28,6 +32,7 @@ class TodayScreen extends ConsumerWidget {
     final limit = ref.watch(newCardLimitProvider).value ?? defaultNewCardLimit;
     final streak = ref.watch(streakDaysProvider).value ?? 0;
     final doneToday = ref.watch(reviewsTodayProvider).value ?? 0;
+    final plan = ref.watch(todayPlanProvider).value;
     final now = DateTime.now();
 
     final streakMeta = streak > 0
@@ -76,23 +81,33 @@ class TodayScreen extends ConsumerWidget {
                           ),
                         ),
                         const SizedBox(height: AppSpacing.s22),
-                        if (planned == 0)
+                        if (planned == 0 && plan?.unit == null)
                           const EmptyState(
                             message:
                                 'Пока нечего повторять — пройдите диктант в любом юните, '
                                 'и выученные слова появятся здесь по расписанию.',
                           )
                         else ...[
-                          // Only the block that really exists. Reading, listening
-                          // and writing (02-04) arrive with the unit packs.
-                          SkillRow(
-                            number: '01',
-                            label: 'Слова',
-                            counter: '$doneToday / $planned',
-                            progress: doneToday / planned,
-                            started: doneToday > 0,
-                          ),
-                          const SizedBox(height: AppSpacing.s22),
+                          if (planned > 0) ...[
+                            SkillRow(
+                              number: '01',
+                              label: 'Слова',
+                              counter: '$doneToday / $planned',
+                              progress: doneToday / planned,
+                              started: doneToday > 0,
+                            ),
+                            const SizedBox(height: AppSpacing.s10),
+                          ],
+                          if (plan?.pack != null)
+                            for (final row in const [
+                              ('02', 'Чтение', PackPart.reading),
+                              ('03', 'Аудирование', PackPart.listening),
+                              ('04', 'Письмо', PackPart.writing),
+                            ]) ...[
+                              _skillRow(row.$1, row.$2, row.$3, plan!, now),
+                              const SizedBox(height: AppSpacing.s10),
+                            ],
+                          const SizedBox(height: AppSpacing.s10),
                           AppCard(
                             dashed: true,
                             onTap: () => context.go('/courses'),
@@ -126,29 +141,84 @@ class TodayScreen extends ConsumerWidget {
                         ],
                       ],
                     ),
-              bottomNavigationBar: total == 0
+              bottomNavigationBar: (plan?.steps.isEmpty ?? true) && total == 0
                   ? null
                   : StickyActionBar(
+                      flexes: total > 0 && (plan?.steps.isNotEmpty ?? false)
+                          ? const [1, 2]
+                          : null,
                       children: [
-                        PrimaryButton(
-                          label: 'Начать повторение',
-                          trailingIcon: Icons.arrow_forward,
-                          onPressed: () async {
-                            await Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const SrsReviewScreen(),
-                              ),
-                            );
-                            ref.invalidate(streakDaysProvider);
-                            ref.invalidate(reviewsTodayProvider);
-                          },
-                        ),
+                        if (total > 0)
+                          GhostButton(
+                            label: 'Только повторение',
+                            onPressed: () async {
+                              await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => const SrsReviewScreen(),
+                                ),
+                              );
+                              ref.invalidate(streakDaysProvider);
+                              ref.invalidate(reviewsTodayProvider);
+                              ref.invalidate(todayPlanProvider);
+                            },
+                          ),
+                        if (plan != null && plan.steps.isNotEmpty)
+                          PrimaryButton(
+                            label:
+                                'Заниматься ${plan.totalMinutes} ${pluralRu(plan.totalMinutes, one: 'минуту', few: 'минуты', many: 'минут')}',
+                            trailingIcon: Icons.arrow_forward,
+                            onPressed: () async {
+                              await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => SessionScreen(plan: plan),
+                                ),
+                              );
+                              ref.invalidate(streakDaysProvider);
+                              ref.invalidate(reviewsTodayProvider);
+                              ref.invalidate(todayPlanProvider);
+                            },
+                          )
+                        else if (total > 0)
+                          PrimaryButton(
+                            label: 'Начать повторение',
+                            trailingIcon: Icons.arrow_forward,
+                            onPressed: () async {
+                              await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => const SrsReviewScreen(),
+                                ),
+                              );
+                              ref.invalidate(streakDaysProvider);
+                              ref.invalidate(reviewsTodayProvider);
+                              ref.invalidate(todayPlanProvider);
+                            },
+                          ),
                       ],
                     ),
             );
           },
         );
       },
+    );
+  }
+
+  /// Row 02-04: one block per skill, today's state. A part that is not
+  /// ready yet says so instead of pretending to be empty.
+  Widget _skillRow(
+    String number,
+    String label,
+    PackPart part,
+    TodayPlan plan,
+    DateTime now,
+  ) {
+    final ready = plan.readyParts.contains(part);
+    final done = plan.doneToday(part, now);
+    return SkillRow(
+      number: number,
+      label: label,
+      counter: !ready ? 'не готово' : (done ? '1 / 1' : '0 / 1'),
+      progress: done ? 1 : 0,
+      started: done,
     );
   }
 }
