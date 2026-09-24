@@ -34,6 +34,12 @@ class AnswerChecker {
   /// resulting piece is at most two words; otherwise it's kept as one
   /// phrase.
   static List<String> variantsOf(String storedAnswer) {
+    return rawVariantsOf(storedAnswer).map(normalize).where((s) => s.isNotEmpty).toList();
+  }
+
+  /// The same split as [variantsOf] but with the original spelling kept, for
+  /// showing an answer to the user rather than comparing.
+  static List<String> rawVariantsOf(String storedAnswer) {
     final result = <String>[];
     for (final chunk in storedAnswer.split(RegExp(r'[/;]'))) {
       final trimmed = chunk.trim();
@@ -43,12 +49,33 @@ class AnswerChecker {
       final isSynonymList = commaParts.length > 1 && commaParts.every((p) => _wordCount(p) <= 2);
 
       if (isSynonymList) {
-        result.addAll(commaParts.map(normalize));
+        result.addAll(commaParts);
       } else {
-        result.add(normalize(trimmed));
+        result.add(trimmed);
       }
     }
-    return result.where((s) => s.isNotEmpty).toList();
+    return result;
+  }
+
+  /// Of the stored variants, the one (in its original spelling) closest to
+  /// what the user typed — so a review compares against the variant they
+  /// were actually aiming for, not blindly the first.
+  static String closestVariant({required String userInput, required String storedAnswer}) {
+    final variants = rawVariantsOf(storedAnswer);
+    if (variants.isEmpty) return storedAnswer.trim();
+    if (variants.length == 1) return variants.first;
+
+    final input = normalize(userInput);
+    var best = variants.first;
+    var bestDistance = _levenshtein(input, normalize(best));
+    for (final variant in variants.skip(1)) {
+      final distance = _levenshtein(input, normalize(variant));
+      if (distance < bestDistance) {
+        best = variant;
+        bestDistance = distance;
+      }
+    }
+    return best;
   }
 
   static int _wordCount(String s) => s.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).length;
