@@ -31,4 +31,13 @@ class RussianDate {
     final capitalized = weekday[0].toUpperCase() + weekday.substring(1);
     return '$capitalized, ${date.day} ${_months[date.month - 1]}';
   }
+
+  /// "Четверг" — the screen title on the main tab.
+  static String weekdayTitle(DateTime date) {
+    final weekday = _weekdays[date.weekday - 1];
+    return weekday[0].toUpperCase() + weekday.substring(1);
+  }
+
+  /// "25 сентября".
+  static String dayAndMonth(DateTime date) => '${date.day} ${_months[date.month - 1]}';
 }
