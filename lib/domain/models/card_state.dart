@@ -2,6 +2,8 @@ import 'dictation_session.dart';
 
 enum SrsState { learning, review, relearning }
 
+enum ReviewRating { again, hard, good, easy }
+
 class CardState {
   final String id;
   final String cardId;
