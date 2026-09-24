@@ -87,12 +87,6 @@ flutter:
   # Skia interpolates the requested FontWeight instead of needing one
   # asset per weight. See DESIGN.md for which family is used where.
   fonts:
-    - family: Literata
-      fonts:
-        - asset: assets/fonts/Literata-Variable.ttf
-    - family: GolosText
-      fonts:
-        - asset: assets/fonts/GolosText-Variable.ttf
     - family: Onest
       fonts:
         - asset: assets/fonts/Onest-Variable.ttf
