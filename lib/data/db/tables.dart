@@ -130,3 +130,15 @@ class CardStates extends Table with SyncColumns {
   late final state = textEnum<SrsCardStateColumn>().withDefault(const Constant('learning'))();
   late final lastReview = dateTime().nullable()();
 }
+
+enum SrsRatingColumn { again, hard, good, easy }
+
+/// One row per graded review. CardStates only keep the *last* review, so a
+/// streak computed from them would lose every earlier day; this is the
+/// history the streak (and later the statistics) are built from.
+@DataClassName('ReviewLogRow')
+class ReviewLogs extends Table with SyncColumns {
+  late final cardStateId = text().references(CardStates, #id)();
+  late final rating = textEnum<SrsRatingColumn>()();
+  late final reviewedAt = dateTime()();
+}
