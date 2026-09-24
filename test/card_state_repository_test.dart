@@ -2,6 +2,7 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stopka/data/db/app_database.dart';
 import 'package:stopka/data/repositories/card_state_repository_impl.dart';
+import 'package:stopka/domain/models/card_state.dart';
 import 'package:stopka/domain/models/dictation_session.dart';
 
 void main() {
@@ -98,5 +99,46 @@ void main() {
     await repo.saveState(s3.copyWith(reps: 1, lastReview: now.subtract(const Duration(days: 2))));
 
     expect(await repo.getStreakDays(), 3);
+  });
+
+  group('streak from the review log', () {
+    DateTime daysAgo(int n) => DateTime.now().subtract(Duration(days: n));
+
+    test('keeps earlier days even though the card was reviewed again later', () async {
+      // The card's own lastReview only remembers the latest review, so this
+      // is exactly the case a streak built from CardStates alone got wrong.
+      final state = await repo.ensureState('card1', DictationDirection.ruEn);
+      await repo.logReview(cardStateId: state.id, rating: ReviewRating.good, at: daysAgo(2));
+      await repo.logReview(cardStateId: state.id, rating: ReviewRating.good, at: daysAgo(1));
+      await repo.logReview(cardStateId: state.id, rating: ReviewRating.good, at: daysAgo(0));
+      await repo.saveState(state.copyWith(reps: 3, lastReview: DateTime.now().toUtc()));
+
+      expect(await repo.getStreakDays(), 3);
+    });
+
+    test('a missed day breaks the streak', () async {
+      final state = await repo.ensureState('card1', DictationDirection.ruEn);
+      await repo.logReview(cardStateId: state.id, rating: ReviewRating.good, at: daysAgo(3));
+      await repo.logReview(cardStateId: state.id, rating: ReviewRating.good, at: daysAgo(1));
+      await repo.logReview(cardStateId: state.id, rating: ReviewRating.good, at: daysAgo(0));
+
+      expect(await repo.getStreakDays(), 2);
+    });
+
+    test('several reviews on one day still count as one day', () async {
+      final state = await repo.ensureState('card1', DictationDirection.ruEn);
+      for (var i = 0; i < 5; i++) {
+        await repo.logReview(cardStateId: state.id, rating: ReviewRating.good);
+      }
+      expect(await repo.getStreakDays(), 1);
+    });
+
+    test('a streak alive through yesterday is not wiped by a pending today', () async {
+      final state = await repo.ensureState('card1', DictationDirection.ruEn);
+      await repo.logReview(cardStateId: state.id, rating: ReviewRating.good, at: daysAgo(2));
+      await repo.logReview(cardStateId: state.id, rating: ReviewRating.good, at: daysAgo(1));
+
+      expect(await repo.getStreakDays(), 2);
+    });
   });
 }
