@@ -185,13 +185,25 @@ void main() {
       );
     });
 
-    test('recieve/receive is distance 2 (a transposition costs 2 under plain '
-        'Levenshtein), so at 7 letters (max distance 1) it is "wrong" — '
-        'consistent with quite/quiet above, not a special case', () {
+    test('recieve/receive (swapped neighbours, 7 letters) is a typo: the word is known, the order slipped', () {
       expect(
         AnswerChecker.check(userInput: 'recieve', correctAnswer: 'receive'),
-        DictationVerdict.wrong,
+        DictationVerdict.typo,
       );
+    });
+
+    test('the same swap in a 5-letter word is a different word: angel/angle, trail/trial', () {
+      expect(AnswerChecker.check(userInput: 'angle', correctAnswer: 'angel'), DictationVerdict.wrong);
+      expect(AnswerChecker.check(userInput: 'trial', correctAnswer: 'trail'), DictationVerdict.wrong);
+    });
+
+    test('a swap at exactly 6 letters counts as a typo', () {
+      // friend -> freind
+      expect(AnswerChecker.check(userInput: 'freind', correctAnswer: 'friend'), DictationVerdict.typo);
+    });
+
+    test('two swaps in a 7-letter word is too far (2 edits, limit 1)', () {
+      expect(AnswerChecker.check(userInput: 'recieev', correctAnswer: 'receive'), DictationVerdict.wrong);
     });
 
     test('a typo-range distance on a short word (<5 letters) is "wrong", not "typo"', () {
