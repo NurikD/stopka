@@ -4,8 +4,8 @@ import '../theme/app_theme_extension.dart';
 import '../theme/tokens.dart';
 import '../theme/typography.dart';
 
-/// Secondary action next to a [PrimaryButton] (e.g. "Не знаю") — outline
-/// only, no fill, so it never competes with the accent button.
+/// Secondary action next to a [PrimaryButton]: same height, transparent
+/// fill, 1px `lineStrong` border, `muted` text.
 class GhostButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
@@ -15,18 +15,16 @@ class GhostButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    return SizedBox(
-      height: 48,
-      child: OutlinedButton(
-        onPressed: onPressed,
-        style: OutlinedButton.styleFrom(
-          foregroundColor: colors.ink,
-          side: BorderSide(color: colors.line),
-          shape: const StadiumBorder(),
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s22),
-        ),
-        child: Text(label, style: AppTypography.label),
+    return OutlinedButton(
+      onPressed: onPressed,
+      style: OutlinedButton.styleFrom(
+        minimumSize: const Size(0, 56),
+        foregroundColor: colors.muted,
+        side: BorderSide(color: colors.lineStrong),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s18),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.button)),
       ),
+      child: Text(label, style: AppTypography.label.copyWith(fontSize: 16), textAlign: TextAlign.center),
     );
   }
 }
