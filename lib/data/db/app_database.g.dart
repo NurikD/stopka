@@ -7049,6 +7049,3514 @@ class ReviewLogsCompanion extends UpdateCompanion<ReviewLogRow> {
   }
 }
 
+class $UnitPacksTable extends UnitPacks
+    with TableInfo<$UnitPacksTable, UnitPackRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $UnitPacksTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: () => const Uuid().v4(),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _ownerIdMeta = const VerificationMeta(
+    'ownerId',
+  );
+  @override
+  late final GeneratedColumn<String> ownerId = GeneratedColumn<String>(
+    'owner_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _packKeyMeta = const VerificationMeta(
+    'packKey',
+  );
+  @override
+  late final GeneratedColumn<String> packKey = GeneratedColumn<String>(
+    'pack_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _levelMeta = const VerificationMeta('level');
+  @override
+  late final GeneratedColumn<String> level = GeneratedColumn<String>(
+    'level',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _grammarTopicMeta = const VerificationMeta(
+    'grammarTopic',
+  );
+  @override
+  late final GeneratedColumn<String> grammarTopic = GeneratedColumn<String>(
+    'grammar_topic',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _vocabTopicMeta = const VerificationMeta(
+    'vocabTopic',
+  );
+  @override
+  late final GeneratedColumn<String> vocabTopic = GeneratedColumn<String>(
+    'vocab_topic',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _interestMeta = const VerificationMeta(
+    'interest',
+  );
+  @override
+  late final GeneratedColumn<String> interest = GeneratedColumn<String>(
+    'interest',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _schemaVersionMeta = const VerificationMeta(
+    'schemaVersion',
+  );
+  @override
+  late final GeneratedColumn<int> schemaVersion = GeneratedColumn<int>(
+    'schema_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _payloadMeta = const VerificationMeta(
+    'payload',
+  );
+  @override
+  late final GeneratedColumn<String> payload = GeneratedColumn<String>(
+    'payload',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('{}'),
+  );
+  static const VerificationMeta _statusesMeta = const VerificationMeta(
+    'statuses',
+  );
+  @override
+  late final GeneratedColumn<String> statuses = GeneratedColumn<String>(
+    'statuses',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('{}'),
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<PackSource, String> source =
+      GeneratedColumn<String>(
+        'source',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant('generated'),
+      ).withConverter<PackSource>($UnitPacksTable.$convertersource);
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    ownerId,
+    syncedAt,
+    packKey,
+    level,
+    grammarTopic,
+    vocabTopic,
+    interest,
+    schemaVersion,
+    payload,
+    statuses,
+    source,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'unit_packs';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<UnitPackRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('owner_id')) {
+      context.handle(
+        _ownerIdMeta,
+        ownerId.isAcceptableOrUnknown(data['owner_id']!, _ownerIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_ownerIdMeta);
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
+    if (data.containsKey('pack_key')) {
+      context.handle(
+        _packKeyMeta,
+        packKey.isAcceptableOrUnknown(data['pack_key']!, _packKeyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_packKeyMeta);
+    }
+    if (data.containsKey('level')) {
+      context.handle(
+        _levelMeta,
+        level.isAcceptableOrUnknown(data['level']!, _levelMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_levelMeta);
+    }
+    if (data.containsKey('grammar_topic')) {
+      context.handle(
+        _grammarTopicMeta,
+        grammarTopic.isAcceptableOrUnknown(
+          data['grammar_topic']!,
+          _grammarTopicMeta,
+        ),
+      );
+    }
+    if (data.containsKey('vocab_topic')) {
+      context.handle(
+        _vocabTopicMeta,
+        vocabTopic.isAcceptableOrUnknown(data['vocab_topic']!, _vocabTopicMeta),
+      );
+    }
+    if (data.containsKey('interest')) {
+      context.handle(
+        _interestMeta,
+        interest.isAcceptableOrUnknown(data['interest']!, _interestMeta),
+      );
+    }
+    if (data.containsKey('schema_version')) {
+      context.handle(
+        _schemaVersionMeta,
+        schemaVersion.isAcceptableOrUnknown(
+          data['schema_version']!,
+          _schemaVersionMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_schemaVersionMeta);
+    }
+    if (data.containsKey('payload')) {
+      context.handle(
+        _payloadMeta,
+        payload.isAcceptableOrUnknown(data['payload']!, _payloadMeta),
+      );
+    }
+    if (data.containsKey('statuses')) {
+      context.handle(
+        _statusesMeta,
+        statuses.isAcceptableOrUnknown(data['statuses']!, _statusesMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  UnitPackRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return UnitPackRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      ownerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}owner_id'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
+      packKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}pack_key'],
+      )!,
+      level: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}level'],
+      )!,
+      grammarTopic: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}grammar_topic'],
+      )!,
+      vocabTopic: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}vocab_topic'],
+      )!,
+      interest: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}interest'],
+      )!,
+      schemaVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}schema_version'],
+      )!,
+      payload: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload'],
+      )!,
+      statuses: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}statuses'],
+      )!,
+      source: $UnitPacksTable.$convertersource.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}source'],
+        )!,
+      ),
+    );
+  }
+
+  @override
+  $UnitPacksTable createAlias(String alias) {
+    return $UnitPacksTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<PackSource, String, String> $convertersource =
+      const EnumNameConverter<PackSource>(PackSource.values);
+}
+
+class UnitPackRow extends DataClass implements Insertable<UnitPackRow> {
+  final String id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  final String ownerId;
+  final DateTime? syncedAt;
+  final String packKey;
+  final String level;
+  final String grammarTopic;
+  final String vocabTopic;
+  final String interest;
+  final int schemaVersion;
+  final String payload;
+  final String statuses;
+  final PackSource source;
+  const UnitPackRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    required this.ownerId,
+    this.syncedAt,
+    required this.packKey,
+    required this.level,
+    required this.grammarTopic,
+    required this.vocabTopic,
+    required this.interest,
+    required this.schemaVersion,
+    required this.payload,
+    required this.statuses,
+    required this.source,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    map['owner_id'] = Variable<String>(ownerId);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
+    map['pack_key'] = Variable<String>(packKey);
+    map['level'] = Variable<String>(level);
+    map['grammar_topic'] = Variable<String>(grammarTopic);
+    map['vocab_topic'] = Variable<String>(vocabTopic);
+    map['interest'] = Variable<String>(interest);
+    map['schema_version'] = Variable<int>(schemaVersion);
+    map['payload'] = Variable<String>(payload);
+    map['statuses'] = Variable<String>(statuses);
+    {
+      map['source'] = Variable<String>(
+        $UnitPacksTable.$convertersource.toSql(source),
+      );
+    }
+    return map;
+  }
+
+  UnitPacksCompanion toCompanion(bool nullToAbsent) {
+    return UnitPacksCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      ownerId: Value(ownerId),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
+      packKey: Value(packKey),
+      level: Value(level),
+      grammarTopic: Value(grammarTopic),
+      vocabTopic: Value(vocabTopic),
+      interest: Value(interest),
+      schemaVersion: Value(schemaVersion),
+      payload: Value(payload),
+      statuses: Value(statuses),
+      source: Value(source),
+    );
+  }
+
+  factory UnitPackRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return UnitPackRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      ownerId: serializer.fromJson<String>(json['ownerId']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+      packKey: serializer.fromJson<String>(json['packKey']),
+      level: serializer.fromJson<String>(json['level']),
+      grammarTopic: serializer.fromJson<String>(json['grammarTopic']),
+      vocabTopic: serializer.fromJson<String>(json['vocabTopic']),
+      interest: serializer.fromJson<String>(json['interest']),
+      schemaVersion: serializer.fromJson<int>(json['schemaVersion']),
+      payload: serializer.fromJson<String>(json['payload']),
+      statuses: serializer.fromJson<String>(json['statuses']),
+      source: $UnitPacksTable.$convertersource.fromJson(
+        serializer.fromJson<String>(json['source']),
+      ),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'ownerId': serializer.toJson<String>(ownerId),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+      'packKey': serializer.toJson<String>(packKey),
+      'level': serializer.toJson<String>(level),
+      'grammarTopic': serializer.toJson<String>(grammarTopic),
+      'vocabTopic': serializer.toJson<String>(vocabTopic),
+      'interest': serializer.toJson<String>(interest),
+      'schemaVersion': serializer.toJson<int>(schemaVersion),
+      'payload': serializer.toJson<String>(payload),
+      'statuses': serializer.toJson<String>(statuses),
+      'source': serializer.toJson<String>(
+        $UnitPacksTable.$convertersource.toJson(source),
+      ),
+    };
+  }
+
+  UnitPackRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+    String? ownerId,
+    Value<DateTime?> syncedAt = const Value.absent(),
+    String? packKey,
+    String? level,
+    String? grammarTopic,
+    String? vocabTopic,
+    String? interest,
+    int? schemaVersion,
+    String? payload,
+    String? statuses,
+    PackSource? source,
+  }) => UnitPackRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    ownerId: ownerId ?? this.ownerId,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+    packKey: packKey ?? this.packKey,
+    level: level ?? this.level,
+    grammarTopic: grammarTopic ?? this.grammarTopic,
+    vocabTopic: vocabTopic ?? this.vocabTopic,
+    interest: interest ?? this.interest,
+    schemaVersion: schemaVersion ?? this.schemaVersion,
+    payload: payload ?? this.payload,
+    statuses: statuses ?? this.statuses,
+    source: source ?? this.source,
+  );
+  UnitPackRow copyWithCompanion(UnitPacksCompanion data) {
+    return UnitPackRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+      packKey: data.packKey.present ? data.packKey.value : this.packKey,
+      level: data.level.present ? data.level.value : this.level,
+      grammarTopic: data.grammarTopic.present
+          ? data.grammarTopic.value
+          : this.grammarTopic,
+      vocabTopic: data.vocabTopic.present
+          ? data.vocabTopic.value
+          : this.vocabTopic,
+      interest: data.interest.present ? data.interest.value : this.interest,
+      schemaVersion: data.schemaVersion.present
+          ? data.schemaVersion.value
+          : this.schemaVersion,
+      payload: data.payload.present ? data.payload.value : this.payload,
+      statuses: data.statuses.present ? data.statuses.value : this.statuses,
+      source: data.source.present ? data.source.value : this.source,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UnitPackRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('packKey: $packKey, ')
+          ..write('level: $level, ')
+          ..write('grammarTopic: $grammarTopic, ')
+          ..write('vocabTopic: $vocabTopic, ')
+          ..write('interest: $interest, ')
+          ..write('schemaVersion: $schemaVersion, ')
+          ..write('payload: $payload, ')
+          ..write('statuses: $statuses, ')
+          ..write('source: $source')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    ownerId,
+    syncedAt,
+    packKey,
+    level,
+    grammarTopic,
+    vocabTopic,
+    interest,
+    schemaVersion,
+    payload,
+    statuses,
+    source,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is UnitPackRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.ownerId == this.ownerId &&
+          other.syncedAt == this.syncedAt &&
+          other.packKey == this.packKey &&
+          other.level == this.level &&
+          other.grammarTopic == this.grammarTopic &&
+          other.vocabTopic == this.vocabTopic &&
+          other.interest == this.interest &&
+          other.schemaVersion == this.schemaVersion &&
+          other.payload == this.payload &&
+          other.statuses == this.statuses &&
+          other.source == this.source);
+}
+
+class UnitPacksCompanion extends UpdateCompanion<UnitPackRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<String> ownerId;
+  final Value<DateTime?> syncedAt;
+  final Value<String> packKey;
+  final Value<String> level;
+  final Value<String> grammarTopic;
+  final Value<String> vocabTopic;
+  final Value<String> interest;
+  final Value<int> schemaVersion;
+  final Value<String> payload;
+  final Value<String> statuses;
+  final Value<PackSource> source;
+  final Value<int> rowid;
+  const UnitPacksCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.ownerId = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.packKey = const Value.absent(),
+    this.level = const Value.absent(),
+    this.grammarTopic = const Value.absent(),
+    this.vocabTopic = const Value.absent(),
+    this.interest = const Value.absent(),
+    this.schemaVersion = const Value.absent(),
+    this.payload = const Value.absent(),
+    this.statuses = const Value.absent(),
+    this.source = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  UnitPacksCompanion.insert({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    required String ownerId,
+    this.syncedAt = const Value.absent(),
+    required String packKey,
+    required String level,
+    this.grammarTopic = const Value.absent(),
+    this.vocabTopic = const Value.absent(),
+    this.interest = const Value.absent(),
+    required int schemaVersion,
+    this.payload = const Value.absent(),
+    this.statuses = const Value.absent(),
+    this.source = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : ownerId = Value(ownerId),
+       packKey = Value(packKey),
+       level = Value(level),
+       schemaVersion = Value(schemaVersion);
+  static Insertable<UnitPackRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<String>? ownerId,
+    Expression<DateTime>? syncedAt,
+    Expression<String>? packKey,
+    Expression<String>? level,
+    Expression<String>? grammarTopic,
+    Expression<String>? vocabTopic,
+    Expression<String>? interest,
+    Expression<int>? schemaVersion,
+    Expression<String>? payload,
+    Expression<String>? statuses,
+    Expression<String>? source,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (ownerId != null) 'owner_id': ownerId,
+      if (syncedAt != null) 'synced_at': syncedAt,
+      if (packKey != null) 'pack_key': packKey,
+      if (level != null) 'level': level,
+      if (grammarTopic != null) 'grammar_topic': grammarTopic,
+      if (vocabTopic != null) 'vocab_topic': vocabTopic,
+      if (interest != null) 'interest': interest,
+      if (schemaVersion != null) 'schema_version': schemaVersion,
+      if (payload != null) 'payload': payload,
+      if (statuses != null) 'statuses': statuses,
+      if (source != null) 'source': source,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  UnitPacksCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
+    Value<String>? ownerId,
+    Value<DateTime?>? syncedAt,
+    Value<String>? packKey,
+    Value<String>? level,
+    Value<String>? grammarTopic,
+    Value<String>? vocabTopic,
+    Value<String>? interest,
+    Value<int>? schemaVersion,
+    Value<String>? payload,
+    Value<String>? statuses,
+    Value<PackSource>? source,
+    Value<int>? rowid,
+  }) {
+    return UnitPacksCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      ownerId: ownerId ?? this.ownerId,
+      syncedAt: syncedAt ?? this.syncedAt,
+      packKey: packKey ?? this.packKey,
+      level: level ?? this.level,
+      grammarTopic: grammarTopic ?? this.grammarTopic,
+      vocabTopic: vocabTopic ?? this.vocabTopic,
+      interest: interest ?? this.interest,
+      schemaVersion: schemaVersion ?? this.schemaVersion,
+      payload: payload ?? this.payload,
+      statuses: statuses ?? this.statuses,
+      source: source ?? this.source,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (ownerId.present) {
+      map['owner_id'] = Variable<String>(ownerId.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    if (packKey.present) {
+      map['pack_key'] = Variable<String>(packKey.value);
+    }
+    if (level.present) {
+      map['level'] = Variable<String>(level.value);
+    }
+    if (grammarTopic.present) {
+      map['grammar_topic'] = Variable<String>(grammarTopic.value);
+    }
+    if (vocabTopic.present) {
+      map['vocab_topic'] = Variable<String>(vocabTopic.value);
+    }
+    if (interest.present) {
+      map['interest'] = Variable<String>(interest.value);
+    }
+    if (schemaVersion.present) {
+      map['schema_version'] = Variable<int>(schemaVersion.value);
+    }
+    if (payload.present) {
+      map['payload'] = Variable<String>(payload.value);
+    }
+    if (statuses.present) {
+      map['statuses'] = Variable<String>(statuses.value);
+    }
+    if (source.present) {
+      map['source'] = Variable<String>(
+        $UnitPacksTable.$convertersource.toSql(source.value),
+      );
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UnitPacksCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('packKey: $packKey, ')
+          ..write('level: $level, ')
+          ..write('grammarTopic: $grammarTopic, ')
+          ..write('vocabTopic: $vocabTopic, ')
+          ..write('interest: $interest, ')
+          ..write('schemaVersion: $schemaVersion, ')
+          ..write('payload: $payload, ')
+          ..write('statuses: $statuses, ')
+          ..write('source: $source, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $PackProgressesTable extends PackProgresses
+    with TableInfo<$PackProgressesTable, PackProgressRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PackProgressesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: () => const Uuid().v4(),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _ownerIdMeta = const VerificationMeta(
+    'ownerId',
+  );
+  @override
+  late final GeneratedColumn<String> ownerId = GeneratedColumn<String>(
+    'owner_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _packIdMeta = const VerificationMeta('packId');
+  @override
+  late final GeneratedColumn<String> packId = GeneratedColumn<String>(
+    'pack_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES unit_packs (id)',
+    ),
+  );
+  static const VerificationMeta _partMeta = const VerificationMeta('part');
+  @override
+  late final GeneratedColumn<String> part = GeneratedColumn<String>(
+    'part',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _completedAtMeta = const VerificationMeta(
+    'completedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> completedAt = GeneratedColumn<DateTime>(
+    'completed_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _scoreMeta = const VerificationMeta('score');
+  @override
+  late final GeneratedColumn<int> score = GeneratedColumn<int>(
+    'score',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _totalMeta = const VerificationMeta('total');
+  @override
+  late final GeneratedColumn<int> total = GeneratedColumn<int>(
+    'total',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    ownerId,
+    syncedAt,
+    packId,
+    part,
+    completedAt,
+    score,
+    total,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'pack_progresses';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<PackProgressRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('owner_id')) {
+      context.handle(
+        _ownerIdMeta,
+        ownerId.isAcceptableOrUnknown(data['owner_id']!, _ownerIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_ownerIdMeta);
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
+    if (data.containsKey('pack_id')) {
+      context.handle(
+        _packIdMeta,
+        packId.isAcceptableOrUnknown(data['pack_id']!, _packIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_packIdMeta);
+    }
+    if (data.containsKey('part')) {
+      context.handle(
+        _partMeta,
+        part.isAcceptableOrUnknown(data['part']!, _partMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_partMeta);
+    }
+    if (data.containsKey('completed_at')) {
+      context.handle(
+        _completedAtMeta,
+        completedAt.isAcceptableOrUnknown(
+          data['completed_at']!,
+          _completedAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_completedAtMeta);
+    }
+    if (data.containsKey('score')) {
+      context.handle(
+        _scoreMeta,
+        score.isAcceptableOrUnknown(data['score']!, _scoreMeta),
+      );
+    }
+    if (data.containsKey('total')) {
+      context.handle(
+        _totalMeta,
+        total.isAcceptableOrUnknown(data['total']!, _totalMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  PackProgressRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PackProgressRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      ownerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}owner_id'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
+      packId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}pack_id'],
+      )!,
+      part: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}part'],
+      )!,
+      completedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}completed_at'],
+      )!,
+      score: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}score'],
+      )!,
+      total: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total'],
+      )!,
+    );
+  }
+
+  @override
+  $PackProgressesTable createAlias(String alias) {
+    return $PackProgressesTable(attachedDatabase, alias);
+  }
+}
+
+class PackProgressRow extends DataClass implements Insertable<PackProgressRow> {
+  final String id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  final String ownerId;
+  final DateTime? syncedAt;
+  final String packId;
+  final String part;
+  final DateTime completedAt;
+  final int score;
+  final int total;
+  const PackProgressRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    required this.ownerId,
+    this.syncedAt,
+    required this.packId,
+    required this.part,
+    required this.completedAt,
+    required this.score,
+    required this.total,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    map['owner_id'] = Variable<String>(ownerId);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
+    map['pack_id'] = Variable<String>(packId);
+    map['part'] = Variable<String>(part);
+    map['completed_at'] = Variable<DateTime>(completedAt);
+    map['score'] = Variable<int>(score);
+    map['total'] = Variable<int>(total);
+    return map;
+  }
+
+  PackProgressesCompanion toCompanion(bool nullToAbsent) {
+    return PackProgressesCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      ownerId: Value(ownerId),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
+      packId: Value(packId),
+      part: Value(part),
+      completedAt: Value(completedAt),
+      score: Value(score),
+      total: Value(total),
+    );
+  }
+
+  factory PackProgressRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PackProgressRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      ownerId: serializer.fromJson<String>(json['ownerId']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+      packId: serializer.fromJson<String>(json['packId']),
+      part: serializer.fromJson<String>(json['part']),
+      completedAt: serializer.fromJson<DateTime>(json['completedAt']),
+      score: serializer.fromJson<int>(json['score']),
+      total: serializer.fromJson<int>(json['total']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'ownerId': serializer.toJson<String>(ownerId),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+      'packId': serializer.toJson<String>(packId),
+      'part': serializer.toJson<String>(part),
+      'completedAt': serializer.toJson<DateTime>(completedAt),
+      'score': serializer.toJson<int>(score),
+      'total': serializer.toJson<int>(total),
+    };
+  }
+
+  PackProgressRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+    String? ownerId,
+    Value<DateTime?> syncedAt = const Value.absent(),
+    String? packId,
+    String? part,
+    DateTime? completedAt,
+    int? score,
+    int? total,
+  }) => PackProgressRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    ownerId: ownerId ?? this.ownerId,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+    packId: packId ?? this.packId,
+    part: part ?? this.part,
+    completedAt: completedAt ?? this.completedAt,
+    score: score ?? this.score,
+    total: total ?? this.total,
+  );
+  PackProgressRow copyWithCompanion(PackProgressesCompanion data) {
+    return PackProgressRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+      packId: data.packId.present ? data.packId.value : this.packId,
+      part: data.part.present ? data.part.value : this.part,
+      completedAt: data.completedAt.present
+          ? data.completedAt.value
+          : this.completedAt,
+      score: data.score.present ? data.score.value : this.score,
+      total: data.total.present ? data.total.value : this.total,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PackProgressRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('packId: $packId, ')
+          ..write('part: $part, ')
+          ..write('completedAt: $completedAt, ')
+          ..write('score: $score, ')
+          ..write('total: $total')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    ownerId,
+    syncedAt,
+    packId,
+    part,
+    completedAt,
+    score,
+    total,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PackProgressRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.ownerId == this.ownerId &&
+          other.syncedAt == this.syncedAt &&
+          other.packId == this.packId &&
+          other.part == this.part &&
+          other.completedAt == this.completedAt &&
+          other.score == this.score &&
+          other.total == this.total);
+}
+
+class PackProgressesCompanion extends UpdateCompanion<PackProgressRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<String> ownerId;
+  final Value<DateTime?> syncedAt;
+  final Value<String> packId;
+  final Value<String> part;
+  final Value<DateTime> completedAt;
+  final Value<int> score;
+  final Value<int> total;
+  final Value<int> rowid;
+  const PackProgressesCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.ownerId = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.packId = const Value.absent(),
+    this.part = const Value.absent(),
+    this.completedAt = const Value.absent(),
+    this.score = const Value.absent(),
+    this.total = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  PackProgressesCompanion.insert({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    required String ownerId,
+    this.syncedAt = const Value.absent(),
+    required String packId,
+    required String part,
+    required DateTime completedAt,
+    this.score = const Value.absent(),
+    this.total = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : ownerId = Value(ownerId),
+       packId = Value(packId),
+       part = Value(part),
+       completedAt = Value(completedAt);
+  static Insertable<PackProgressRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<String>? ownerId,
+    Expression<DateTime>? syncedAt,
+    Expression<String>? packId,
+    Expression<String>? part,
+    Expression<DateTime>? completedAt,
+    Expression<int>? score,
+    Expression<int>? total,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (ownerId != null) 'owner_id': ownerId,
+      if (syncedAt != null) 'synced_at': syncedAt,
+      if (packId != null) 'pack_id': packId,
+      if (part != null) 'part': part,
+      if (completedAt != null) 'completed_at': completedAt,
+      if (score != null) 'score': score,
+      if (total != null) 'total': total,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  PackProgressesCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
+    Value<String>? ownerId,
+    Value<DateTime?>? syncedAt,
+    Value<String>? packId,
+    Value<String>? part,
+    Value<DateTime>? completedAt,
+    Value<int>? score,
+    Value<int>? total,
+    Value<int>? rowid,
+  }) {
+    return PackProgressesCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      ownerId: ownerId ?? this.ownerId,
+      syncedAt: syncedAt ?? this.syncedAt,
+      packId: packId ?? this.packId,
+      part: part ?? this.part,
+      completedAt: completedAt ?? this.completedAt,
+      score: score ?? this.score,
+      total: total ?? this.total,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (ownerId.present) {
+      map['owner_id'] = Variable<String>(ownerId.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    if (packId.present) {
+      map['pack_id'] = Variable<String>(packId.value);
+    }
+    if (part.present) {
+      map['part'] = Variable<String>(part.value);
+    }
+    if (completedAt.present) {
+      map['completed_at'] = Variable<DateTime>(completedAt.value);
+    }
+    if (score.present) {
+      map['score'] = Variable<int>(score.value);
+    }
+    if (total.present) {
+      map['total'] = Variable<int>(total.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PackProgressesCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('packId: $packId, ')
+          ..write('part: $part, ')
+          ..write('completedAt: $completedAt, ')
+          ..write('score: $score, ')
+          ..write('total: $total, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ExerciseAttemptsTable extends ExerciseAttempts
+    with TableInfo<$ExerciseAttemptsTable, ExerciseAttemptRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ExerciseAttemptsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: () => const Uuid().v4(),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _ownerIdMeta = const VerificationMeta(
+    'ownerId',
+  );
+  @override
+  late final GeneratedColumn<String> ownerId = GeneratedColumn<String>(
+    'owner_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _packIdMeta = const VerificationMeta('packId');
+  @override
+  late final GeneratedColumn<String> packId = GeneratedColumn<String>(
+    'pack_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES unit_packs (id)',
+    ),
+  );
+  static const VerificationMeta _partMeta = const VerificationMeta('part');
+  @override
+  late final GeneratedColumn<String> part = GeneratedColumn<String>(
+    'part',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _itemIndexMeta = const VerificationMeta(
+    'itemIndex',
+  );
+  @override
+  late final GeneratedColumn<int> itemIndex = GeneratedColumn<int>(
+    'item_index',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _userAnswerMeta = const VerificationMeta(
+    'userAnswer',
+  );
+  @override
+  late final GeneratedColumn<String> userAnswer = GeneratedColumn<String>(
+    'user_answer',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isCorrectMeta = const VerificationMeta(
+    'isCorrect',
+  );
+  @override
+  late final GeneratedColumn<bool> isCorrect = GeneratedColumn<bool>(
+    'is_correct',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_correct" IN (0, 1))',
+    ),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    ownerId,
+    syncedAt,
+    packId,
+    part,
+    itemIndex,
+    userAnswer,
+    isCorrect,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'exercise_attempts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ExerciseAttemptRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('owner_id')) {
+      context.handle(
+        _ownerIdMeta,
+        ownerId.isAcceptableOrUnknown(data['owner_id']!, _ownerIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_ownerIdMeta);
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
+    if (data.containsKey('pack_id')) {
+      context.handle(
+        _packIdMeta,
+        packId.isAcceptableOrUnknown(data['pack_id']!, _packIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_packIdMeta);
+    }
+    if (data.containsKey('part')) {
+      context.handle(
+        _partMeta,
+        part.isAcceptableOrUnknown(data['part']!, _partMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_partMeta);
+    }
+    if (data.containsKey('item_index')) {
+      context.handle(
+        _itemIndexMeta,
+        itemIndex.isAcceptableOrUnknown(data['item_index']!, _itemIndexMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_itemIndexMeta);
+    }
+    if (data.containsKey('user_answer')) {
+      context.handle(
+        _userAnswerMeta,
+        userAnswer.isAcceptableOrUnknown(data['user_answer']!, _userAnswerMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_userAnswerMeta);
+    }
+    if (data.containsKey('is_correct')) {
+      context.handle(
+        _isCorrectMeta,
+        isCorrect.isAcceptableOrUnknown(data['is_correct']!, _isCorrectMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_isCorrectMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ExerciseAttemptRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ExerciseAttemptRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      ownerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}owner_id'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
+      packId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}pack_id'],
+      )!,
+      part: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}part'],
+      )!,
+      itemIndex: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}item_index'],
+      )!,
+      userAnswer: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_answer'],
+      )!,
+      isCorrect: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_correct'],
+      )!,
+    );
+  }
+
+  @override
+  $ExerciseAttemptsTable createAlias(String alias) {
+    return $ExerciseAttemptsTable(attachedDatabase, alias);
+  }
+}
+
+class ExerciseAttemptRow extends DataClass
+    implements Insertable<ExerciseAttemptRow> {
+  final String id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  final String ownerId;
+  final DateTime? syncedAt;
+  final String packId;
+  final String part;
+  final int itemIndex;
+  final String userAnswer;
+  final bool isCorrect;
+  const ExerciseAttemptRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    required this.ownerId,
+    this.syncedAt,
+    required this.packId,
+    required this.part,
+    required this.itemIndex,
+    required this.userAnswer,
+    required this.isCorrect,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    map['owner_id'] = Variable<String>(ownerId);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
+    map['pack_id'] = Variable<String>(packId);
+    map['part'] = Variable<String>(part);
+    map['item_index'] = Variable<int>(itemIndex);
+    map['user_answer'] = Variable<String>(userAnswer);
+    map['is_correct'] = Variable<bool>(isCorrect);
+    return map;
+  }
+
+  ExerciseAttemptsCompanion toCompanion(bool nullToAbsent) {
+    return ExerciseAttemptsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      ownerId: Value(ownerId),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
+      packId: Value(packId),
+      part: Value(part),
+      itemIndex: Value(itemIndex),
+      userAnswer: Value(userAnswer),
+      isCorrect: Value(isCorrect),
+    );
+  }
+
+  factory ExerciseAttemptRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ExerciseAttemptRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      ownerId: serializer.fromJson<String>(json['ownerId']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+      packId: serializer.fromJson<String>(json['packId']),
+      part: serializer.fromJson<String>(json['part']),
+      itemIndex: serializer.fromJson<int>(json['itemIndex']),
+      userAnswer: serializer.fromJson<String>(json['userAnswer']),
+      isCorrect: serializer.fromJson<bool>(json['isCorrect']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'ownerId': serializer.toJson<String>(ownerId),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+      'packId': serializer.toJson<String>(packId),
+      'part': serializer.toJson<String>(part),
+      'itemIndex': serializer.toJson<int>(itemIndex),
+      'userAnswer': serializer.toJson<String>(userAnswer),
+      'isCorrect': serializer.toJson<bool>(isCorrect),
+    };
+  }
+
+  ExerciseAttemptRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+    String? ownerId,
+    Value<DateTime?> syncedAt = const Value.absent(),
+    String? packId,
+    String? part,
+    int? itemIndex,
+    String? userAnswer,
+    bool? isCorrect,
+  }) => ExerciseAttemptRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    ownerId: ownerId ?? this.ownerId,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+    packId: packId ?? this.packId,
+    part: part ?? this.part,
+    itemIndex: itemIndex ?? this.itemIndex,
+    userAnswer: userAnswer ?? this.userAnswer,
+    isCorrect: isCorrect ?? this.isCorrect,
+  );
+  ExerciseAttemptRow copyWithCompanion(ExerciseAttemptsCompanion data) {
+    return ExerciseAttemptRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+      packId: data.packId.present ? data.packId.value : this.packId,
+      part: data.part.present ? data.part.value : this.part,
+      itemIndex: data.itemIndex.present ? data.itemIndex.value : this.itemIndex,
+      userAnswer: data.userAnswer.present
+          ? data.userAnswer.value
+          : this.userAnswer,
+      isCorrect: data.isCorrect.present ? data.isCorrect.value : this.isCorrect,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExerciseAttemptRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('packId: $packId, ')
+          ..write('part: $part, ')
+          ..write('itemIndex: $itemIndex, ')
+          ..write('userAnswer: $userAnswer, ')
+          ..write('isCorrect: $isCorrect')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    ownerId,
+    syncedAt,
+    packId,
+    part,
+    itemIndex,
+    userAnswer,
+    isCorrect,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ExerciseAttemptRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.ownerId == this.ownerId &&
+          other.syncedAt == this.syncedAt &&
+          other.packId == this.packId &&
+          other.part == this.part &&
+          other.itemIndex == this.itemIndex &&
+          other.userAnswer == this.userAnswer &&
+          other.isCorrect == this.isCorrect);
+}
+
+class ExerciseAttemptsCompanion extends UpdateCompanion<ExerciseAttemptRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<String> ownerId;
+  final Value<DateTime?> syncedAt;
+  final Value<String> packId;
+  final Value<String> part;
+  final Value<int> itemIndex;
+  final Value<String> userAnswer;
+  final Value<bool> isCorrect;
+  final Value<int> rowid;
+  const ExerciseAttemptsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.ownerId = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.packId = const Value.absent(),
+    this.part = const Value.absent(),
+    this.itemIndex = const Value.absent(),
+    this.userAnswer = const Value.absent(),
+    this.isCorrect = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ExerciseAttemptsCompanion.insert({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    required String ownerId,
+    this.syncedAt = const Value.absent(),
+    required String packId,
+    required String part,
+    required int itemIndex,
+    required String userAnswer,
+    required bool isCorrect,
+    this.rowid = const Value.absent(),
+  }) : ownerId = Value(ownerId),
+       packId = Value(packId),
+       part = Value(part),
+       itemIndex = Value(itemIndex),
+       userAnswer = Value(userAnswer),
+       isCorrect = Value(isCorrect);
+  static Insertable<ExerciseAttemptRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<String>? ownerId,
+    Expression<DateTime>? syncedAt,
+    Expression<String>? packId,
+    Expression<String>? part,
+    Expression<int>? itemIndex,
+    Expression<String>? userAnswer,
+    Expression<bool>? isCorrect,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (ownerId != null) 'owner_id': ownerId,
+      if (syncedAt != null) 'synced_at': syncedAt,
+      if (packId != null) 'pack_id': packId,
+      if (part != null) 'part': part,
+      if (itemIndex != null) 'item_index': itemIndex,
+      if (userAnswer != null) 'user_answer': userAnswer,
+      if (isCorrect != null) 'is_correct': isCorrect,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ExerciseAttemptsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
+    Value<String>? ownerId,
+    Value<DateTime?>? syncedAt,
+    Value<String>? packId,
+    Value<String>? part,
+    Value<int>? itemIndex,
+    Value<String>? userAnswer,
+    Value<bool>? isCorrect,
+    Value<int>? rowid,
+  }) {
+    return ExerciseAttemptsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      ownerId: ownerId ?? this.ownerId,
+      syncedAt: syncedAt ?? this.syncedAt,
+      packId: packId ?? this.packId,
+      part: part ?? this.part,
+      itemIndex: itemIndex ?? this.itemIndex,
+      userAnswer: userAnswer ?? this.userAnswer,
+      isCorrect: isCorrect ?? this.isCorrect,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (ownerId.present) {
+      map['owner_id'] = Variable<String>(ownerId.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    if (packId.present) {
+      map['pack_id'] = Variable<String>(packId.value);
+    }
+    if (part.present) {
+      map['part'] = Variable<String>(part.value);
+    }
+    if (itemIndex.present) {
+      map['item_index'] = Variable<int>(itemIndex.value);
+    }
+    if (userAnswer.present) {
+      map['user_answer'] = Variable<String>(userAnswer.value);
+    }
+    if (isCorrect.present) {
+      map['is_correct'] = Variable<bool>(isCorrect.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExerciseAttemptsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('packId: $packId, ')
+          ..write('part: $part, ')
+          ..write('itemIndex: $itemIndex, ')
+          ..write('userAnswer: $userAnswer, ')
+          ..write('isCorrect: $isCorrect, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $WritingAttemptsTable extends WritingAttempts
+    with TableInfo<$WritingAttemptsTable, WritingAttemptRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $WritingAttemptsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: () => const Uuid().v4(),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _ownerIdMeta = const VerificationMeta(
+    'ownerId',
+  );
+  @override
+  late final GeneratedColumn<String> ownerId = GeneratedColumn<String>(
+    'owner_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _packIdMeta = const VerificationMeta('packId');
+  @override
+  late final GeneratedColumn<String> packId = GeneratedColumn<String>(
+    'pack_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES unit_packs (id)',
+    ),
+  );
+  static const VerificationMeta _userTextMeta = const VerificationMeta(
+    'userText',
+  );
+  @override
+  late final GeneratedColumn<String> userText = GeneratedColumn<String>(
+    'user_text',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _correctedTextMeta = const VerificationMeta(
+    'correctedText',
+  );
+  @override
+  late final GeneratedColumn<String> correctedText = GeneratedColumn<String>(
+    'corrected_text',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _nativeTextMeta = const VerificationMeta(
+    'nativeText',
+  );
+  @override
+  late final GeneratedColumn<String> nativeText = GeneratedColumn<String>(
+    'native_text',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _summaryMeta = const VerificationMeta(
+    'summary',
+  );
+  @override
+  late final GeneratedColumn<String> summary = GeneratedColumn<String>(
+    'summary',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    ownerId,
+    syncedAt,
+    packId,
+    userText,
+    correctedText,
+    nativeText,
+    summary,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'writing_attempts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<WritingAttemptRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('owner_id')) {
+      context.handle(
+        _ownerIdMeta,
+        ownerId.isAcceptableOrUnknown(data['owner_id']!, _ownerIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_ownerIdMeta);
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
+    if (data.containsKey('pack_id')) {
+      context.handle(
+        _packIdMeta,
+        packId.isAcceptableOrUnknown(data['pack_id']!, _packIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_packIdMeta);
+    }
+    if (data.containsKey('user_text')) {
+      context.handle(
+        _userTextMeta,
+        userText.isAcceptableOrUnknown(data['user_text']!, _userTextMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_userTextMeta);
+    }
+    if (data.containsKey('corrected_text')) {
+      context.handle(
+        _correctedTextMeta,
+        correctedText.isAcceptableOrUnknown(
+          data['corrected_text']!,
+          _correctedTextMeta,
+        ),
+      );
+    }
+    if (data.containsKey('native_text')) {
+      context.handle(
+        _nativeTextMeta,
+        nativeText.isAcceptableOrUnknown(data['native_text']!, _nativeTextMeta),
+      );
+    }
+    if (data.containsKey('summary')) {
+      context.handle(
+        _summaryMeta,
+        summary.isAcceptableOrUnknown(data['summary']!, _summaryMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  WritingAttemptRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return WritingAttemptRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      ownerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}owner_id'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
+      packId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}pack_id'],
+      )!,
+      userText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_text'],
+      )!,
+      correctedText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}corrected_text'],
+      )!,
+      nativeText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}native_text'],
+      )!,
+      summary: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}summary'],
+      )!,
+    );
+  }
+
+  @override
+  $WritingAttemptsTable createAlias(String alias) {
+    return $WritingAttemptsTable(attachedDatabase, alias);
+  }
+}
+
+class WritingAttemptRow extends DataClass
+    implements Insertable<WritingAttemptRow> {
+  final String id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  final String ownerId;
+  final DateTime? syncedAt;
+  final String packId;
+  final String userText;
+  final String correctedText;
+  final String nativeText;
+  final String summary;
+  const WritingAttemptRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    required this.ownerId,
+    this.syncedAt,
+    required this.packId,
+    required this.userText,
+    required this.correctedText,
+    required this.nativeText,
+    required this.summary,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    map['owner_id'] = Variable<String>(ownerId);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
+    map['pack_id'] = Variable<String>(packId);
+    map['user_text'] = Variable<String>(userText);
+    map['corrected_text'] = Variable<String>(correctedText);
+    map['native_text'] = Variable<String>(nativeText);
+    map['summary'] = Variable<String>(summary);
+    return map;
+  }
+
+  WritingAttemptsCompanion toCompanion(bool nullToAbsent) {
+    return WritingAttemptsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      ownerId: Value(ownerId),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
+      packId: Value(packId),
+      userText: Value(userText),
+      correctedText: Value(correctedText),
+      nativeText: Value(nativeText),
+      summary: Value(summary),
+    );
+  }
+
+  factory WritingAttemptRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return WritingAttemptRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      ownerId: serializer.fromJson<String>(json['ownerId']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+      packId: serializer.fromJson<String>(json['packId']),
+      userText: serializer.fromJson<String>(json['userText']),
+      correctedText: serializer.fromJson<String>(json['correctedText']),
+      nativeText: serializer.fromJson<String>(json['nativeText']),
+      summary: serializer.fromJson<String>(json['summary']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'ownerId': serializer.toJson<String>(ownerId),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+      'packId': serializer.toJson<String>(packId),
+      'userText': serializer.toJson<String>(userText),
+      'correctedText': serializer.toJson<String>(correctedText),
+      'nativeText': serializer.toJson<String>(nativeText),
+      'summary': serializer.toJson<String>(summary),
+    };
+  }
+
+  WritingAttemptRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+    String? ownerId,
+    Value<DateTime?> syncedAt = const Value.absent(),
+    String? packId,
+    String? userText,
+    String? correctedText,
+    String? nativeText,
+    String? summary,
+  }) => WritingAttemptRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    ownerId: ownerId ?? this.ownerId,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+    packId: packId ?? this.packId,
+    userText: userText ?? this.userText,
+    correctedText: correctedText ?? this.correctedText,
+    nativeText: nativeText ?? this.nativeText,
+    summary: summary ?? this.summary,
+  );
+  WritingAttemptRow copyWithCompanion(WritingAttemptsCompanion data) {
+    return WritingAttemptRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+      packId: data.packId.present ? data.packId.value : this.packId,
+      userText: data.userText.present ? data.userText.value : this.userText,
+      correctedText: data.correctedText.present
+          ? data.correctedText.value
+          : this.correctedText,
+      nativeText: data.nativeText.present
+          ? data.nativeText.value
+          : this.nativeText,
+      summary: data.summary.present ? data.summary.value : this.summary,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('WritingAttemptRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('packId: $packId, ')
+          ..write('userText: $userText, ')
+          ..write('correctedText: $correctedText, ')
+          ..write('nativeText: $nativeText, ')
+          ..write('summary: $summary')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    ownerId,
+    syncedAt,
+    packId,
+    userText,
+    correctedText,
+    nativeText,
+    summary,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is WritingAttemptRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.ownerId == this.ownerId &&
+          other.syncedAt == this.syncedAt &&
+          other.packId == this.packId &&
+          other.userText == this.userText &&
+          other.correctedText == this.correctedText &&
+          other.nativeText == this.nativeText &&
+          other.summary == this.summary);
+}
+
+class WritingAttemptsCompanion extends UpdateCompanion<WritingAttemptRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<String> ownerId;
+  final Value<DateTime?> syncedAt;
+  final Value<String> packId;
+  final Value<String> userText;
+  final Value<String> correctedText;
+  final Value<String> nativeText;
+  final Value<String> summary;
+  final Value<int> rowid;
+  const WritingAttemptsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.ownerId = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.packId = const Value.absent(),
+    this.userText = const Value.absent(),
+    this.correctedText = const Value.absent(),
+    this.nativeText = const Value.absent(),
+    this.summary = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  WritingAttemptsCompanion.insert({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    required String ownerId,
+    this.syncedAt = const Value.absent(),
+    required String packId,
+    required String userText,
+    this.correctedText = const Value.absent(),
+    this.nativeText = const Value.absent(),
+    this.summary = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : ownerId = Value(ownerId),
+       packId = Value(packId),
+       userText = Value(userText);
+  static Insertable<WritingAttemptRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<String>? ownerId,
+    Expression<DateTime>? syncedAt,
+    Expression<String>? packId,
+    Expression<String>? userText,
+    Expression<String>? correctedText,
+    Expression<String>? nativeText,
+    Expression<String>? summary,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (ownerId != null) 'owner_id': ownerId,
+      if (syncedAt != null) 'synced_at': syncedAt,
+      if (packId != null) 'pack_id': packId,
+      if (userText != null) 'user_text': userText,
+      if (correctedText != null) 'corrected_text': correctedText,
+      if (nativeText != null) 'native_text': nativeText,
+      if (summary != null) 'summary': summary,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  WritingAttemptsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
+    Value<String>? ownerId,
+    Value<DateTime?>? syncedAt,
+    Value<String>? packId,
+    Value<String>? userText,
+    Value<String>? correctedText,
+    Value<String>? nativeText,
+    Value<String>? summary,
+    Value<int>? rowid,
+  }) {
+    return WritingAttemptsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      ownerId: ownerId ?? this.ownerId,
+      syncedAt: syncedAt ?? this.syncedAt,
+      packId: packId ?? this.packId,
+      userText: userText ?? this.userText,
+      correctedText: correctedText ?? this.correctedText,
+      nativeText: nativeText ?? this.nativeText,
+      summary: summary ?? this.summary,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (ownerId.present) {
+      map['owner_id'] = Variable<String>(ownerId.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    if (packId.present) {
+      map['pack_id'] = Variable<String>(packId.value);
+    }
+    if (userText.present) {
+      map['user_text'] = Variable<String>(userText.value);
+    }
+    if (correctedText.present) {
+      map['corrected_text'] = Variable<String>(correctedText.value);
+    }
+    if (nativeText.present) {
+      map['native_text'] = Variable<String>(nativeText.value);
+    }
+    if (summary.present) {
+      map['summary'] = Variable<String>(summary.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('WritingAttemptsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('packId: $packId, ')
+          ..write('userText: $userText, ')
+          ..write('correctedText: $correctedText, ')
+          ..write('nativeText: $nativeText, ')
+          ..write('summary: $summary, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $MistakesTable extends Mistakes
+    with TableInfo<$MistakesTable, MistakeRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MistakesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: () => const Uuid().v4(),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _ownerIdMeta = const VerificationMeta(
+    'ownerId',
+  );
+  @override
+  late final GeneratedColumn<String> ownerId = GeneratedColumn<String>(
+    'owner_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _skillMeta = const VerificationMeta('skill');
+  @override
+  late final GeneratedColumn<String> skill = GeneratedColumn<String>(
+    'skill',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _categoryMeta = const VerificationMeta(
+    'category',
+  );
+  @override
+  late final GeneratedColumn<String> category = GeneratedColumn<String>(
+    'category',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _originalMeta = const VerificationMeta(
+    'original',
+  );
+  @override
+  late final GeneratedColumn<String> original = GeneratedColumn<String>(
+    'original',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _correctedMeta = const VerificationMeta(
+    'corrected',
+  );
+  @override
+  late final GeneratedColumn<String> corrected = GeneratedColumn<String>(
+    'corrected',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _explanationMeta = const VerificationMeta(
+    'explanation',
+  );
+  @override
+  late final GeneratedColumn<String> explanation = GeneratedColumn<String>(
+    'explanation',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _packIdMeta = const VerificationMeta('packId');
+  @override
+  late final GeneratedColumn<String> packId = GeneratedColumn<String>(
+    'pack_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES unit_packs (id)',
+    ),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    ownerId,
+    syncedAt,
+    skill,
+    category,
+    original,
+    corrected,
+    explanation,
+    packId,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'mistakes';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<MistakeRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('owner_id')) {
+      context.handle(
+        _ownerIdMeta,
+        ownerId.isAcceptableOrUnknown(data['owner_id']!, _ownerIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_ownerIdMeta);
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
+    if (data.containsKey('skill')) {
+      context.handle(
+        _skillMeta,
+        skill.isAcceptableOrUnknown(data['skill']!, _skillMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_skillMeta);
+    }
+    if (data.containsKey('category')) {
+      context.handle(
+        _categoryMeta,
+        category.isAcceptableOrUnknown(data['category']!, _categoryMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_categoryMeta);
+    }
+    if (data.containsKey('original')) {
+      context.handle(
+        _originalMeta,
+        original.isAcceptableOrUnknown(data['original']!, _originalMeta),
+      );
+    }
+    if (data.containsKey('corrected')) {
+      context.handle(
+        _correctedMeta,
+        corrected.isAcceptableOrUnknown(data['corrected']!, _correctedMeta),
+      );
+    }
+    if (data.containsKey('explanation')) {
+      context.handle(
+        _explanationMeta,
+        explanation.isAcceptableOrUnknown(
+          data['explanation']!,
+          _explanationMeta,
+        ),
+      );
+    }
+    if (data.containsKey('pack_id')) {
+      context.handle(
+        _packIdMeta,
+        packId.isAcceptableOrUnknown(data['pack_id']!, _packIdMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  MistakeRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MistakeRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      ownerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}owner_id'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
+      skill: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}skill'],
+      )!,
+      category: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category'],
+      )!,
+      original: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}original'],
+      )!,
+      corrected: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}corrected'],
+      )!,
+      explanation: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}explanation'],
+      )!,
+      packId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}pack_id'],
+      ),
+    );
+  }
+
+  @override
+  $MistakesTable createAlias(String alias) {
+    return $MistakesTable(attachedDatabase, alias);
+  }
+}
+
+class MistakeRow extends DataClass implements Insertable<MistakeRow> {
+  final String id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  final String ownerId;
+  final DateTime? syncedAt;
+  final String skill;
+  final String category;
+  final String original;
+  final String corrected;
+  final String explanation;
+  final String? packId;
+  const MistakeRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    required this.ownerId,
+    this.syncedAt,
+    required this.skill,
+    required this.category,
+    required this.original,
+    required this.corrected,
+    required this.explanation,
+    this.packId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    map['owner_id'] = Variable<String>(ownerId);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
+    map['skill'] = Variable<String>(skill);
+    map['category'] = Variable<String>(category);
+    map['original'] = Variable<String>(original);
+    map['corrected'] = Variable<String>(corrected);
+    map['explanation'] = Variable<String>(explanation);
+    if (!nullToAbsent || packId != null) {
+      map['pack_id'] = Variable<String>(packId);
+    }
+    return map;
+  }
+
+  MistakesCompanion toCompanion(bool nullToAbsent) {
+    return MistakesCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      ownerId: Value(ownerId),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
+      skill: Value(skill),
+      category: Value(category),
+      original: Value(original),
+      corrected: Value(corrected),
+      explanation: Value(explanation),
+      packId: packId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(packId),
+    );
+  }
+
+  factory MistakeRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MistakeRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      ownerId: serializer.fromJson<String>(json['ownerId']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+      skill: serializer.fromJson<String>(json['skill']),
+      category: serializer.fromJson<String>(json['category']),
+      original: serializer.fromJson<String>(json['original']),
+      corrected: serializer.fromJson<String>(json['corrected']),
+      explanation: serializer.fromJson<String>(json['explanation']),
+      packId: serializer.fromJson<String?>(json['packId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'ownerId': serializer.toJson<String>(ownerId),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+      'skill': serializer.toJson<String>(skill),
+      'category': serializer.toJson<String>(category),
+      'original': serializer.toJson<String>(original),
+      'corrected': serializer.toJson<String>(corrected),
+      'explanation': serializer.toJson<String>(explanation),
+      'packId': serializer.toJson<String?>(packId),
+    };
+  }
+
+  MistakeRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+    String? ownerId,
+    Value<DateTime?> syncedAt = const Value.absent(),
+    String? skill,
+    String? category,
+    String? original,
+    String? corrected,
+    String? explanation,
+    Value<String?> packId = const Value.absent(),
+  }) => MistakeRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    ownerId: ownerId ?? this.ownerId,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+    skill: skill ?? this.skill,
+    category: category ?? this.category,
+    original: original ?? this.original,
+    corrected: corrected ?? this.corrected,
+    explanation: explanation ?? this.explanation,
+    packId: packId.present ? packId.value : this.packId,
+  );
+  MistakeRow copyWithCompanion(MistakesCompanion data) {
+    return MistakeRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+      skill: data.skill.present ? data.skill.value : this.skill,
+      category: data.category.present ? data.category.value : this.category,
+      original: data.original.present ? data.original.value : this.original,
+      corrected: data.corrected.present ? data.corrected.value : this.corrected,
+      explanation: data.explanation.present
+          ? data.explanation.value
+          : this.explanation,
+      packId: data.packId.present ? data.packId.value : this.packId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MistakeRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('skill: $skill, ')
+          ..write('category: $category, ')
+          ..write('original: $original, ')
+          ..write('corrected: $corrected, ')
+          ..write('explanation: $explanation, ')
+          ..write('packId: $packId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    ownerId,
+    syncedAt,
+    skill,
+    category,
+    original,
+    corrected,
+    explanation,
+    packId,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MistakeRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.ownerId == this.ownerId &&
+          other.syncedAt == this.syncedAt &&
+          other.skill == this.skill &&
+          other.category == this.category &&
+          other.original == this.original &&
+          other.corrected == this.corrected &&
+          other.explanation == this.explanation &&
+          other.packId == this.packId);
+}
+
+class MistakesCompanion extends UpdateCompanion<MistakeRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<String> ownerId;
+  final Value<DateTime?> syncedAt;
+  final Value<String> skill;
+  final Value<String> category;
+  final Value<String> original;
+  final Value<String> corrected;
+  final Value<String> explanation;
+  final Value<String?> packId;
+  final Value<int> rowid;
+  const MistakesCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.ownerId = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.skill = const Value.absent(),
+    this.category = const Value.absent(),
+    this.original = const Value.absent(),
+    this.corrected = const Value.absent(),
+    this.explanation = const Value.absent(),
+    this.packId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  MistakesCompanion.insert({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    required String ownerId,
+    this.syncedAt = const Value.absent(),
+    required String skill,
+    required String category,
+    this.original = const Value.absent(),
+    this.corrected = const Value.absent(),
+    this.explanation = const Value.absent(),
+    this.packId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : ownerId = Value(ownerId),
+       skill = Value(skill),
+       category = Value(category);
+  static Insertable<MistakeRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<String>? ownerId,
+    Expression<DateTime>? syncedAt,
+    Expression<String>? skill,
+    Expression<String>? category,
+    Expression<String>? original,
+    Expression<String>? corrected,
+    Expression<String>? explanation,
+    Expression<String>? packId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (ownerId != null) 'owner_id': ownerId,
+      if (syncedAt != null) 'synced_at': syncedAt,
+      if (skill != null) 'skill': skill,
+      if (category != null) 'category': category,
+      if (original != null) 'original': original,
+      if (corrected != null) 'corrected': corrected,
+      if (explanation != null) 'explanation': explanation,
+      if (packId != null) 'pack_id': packId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  MistakesCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
+    Value<String>? ownerId,
+    Value<DateTime?>? syncedAt,
+    Value<String>? skill,
+    Value<String>? category,
+    Value<String>? original,
+    Value<String>? corrected,
+    Value<String>? explanation,
+    Value<String?>? packId,
+    Value<int>? rowid,
+  }) {
+    return MistakesCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      ownerId: ownerId ?? this.ownerId,
+      syncedAt: syncedAt ?? this.syncedAt,
+      skill: skill ?? this.skill,
+      category: category ?? this.category,
+      original: original ?? this.original,
+      corrected: corrected ?? this.corrected,
+      explanation: explanation ?? this.explanation,
+      packId: packId ?? this.packId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (ownerId.present) {
+      map['owner_id'] = Variable<String>(ownerId.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    if (skill.present) {
+      map['skill'] = Variable<String>(skill.value);
+    }
+    if (category.present) {
+      map['category'] = Variable<String>(category.value);
+    }
+    if (original.present) {
+      map['original'] = Variable<String>(original.value);
+    }
+    if (corrected.present) {
+      map['corrected'] = Variable<String>(corrected.value);
+    }
+    if (explanation.present) {
+      map['explanation'] = Variable<String>(explanation.value);
+    }
+    if (packId.present) {
+      map['pack_id'] = Variable<String>(packId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MistakesCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('skill: $skill, ')
+          ..write('category: $category, ')
+          ..write('original: $original, ')
+          ..write('corrected: $corrected, ')
+          ..write('explanation: $explanation, ')
+          ..write('packId: $packId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -7065,6 +10573,15 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   );
   late final $CardStatesTable cardStates = $CardStatesTable(this);
   late final $ReviewLogsTable reviewLogs = $ReviewLogsTable(this);
+  late final $UnitPacksTable unitPacks = $UnitPacksTable(this);
+  late final $PackProgressesTable packProgresses = $PackProgressesTable(this);
+  late final $ExerciseAttemptsTable exerciseAttempts = $ExerciseAttemptsTable(
+    this,
+  );
+  late final $WritingAttemptsTable writingAttempts = $WritingAttemptsTable(
+    this,
+  );
+  late final $MistakesTable mistakes = $MistakesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -7080,6 +10597,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     dictationAnswers,
     cardStates,
     reviewLogs,
+    unitPacks,
+    packProgresses,
+    exerciseAttempts,
+    writingAttempts,
+    mistakes,
   ];
 }
 
@@ -12128,6 +15650,2571 @@ typedef $$ReviewLogsTableProcessedTableManager =
       ReviewLogRow,
       PrefetchHooks Function({bool cardStateId})
     >;
+typedef $$UnitPacksTableCreateCompanionBuilder = UnitPacksCompanion Function({
+  Value<String> id,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<DateTime?> deletedAt,
+  required String ownerId,
+  Value<DateTime?> syncedAt,
+  required String packKey,
+  required String level,
+  Value<String> grammarTopic,
+  Value<String> vocabTopic,
+  Value<String> interest,
+  required int schemaVersion,
+  Value<String> payload,
+  Value<String> statuses,
+  Value<PackSource> source,
+  Value<int> rowid,
+});
+typedef $$UnitPacksTableUpdateCompanionBuilder = UnitPacksCompanion Function({
+  Value<String> id,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<DateTime?> deletedAt,
+  Value<String> ownerId,
+  Value<DateTime?> syncedAt,
+  Value<String> packKey,
+  Value<String> level,
+  Value<String> grammarTopic,
+  Value<String> vocabTopic,
+  Value<String> interest,
+  Value<int> schemaVersion,
+  Value<String> payload,
+  Value<String> statuses,
+  Value<PackSource> source,
+  Value<int> rowid,
+});
+
+final class $$UnitPacksTableReferences
+    extends BaseReferences<_$AppDatabase, $UnitPacksTable, UnitPackRow> {
+  $$UnitPacksTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$PackProgressesTable, List<PackProgressRow>>
+  _packProgressesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.packProgresses,
+    aliasName: 'unit_packs__id__pack_progresses__pack_id',
+  );
+
+  $$PackProgressesTableProcessedTableManager get packProgressesRefs {
+    final manager = $$PackProgressesTableTableManager(
+      $_db,
+      $_db.packProgresses,
+    ).filter((f) => f.packId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_packProgressesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$ExerciseAttemptsTable, List<ExerciseAttemptRow>>
+  _exerciseAttemptsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.exerciseAttempts,
+    aliasName: 'unit_packs__id__exercise_attempts__pack_id',
+  );
+
+  $$ExerciseAttemptsTableProcessedTableManager get exerciseAttemptsRefs {
+    final manager = $$ExerciseAttemptsTableTableManager(
+      $_db,
+      $_db.exerciseAttempts,
+    ).filter((f) => f.packId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _exerciseAttemptsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$WritingAttemptsTable, List<WritingAttemptRow>>
+  _writingAttemptsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.writingAttempts,
+    aliasName: 'unit_packs__id__writing_attempts__pack_id',
+  );
+
+  $$WritingAttemptsTableProcessedTableManager get writingAttemptsRefs {
+    final manager = $$WritingAttemptsTableTableManager(
+      $_db,
+      $_db.writingAttempts,
+    ).filter((f) => f.packId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _writingAttemptsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$MistakesTable, List<MistakeRow>>
+  _mistakesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.mistakes,
+    aliasName: 'unit_packs__id__mistakes__pack_id',
+  );
+
+  $$MistakesTableProcessedTableManager get mistakesRefs {
+    final manager = $$MistakesTableTableManager(
+      $_db,
+      $_db.mistakes,
+    ).filter((f) => f.packId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_mistakesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$UnitPacksTableFilterComposer
+    extends Composer<_$AppDatabase, $UnitPacksTable> {
+  $$UnitPacksTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ownerId => $composableBuilder(
+    column: $table.ownerId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get packKey => $composableBuilder(
+    column: $table.packKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get level => $composableBuilder(
+    column: $table.level,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get grammarTopic => $composableBuilder(
+    column: $table.grammarTopic,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get vocabTopic => $composableBuilder(
+    column: $table.vocabTopic,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get interest => $composableBuilder(
+    column: $table.interest,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get schemaVersion => $composableBuilder(
+    column: $table.schemaVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payload => $composableBuilder(
+    column: $table.payload,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get statuses => $composableBuilder(
+    column: $table.statuses,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<PackSource, PackSource, String> get source =>
+      $composableBuilder(
+        column: $table.source,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
+
+  Expression<bool> packProgressesRefs(
+    Expression<bool> Function($$PackProgressesTableFilterComposer f) f,
+  ) {
+    final $$PackProgressesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.packProgresses,
+      getReferencedColumn: (t) => t.packId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PackProgressesTableFilterComposer(
+            $db: $db,
+            $table: $db.packProgresses,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> exerciseAttemptsRefs(
+    Expression<bool> Function($$ExerciseAttemptsTableFilterComposer f) f,
+  ) {
+    final $$ExerciseAttemptsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.exerciseAttempts,
+      getReferencedColumn: (t) => t.packId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExerciseAttemptsTableFilterComposer(
+            $db: $db,
+            $table: $db.exerciseAttempts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> writingAttemptsRefs(
+    Expression<bool> Function($$WritingAttemptsTableFilterComposer f) f,
+  ) {
+    final $$WritingAttemptsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.writingAttempts,
+      getReferencedColumn: (t) => t.packId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WritingAttemptsTableFilterComposer(
+            $db: $db,
+            $table: $db.writingAttempts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> mistakesRefs(
+    Expression<bool> Function($$MistakesTableFilterComposer f) f,
+  ) {
+    final $$MistakesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.mistakes,
+      getReferencedColumn: (t) => t.packId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MistakesTableFilterComposer(
+            $db: $db,
+            $table: $db.mistakes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$UnitPacksTableOrderingComposer
+    extends Composer<_$AppDatabase, $UnitPacksTable> {
+  $$UnitPacksTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ownerId => $composableBuilder(
+    column: $table.ownerId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get packKey => $composableBuilder(
+    column: $table.packKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get level => $composableBuilder(
+    column: $table.level,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get grammarTopic => $composableBuilder(
+    column: $table.grammarTopic,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get vocabTopic => $composableBuilder(
+    column: $table.vocabTopic,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get interest => $composableBuilder(
+    column: $table.interest,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get schemaVersion => $composableBuilder(
+    column: $table.schemaVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payload => $composableBuilder(
+    column: $table.payload,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get statuses => $composableBuilder(
+    column: $table.statuses,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$UnitPacksTableAnnotationComposer
+    extends Composer<_$AppDatabase, $UnitPacksTable> {
+  $$UnitPacksTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get ownerId =>
+      $composableBuilder(column: $table.ownerId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get packKey =>
+      $composableBuilder(column: $table.packKey, builder: (column) => column);
+
+  GeneratedColumn<String> get level =>
+      $composableBuilder(column: $table.level, builder: (column) => column);
+
+  GeneratedColumn<String> get grammarTopic => $composableBuilder(
+    column: $table.grammarTopic,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get vocabTopic => $composableBuilder(
+    column: $table.vocabTopic,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get interest =>
+      $composableBuilder(column: $table.interest, builder: (column) => column);
+
+  GeneratedColumn<int> get schemaVersion => $composableBuilder(
+    column: $table.schemaVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get payload =>
+      $composableBuilder(column: $table.payload, builder: (column) => column);
+
+  GeneratedColumn<String> get statuses =>
+      $composableBuilder(column: $table.statuses, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<PackSource, String> get source =>
+      $composableBuilder(column: $table.source, builder: (column) => column);
+
+  Expression<T> packProgressesRefs<T extends Object>(
+    Expression<T> Function($$PackProgressesTableAnnotationComposer a) f,
+  ) {
+    final $$PackProgressesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.packProgresses,
+      getReferencedColumn: (t) => t.packId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PackProgressesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.packProgresses,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> exerciseAttemptsRefs<T extends Object>(
+    Expression<T> Function($$ExerciseAttemptsTableAnnotationComposer a) f,
+  ) {
+    final $$ExerciseAttemptsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.exerciseAttempts,
+      getReferencedColumn: (t) => t.packId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExerciseAttemptsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.exerciseAttempts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> writingAttemptsRefs<T extends Object>(
+    Expression<T> Function($$WritingAttemptsTableAnnotationComposer a) f,
+  ) {
+    final $$WritingAttemptsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.writingAttempts,
+      getReferencedColumn: (t) => t.packId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WritingAttemptsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.writingAttempts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> mistakesRefs<T extends Object>(
+    Expression<T> Function($$MistakesTableAnnotationComposer a) f,
+  ) {
+    final $$MistakesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.mistakes,
+      getReferencedColumn: (t) => t.packId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MistakesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.mistakes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$UnitPacksTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $UnitPacksTable,
+          UnitPackRow,
+          $$UnitPacksTableFilterComposer,
+          $$UnitPacksTableOrderingComposer,
+          $$UnitPacksTableAnnotationComposer,
+          $$UnitPacksTableCreateCompanionBuilder,
+          $$UnitPacksTableUpdateCompanionBuilder,
+          (UnitPackRow, $$UnitPacksTableReferences),
+          UnitPackRow,
+          PrefetchHooks Function({
+            bool packProgressesRefs,
+            bool exerciseAttemptsRefs,
+            bool writingAttemptsRefs,
+            bool mistakesRefs,
+          })
+        > {
+  $$UnitPacksTableTableManager(_$AppDatabase db, $UnitPacksTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$UnitPacksTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$UnitPacksTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$UnitPacksTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<String> ownerId = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<String> packKey = const Value.absent(),
+                Value<String> level = const Value.absent(),
+                Value<String> grammarTopic = const Value.absent(),
+                Value<String> vocabTopic = const Value.absent(),
+                Value<String> interest = const Value.absent(),
+                Value<int> schemaVersion = const Value.absent(),
+                Value<String> payload = const Value.absent(),
+                Value<String> statuses = const Value.absent(),
+                Value<PackSource> source = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => UnitPacksCompanion(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                ownerId: ownerId,
+                syncedAt: syncedAt,
+                packKey: packKey,
+                level: level,
+                grammarTopic: grammarTopic,
+                vocabTopic: vocabTopic,
+                interest: interest,
+                schemaVersion: schemaVersion,
+                payload: payload,
+                statuses: statuses,
+                source: source,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                required String ownerId,
+                Value<DateTime?> syncedAt = const Value.absent(),
+                required String packKey,
+                required String level,
+                Value<String> grammarTopic = const Value.absent(),
+                Value<String> vocabTopic = const Value.absent(),
+                Value<String> interest = const Value.absent(),
+                required int schemaVersion,
+                Value<String> payload = const Value.absent(),
+                Value<String> statuses = const Value.absent(),
+                Value<PackSource> source = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => UnitPacksCompanion.insert(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                ownerId: ownerId,
+                syncedAt: syncedAt,
+                packKey: packKey,
+                level: level,
+                grammarTopic: grammarTopic,
+                vocabTopic: vocabTopic,
+                interest: interest,
+                schemaVersion: schemaVersion,
+                payload: payload,
+                statuses: statuses,
+                source: source,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$UnitPacksTable, UnitPackRow>(table),
+                  $$UnitPacksTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({
+                packProgressesRefs = false,
+                exerciseAttemptsRefs = false,
+                writingAttemptsRefs = false,
+                mistakesRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (packProgressesRefs) db.packProgresses,
+                    if (exerciseAttemptsRefs) db.exerciseAttempts,
+                    if (writingAttemptsRefs) db.writingAttempts,
+                    if (mistakesRefs) db.mistakes,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (packProgressesRefs)
+                        await $_getPrefetchedData<
+                          UnitPackRow,
+                          $UnitPacksTable,
+                          PackProgressRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$UnitPacksTableReferences
+                              ._packProgressesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$UnitPacksTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).packProgressesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.packId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (exerciseAttemptsRefs)
+                        await $_getPrefetchedData<
+                          UnitPackRow,
+                          $UnitPacksTable,
+                          ExerciseAttemptRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$UnitPacksTableReferences
+                              ._exerciseAttemptsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$UnitPacksTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).exerciseAttemptsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.packId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (writingAttemptsRefs)
+                        await $_getPrefetchedData<
+                          UnitPackRow,
+                          $UnitPacksTable,
+                          WritingAttemptRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$UnitPacksTableReferences
+                              ._writingAttemptsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$UnitPacksTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).writingAttemptsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.packId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (mistakesRefs)
+                        await $_getPrefetchedData<
+                          UnitPackRow,
+                          $UnitPacksTable,
+                          MistakeRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$UnitPacksTableReferences
+                              ._mistakesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$UnitPacksTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).mistakesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.packId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$UnitPacksTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $UnitPacksTable,
+      UnitPackRow,
+      $$UnitPacksTableFilterComposer,
+      $$UnitPacksTableOrderingComposer,
+      $$UnitPacksTableAnnotationComposer,
+      $$UnitPacksTableCreateCompanionBuilder,
+      $$UnitPacksTableUpdateCompanionBuilder,
+      (UnitPackRow, $$UnitPacksTableReferences),
+      UnitPackRow,
+      PrefetchHooks Function({
+        bool packProgressesRefs,
+        bool exerciseAttemptsRefs,
+        bool writingAttemptsRefs,
+        bool mistakesRefs,
+      })
+    >;
+typedef $$PackProgressesTableCreateCompanionBuilder =
+    PackProgressesCompanion Function({
+      Value<String> id,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      required String ownerId,
+      Value<DateTime?> syncedAt,
+      required String packId,
+      required String part,
+      required DateTime completedAt,
+      Value<int> score,
+      Value<int> total,
+      Value<int> rowid,
+    });
+typedef $$PackProgressesTableUpdateCompanionBuilder =
+    PackProgressesCompanion Function({
+      Value<String> id,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<String> ownerId,
+      Value<DateTime?> syncedAt,
+      Value<String> packId,
+      Value<String> part,
+      Value<DateTime> completedAt,
+      Value<int> score,
+      Value<int> total,
+      Value<int> rowid,
+    });
+
+final class $$PackProgressesTableReferences
+    extends
+        BaseReferences<_$AppDatabase, $PackProgressesTable, PackProgressRow> {
+  $$PackProgressesTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $UnitPacksTable _packIdTable(_$AppDatabase db) =>
+      db.unitPacks.createAlias('pack_progresses__pack_id__unit_packs__id');
+
+  $$UnitPacksTableProcessedTableManager get packId {
+    final $_column = $_itemColumn<String>('pack_id')!;
+
+    final manager = $$UnitPacksTableTableManager(
+      $_db,
+      $_db.unitPacks,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_packIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$PackProgressesTableFilterComposer
+    extends Composer<_$AppDatabase, $PackProgressesTable> {
+  $$PackProgressesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ownerId => $composableBuilder(
+    column: $table.ownerId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get part => $composableBuilder(
+    column: $table.part,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get score => $composableBuilder(
+    column: $table.score,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get total => $composableBuilder(
+    column: $table.total,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$UnitPacksTableFilterComposer get packId {
+    final $$UnitPacksTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.packId,
+      referencedTable: $db.unitPacks,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UnitPacksTableFilterComposer(
+            $db: $db,
+            $table: $db.unitPacks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$PackProgressesTableOrderingComposer
+    extends Composer<_$AppDatabase, $PackProgressesTable> {
+  $$PackProgressesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ownerId => $composableBuilder(
+    column: $table.ownerId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get part => $composableBuilder(
+    column: $table.part,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get score => $composableBuilder(
+    column: $table.score,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get total => $composableBuilder(
+    column: $table.total,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$UnitPacksTableOrderingComposer get packId {
+    final $$UnitPacksTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.packId,
+      referencedTable: $db.unitPacks,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UnitPacksTableOrderingComposer(
+            $db: $db,
+            $table: $db.unitPacks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$PackProgressesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $PackProgressesTable> {
+  $$PackProgressesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get ownerId =>
+      $composableBuilder(column: $table.ownerId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get part =>
+      $composableBuilder(column: $table.part, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get score =>
+      $composableBuilder(column: $table.score, builder: (column) => column);
+
+  GeneratedColumn<int> get total =>
+      $composableBuilder(column: $table.total, builder: (column) => column);
+
+  $$UnitPacksTableAnnotationComposer get packId {
+    final $$UnitPacksTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.packId,
+      referencedTable: $db.unitPacks,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UnitPacksTableAnnotationComposer(
+            $db: $db,
+            $table: $db.unitPacks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$PackProgressesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $PackProgressesTable,
+          PackProgressRow,
+          $$PackProgressesTableFilterComposer,
+          $$PackProgressesTableOrderingComposer,
+          $$PackProgressesTableAnnotationComposer,
+          $$PackProgressesTableCreateCompanionBuilder,
+          $$PackProgressesTableUpdateCompanionBuilder,
+          (PackProgressRow, $$PackProgressesTableReferences),
+          PackProgressRow,
+          PrefetchHooks Function({bool packId})
+        > {
+  $$PackProgressesTableTableManager(
+    _$AppDatabase db,
+    $PackProgressesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$PackProgressesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PackProgressesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PackProgressesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<String> ownerId = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<String> packId = const Value.absent(),
+                Value<String> part = const Value.absent(),
+                Value<DateTime> completedAt = const Value.absent(),
+                Value<int> score = const Value.absent(),
+                Value<int> total = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => PackProgressesCompanion(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                ownerId: ownerId,
+                syncedAt: syncedAt,
+                packId: packId,
+                part: part,
+                completedAt: completedAt,
+                score: score,
+                total: total,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                required String ownerId,
+                Value<DateTime?> syncedAt = const Value.absent(),
+                required String packId,
+                required String part,
+                required DateTime completedAt,
+                Value<int> score = const Value.absent(),
+                Value<int> total = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => PackProgressesCompanion.insert(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                ownerId: ownerId,
+                syncedAt: syncedAt,
+                packId: packId,
+                part: part,
+                completedAt: completedAt,
+                score: score,
+                total: total,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$PackProgressesTable, PackProgressRow>(table),
+                  $$PackProgressesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({packId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (packId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.packId,
+                        referencedTable: $$PackProgressesTableReferences
+                            ._packIdTable(db),
+                        referencedColumn: $$PackProgressesTableReferences
+                            ._packIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$PackProgressesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $PackProgressesTable,
+      PackProgressRow,
+      $$PackProgressesTableFilterComposer,
+      $$PackProgressesTableOrderingComposer,
+      $$PackProgressesTableAnnotationComposer,
+      $$PackProgressesTableCreateCompanionBuilder,
+      $$PackProgressesTableUpdateCompanionBuilder,
+      (PackProgressRow, $$PackProgressesTableReferences),
+      PackProgressRow,
+      PrefetchHooks Function({bool packId})
+    >;
+typedef $$ExerciseAttemptsTableCreateCompanionBuilder =
+    ExerciseAttemptsCompanion Function({
+      Value<String> id,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      required String ownerId,
+      Value<DateTime?> syncedAt,
+      required String packId,
+      required String part,
+      required int itemIndex,
+      required String userAnswer,
+      required bool isCorrect,
+      Value<int> rowid,
+    });
+typedef $$ExerciseAttemptsTableUpdateCompanionBuilder =
+    ExerciseAttemptsCompanion Function({
+      Value<String> id,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<String> ownerId,
+      Value<DateTime?> syncedAt,
+      Value<String> packId,
+      Value<String> part,
+      Value<int> itemIndex,
+      Value<String> userAnswer,
+      Value<bool> isCorrect,
+      Value<int> rowid,
+    });
+
+final class $$ExerciseAttemptsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $ExerciseAttemptsTable,
+          ExerciseAttemptRow
+        > {
+  $$ExerciseAttemptsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $UnitPacksTable _packIdTable(_$AppDatabase db) =>
+      db.unitPacks.createAlias('exercise_attempts__pack_id__unit_packs__id');
+
+  $$UnitPacksTableProcessedTableManager get packId {
+    final $_column = $_itemColumn<String>('pack_id')!;
+
+    final manager = $$UnitPacksTableTableManager(
+      $_db,
+      $_db.unitPacks,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_packIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$ExerciseAttemptsTableFilterComposer
+    extends Composer<_$AppDatabase, $ExerciseAttemptsTable> {
+  $$ExerciseAttemptsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ownerId => $composableBuilder(
+    column: $table.ownerId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get part => $composableBuilder(
+    column: $table.part,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get itemIndex => $composableBuilder(
+    column: $table.itemIndex,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userAnswer => $composableBuilder(
+    column: $table.userAnswer,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isCorrect => $composableBuilder(
+    column: $table.isCorrect,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$UnitPacksTableFilterComposer get packId {
+    final $$UnitPacksTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.packId,
+      referencedTable: $db.unitPacks,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UnitPacksTableFilterComposer(
+            $db: $db,
+            $table: $db.unitPacks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ExerciseAttemptsTableOrderingComposer
+    extends Composer<_$AppDatabase, $ExerciseAttemptsTable> {
+  $$ExerciseAttemptsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ownerId => $composableBuilder(
+    column: $table.ownerId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get part => $composableBuilder(
+    column: $table.part,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get itemIndex => $composableBuilder(
+    column: $table.itemIndex,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get userAnswer => $composableBuilder(
+    column: $table.userAnswer,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isCorrect => $composableBuilder(
+    column: $table.isCorrect,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$UnitPacksTableOrderingComposer get packId {
+    final $$UnitPacksTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.packId,
+      referencedTable: $db.unitPacks,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UnitPacksTableOrderingComposer(
+            $db: $db,
+            $table: $db.unitPacks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ExerciseAttemptsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ExerciseAttemptsTable> {
+  $$ExerciseAttemptsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get ownerId =>
+      $composableBuilder(column: $table.ownerId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get part =>
+      $composableBuilder(column: $table.part, builder: (column) => column);
+
+  GeneratedColumn<int> get itemIndex =>
+      $composableBuilder(column: $table.itemIndex, builder: (column) => column);
+
+  GeneratedColumn<String> get userAnswer => $composableBuilder(
+    column: $table.userAnswer,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get isCorrect =>
+      $composableBuilder(column: $table.isCorrect, builder: (column) => column);
+
+  $$UnitPacksTableAnnotationComposer get packId {
+    final $$UnitPacksTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.packId,
+      referencedTable: $db.unitPacks,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UnitPacksTableAnnotationComposer(
+            $db: $db,
+            $table: $db.unitPacks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ExerciseAttemptsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ExerciseAttemptsTable,
+          ExerciseAttemptRow,
+          $$ExerciseAttemptsTableFilterComposer,
+          $$ExerciseAttemptsTableOrderingComposer,
+          $$ExerciseAttemptsTableAnnotationComposer,
+          $$ExerciseAttemptsTableCreateCompanionBuilder,
+          $$ExerciseAttemptsTableUpdateCompanionBuilder,
+          (ExerciseAttemptRow, $$ExerciseAttemptsTableReferences),
+          ExerciseAttemptRow,
+          PrefetchHooks Function({bool packId})
+        > {
+  $$ExerciseAttemptsTableTableManager(
+    _$AppDatabase db,
+    $ExerciseAttemptsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ExerciseAttemptsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ExerciseAttemptsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ExerciseAttemptsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<String> ownerId = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<String> packId = const Value.absent(),
+                Value<String> part = const Value.absent(),
+                Value<int> itemIndex = const Value.absent(),
+                Value<String> userAnswer = const Value.absent(),
+                Value<bool> isCorrect = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ExerciseAttemptsCompanion(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                ownerId: ownerId,
+                syncedAt: syncedAt,
+                packId: packId,
+                part: part,
+                itemIndex: itemIndex,
+                userAnswer: userAnswer,
+                isCorrect: isCorrect,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                required String ownerId,
+                Value<DateTime?> syncedAt = const Value.absent(),
+                required String packId,
+                required String part,
+                required int itemIndex,
+                required String userAnswer,
+                required bool isCorrect,
+                Value<int> rowid = const Value.absent(),
+              }) => ExerciseAttemptsCompanion.insert(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                ownerId: ownerId,
+                syncedAt: syncedAt,
+                packId: packId,
+                part: part,
+                itemIndex: itemIndex,
+                userAnswer: userAnswer,
+                isCorrect: isCorrect,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ExerciseAttemptsTable, ExerciseAttemptRow>(
+                    table,
+                  ),
+                  $$ExerciseAttemptsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({packId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (packId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.packId,
+                        referencedTable: $$ExerciseAttemptsTableReferences
+                            ._packIdTable(db),
+                        referencedColumn: $$ExerciseAttemptsTableReferences
+                            ._packIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$ExerciseAttemptsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ExerciseAttemptsTable,
+      ExerciseAttemptRow,
+      $$ExerciseAttemptsTableFilterComposer,
+      $$ExerciseAttemptsTableOrderingComposer,
+      $$ExerciseAttemptsTableAnnotationComposer,
+      $$ExerciseAttemptsTableCreateCompanionBuilder,
+      $$ExerciseAttemptsTableUpdateCompanionBuilder,
+      (ExerciseAttemptRow, $$ExerciseAttemptsTableReferences),
+      ExerciseAttemptRow,
+      PrefetchHooks Function({bool packId})
+    >;
+typedef $$WritingAttemptsTableCreateCompanionBuilder =
+    WritingAttemptsCompanion Function({
+      Value<String> id,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      required String ownerId,
+      Value<DateTime?> syncedAt,
+      required String packId,
+      required String userText,
+      Value<String> correctedText,
+      Value<String> nativeText,
+      Value<String> summary,
+      Value<int> rowid,
+    });
+typedef $$WritingAttemptsTableUpdateCompanionBuilder =
+    WritingAttemptsCompanion Function({
+      Value<String> id,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<String> ownerId,
+      Value<DateTime?> syncedAt,
+      Value<String> packId,
+      Value<String> userText,
+      Value<String> correctedText,
+      Value<String> nativeText,
+      Value<String> summary,
+      Value<int> rowid,
+    });
+
+final class $$WritingAttemptsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $WritingAttemptsTable,
+          WritingAttemptRow
+        > {
+  $$WritingAttemptsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $UnitPacksTable _packIdTable(_$AppDatabase db) =>
+      db.unitPacks.createAlias('writing_attempts__pack_id__unit_packs__id');
+
+  $$UnitPacksTableProcessedTableManager get packId {
+    final $_column = $_itemColumn<String>('pack_id')!;
+
+    final manager = $$UnitPacksTableTableManager(
+      $_db,
+      $_db.unitPacks,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_packIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$WritingAttemptsTableFilterComposer
+    extends Composer<_$AppDatabase, $WritingAttemptsTable> {
+  $$WritingAttemptsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ownerId => $composableBuilder(
+    column: $table.ownerId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userText => $composableBuilder(
+    column: $table.userText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get correctedText => $composableBuilder(
+    column: $table.correctedText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get nativeText => $composableBuilder(
+    column: $table.nativeText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get summary => $composableBuilder(
+    column: $table.summary,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$UnitPacksTableFilterComposer get packId {
+    final $$UnitPacksTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.packId,
+      referencedTable: $db.unitPacks,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UnitPacksTableFilterComposer(
+            $db: $db,
+            $table: $db.unitPacks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$WritingAttemptsTableOrderingComposer
+    extends Composer<_$AppDatabase, $WritingAttemptsTable> {
+  $$WritingAttemptsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ownerId => $composableBuilder(
+    column: $table.ownerId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get userText => $composableBuilder(
+    column: $table.userText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get correctedText => $composableBuilder(
+    column: $table.correctedText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get nativeText => $composableBuilder(
+    column: $table.nativeText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get summary => $composableBuilder(
+    column: $table.summary,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$UnitPacksTableOrderingComposer get packId {
+    final $$UnitPacksTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.packId,
+      referencedTable: $db.unitPacks,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UnitPacksTableOrderingComposer(
+            $db: $db,
+            $table: $db.unitPacks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$WritingAttemptsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $WritingAttemptsTable> {
+  $$WritingAttemptsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get ownerId =>
+      $composableBuilder(column: $table.ownerId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get userText =>
+      $composableBuilder(column: $table.userText, builder: (column) => column);
+
+  GeneratedColumn<String> get correctedText => $composableBuilder(
+    column: $table.correctedText,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get nativeText => $composableBuilder(
+    column: $table.nativeText,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get summary =>
+      $composableBuilder(column: $table.summary, builder: (column) => column);
+
+  $$UnitPacksTableAnnotationComposer get packId {
+    final $$UnitPacksTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.packId,
+      referencedTable: $db.unitPacks,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UnitPacksTableAnnotationComposer(
+            $db: $db,
+            $table: $db.unitPacks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$WritingAttemptsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $WritingAttemptsTable,
+          WritingAttemptRow,
+          $$WritingAttemptsTableFilterComposer,
+          $$WritingAttemptsTableOrderingComposer,
+          $$WritingAttemptsTableAnnotationComposer,
+          $$WritingAttemptsTableCreateCompanionBuilder,
+          $$WritingAttemptsTableUpdateCompanionBuilder,
+          (WritingAttemptRow, $$WritingAttemptsTableReferences),
+          WritingAttemptRow,
+          PrefetchHooks Function({bool packId})
+        > {
+  $$WritingAttemptsTableTableManager(
+    _$AppDatabase db,
+    $WritingAttemptsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$WritingAttemptsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$WritingAttemptsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$WritingAttemptsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<String> ownerId = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<String> packId = const Value.absent(),
+                Value<String> userText = const Value.absent(),
+                Value<String> correctedText = const Value.absent(),
+                Value<String> nativeText = const Value.absent(),
+                Value<String> summary = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => WritingAttemptsCompanion(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                ownerId: ownerId,
+                syncedAt: syncedAt,
+                packId: packId,
+                userText: userText,
+                correctedText: correctedText,
+                nativeText: nativeText,
+                summary: summary,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                required String ownerId,
+                Value<DateTime?> syncedAt = const Value.absent(),
+                required String packId,
+                required String userText,
+                Value<String> correctedText = const Value.absent(),
+                Value<String> nativeText = const Value.absent(),
+                Value<String> summary = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => WritingAttemptsCompanion.insert(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                ownerId: ownerId,
+                syncedAt: syncedAt,
+                packId: packId,
+                userText: userText,
+                correctedText: correctedText,
+                nativeText: nativeText,
+                summary: summary,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$WritingAttemptsTable, WritingAttemptRow>(table),
+                  $$WritingAttemptsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({packId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (packId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.packId,
+                        referencedTable: $$WritingAttemptsTableReferences
+                            ._packIdTable(db),
+                        referencedColumn: $$WritingAttemptsTableReferences
+                            ._packIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$WritingAttemptsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $WritingAttemptsTable,
+      WritingAttemptRow,
+      $$WritingAttemptsTableFilterComposer,
+      $$WritingAttemptsTableOrderingComposer,
+      $$WritingAttemptsTableAnnotationComposer,
+      $$WritingAttemptsTableCreateCompanionBuilder,
+      $$WritingAttemptsTableUpdateCompanionBuilder,
+      (WritingAttemptRow, $$WritingAttemptsTableReferences),
+      WritingAttemptRow,
+      PrefetchHooks Function({bool packId})
+    >;
+typedef $$MistakesTableCreateCompanionBuilder = MistakesCompanion Function({
+  Value<String> id,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<DateTime?> deletedAt,
+  required String ownerId,
+  Value<DateTime?> syncedAt,
+  required String skill,
+  required String category,
+  Value<String> original,
+  Value<String> corrected,
+  Value<String> explanation,
+  Value<String?> packId,
+  Value<int> rowid,
+});
+typedef $$MistakesTableUpdateCompanionBuilder = MistakesCompanion Function({
+  Value<String> id,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<DateTime?> deletedAt,
+  Value<String> ownerId,
+  Value<DateTime?> syncedAt,
+  Value<String> skill,
+  Value<String> category,
+  Value<String> original,
+  Value<String> corrected,
+  Value<String> explanation,
+  Value<String?> packId,
+  Value<int> rowid,
+});
+
+final class $$MistakesTableReferences
+    extends BaseReferences<_$AppDatabase, $MistakesTable, MistakeRow> {
+  $$MistakesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $UnitPacksTable _packIdTable(_$AppDatabase db) =>
+      db.unitPacks.createAlias('mistakes__pack_id__unit_packs__id');
+
+  $$UnitPacksTableProcessedTableManager? get packId {
+    final $_column = $_itemColumn<String>('pack_id');
+    if ($_column == null) return null;
+    final manager = $$UnitPacksTableTableManager(
+      $_db,
+      $_db.unitPacks,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_packIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$MistakesTableFilterComposer
+    extends Composer<_$AppDatabase, $MistakesTable> {
+  $$MistakesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ownerId => $composableBuilder(
+    column: $table.ownerId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get skill => $composableBuilder(
+    column: $table.skill,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get category => $composableBuilder(
+    column: $table.category,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get original => $composableBuilder(
+    column: $table.original,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get corrected => $composableBuilder(
+    column: $table.corrected,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get explanation => $composableBuilder(
+    column: $table.explanation,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$UnitPacksTableFilterComposer get packId {
+    final $$UnitPacksTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.packId,
+      referencedTable: $db.unitPacks,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UnitPacksTableFilterComposer(
+            $db: $db,
+            $table: $db.unitPacks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$MistakesTableOrderingComposer
+    extends Composer<_$AppDatabase, $MistakesTable> {
+  $$MistakesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ownerId => $composableBuilder(
+    column: $table.ownerId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get skill => $composableBuilder(
+    column: $table.skill,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get category => $composableBuilder(
+    column: $table.category,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get original => $composableBuilder(
+    column: $table.original,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get corrected => $composableBuilder(
+    column: $table.corrected,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get explanation => $composableBuilder(
+    column: $table.explanation,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$UnitPacksTableOrderingComposer get packId {
+    final $$UnitPacksTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.packId,
+      referencedTable: $db.unitPacks,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UnitPacksTableOrderingComposer(
+            $db: $db,
+            $table: $db.unitPacks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$MistakesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $MistakesTable> {
+  $$MistakesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get ownerId =>
+      $composableBuilder(column: $table.ownerId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get skill =>
+      $composableBuilder(column: $table.skill, builder: (column) => column);
+
+  GeneratedColumn<String> get category =>
+      $composableBuilder(column: $table.category, builder: (column) => column);
+
+  GeneratedColumn<String> get original =>
+      $composableBuilder(column: $table.original, builder: (column) => column);
+
+  GeneratedColumn<String> get corrected =>
+      $composableBuilder(column: $table.corrected, builder: (column) => column);
+
+  GeneratedColumn<String> get explanation => $composableBuilder(
+    column: $table.explanation,
+    builder: (column) => column,
+  );
+
+  $$UnitPacksTableAnnotationComposer get packId {
+    final $$UnitPacksTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.packId,
+      referencedTable: $db.unitPacks,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UnitPacksTableAnnotationComposer(
+            $db: $db,
+            $table: $db.unitPacks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$MistakesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $MistakesTable,
+          MistakeRow,
+          $$MistakesTableFilterComposer,
+          $$MistakesTableOrderingComposer,
+          $$MistakesTableAnnotationComposer,
+          $$MistakesTableCreateCompanionBuilder,
+          $$MistakesTableUpdateCompanionBuilder,
+          (MistakeRow, $$MistakesTableReferences),
+          MistakeRow,
+          PrefetchHooks Function({bool packId})
+        > {
+  $$MistakesTableTableManager(_$AppDatabase db, $MistakesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$MistakesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$MistakesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$MistakesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<String> ownerId = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<String> skill = const Value.absent(),
+                Value<String> category = const Value.absent(),
+                Value<String> original = const Value.absent(),
+                Value<String> corrected = const Value.absent(),
+                Value<String> explanation = const Value.absent(),
+                Value<String?> packId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => MistakesCompanion(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                ownerId: ownerId,
+                syncedAt: syncedAt,
+                skill: skill,
+                category: category,
+                original: original,
+                corrected: corrected,
+                explanation: explanation,
+                packId: packId,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                required String ownerId,
+                Value<DateTime?> syncedAt = const Value.absent(),
+                required String skill,
+                required String category,
+                Value<String> original = const Value.absent(),
+                Value<String> corrected = const Value.absent(),
+                Value<String> explanation = const Value.absent(),
+                Value<String?> packId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => MistakesCompanion.insert(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                ownerId: ownerId,
+                syncedAt: syncedAt,
+                skill: skill,
+                category: category,
+                original: original,
+                corrected: corrected,
+                explanation: explanation,
+                packId: packId,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$MistakesTable, MistakeRow>(table),
+                  $$MistakesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({packId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (packId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.packId,
+                        referencedTable: $$MistakesTableReferences._packIdTable(
+                          db,
+                        ),
+                        referencedColumn: $$MistakesTableReferences
+                            ._packIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$MistakesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $MistakesTable,
+      MistakeRow,
+      $$MistakesTableFilterComposer,
+      $$MistakesTableOrderingComposer,
+      $$MistakesTableAnnotationComposer,
+      $$MistakesTableCreateCompanionBuilder,
+      $$MistakesTableUpdateCompanionBuilder,
+      (MistakeRow, $$MistakesTableReferences),
+      MistakeRow,
+      PrefetchHooks Function({bool packId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -12152,4 +18239,14 @@ class $AppDatabaseManager {
       $$CardStatesTableTableManager(_db, _db.cardStates);
   $$ReviewLogsTableTableManager get reviewLogs =>
       $$ReviewLogsTableTableManager(_db, _db.reviewLogs);
+  $$UnitPacksTableTableManager get unitPacks =>
+      $$UnitPacksTableTableManager(_db, _db.unitPacks);
+  $$PackProgressesTableTableManager get packProgresses =>
+      $$PackProgressesTableTableManager(_db, _db.packProgresses);
+  $$ExerciseAttemptsTableTableManager get exerciseAttempts =>
+      $$ExerciseAttemptsTableTableManager(_db, _db.exerciseAttempts);
+  $$WritingAttemptsTableTableManager get writingAttempts =>
+      $$WritingAttemptsTableTableManager(_db, _db.writingAttempts);
+  $$MistakesTableTableManager get mistakes =>
+      $$MistakesTableTableManager(_db, _db.mistakes);
 }

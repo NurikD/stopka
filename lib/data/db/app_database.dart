@@ -22,6 +22,11 @@ part 'app_database.g.dart';
     DictationAnswers,
     CardStates,
     ReviewLogs,
+    UnitPacks,
+    PackProgresses,
+    ExerciseAttempts,
+    WritingAttempts,
+    Mistakes,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -30,7 +35,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.connection);
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration {
@@ -66,6 +71,13 @@ class AppDatabase extends _$AppDatabase {
             "UPDATE profiles SET onboarded_at = CAST(strftime('%s','now') AS INTEGER) "
             'WHERE EXISTS (SELECT 1 FROM courses)',
           );
+        }
+        if (from < 8) {
+          await m.createTable(unitPacks);
+          await m.createTable(packProgresses);
+          await m.createTable(exerciseAttempts);
+          await m.createTable(writingAttempts);
+          await m.createTable(mistakes);
         }
       },
     );

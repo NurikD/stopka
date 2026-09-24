@@ -147,3 +147,61 @@ class ReviewLogs extends Table with SyncColumns {
   late final rating = textEnum<SrsRatingColumn>()();
   late final reviewedAt = dateTime()();
 }
+
+enum PackSource { generated, server }
+
+/// One generated (or downloaded) study pack per [packKey]. The big content is
+/// a single JSON in [payload] (part name -> part JSON); [statuses] is part
+/// name -> pending/ready/failed/flagged. Progress and answers live in their
+/// own tables so a part can be regenerated without losing history.
+@DataClassName('UnitPackRow')
+class UnitPacks extends Table with SyncColumns {
+  late final packKey = text()();
+  late final level = text()();
+  late final grammarTopic = text().withDefault(const Constant(''))();
+  late final vocabTopic = text().withDefault(const Constant(''))();
+  late final interest = text().withDefault(const Constant(''))();
+  late final schemaVersion = integer()();
+  late final payload = text().withDefault(const Constant('{}'))();
+  late final statuses = text().withDefault(const Constant('{}'))();
+  late final source = textEnum<PackSource>().withDefault(const Constant('generated'))();
+}
+
+@DataClassName('PackProgressRow')
+class PackProgresses extends Table with SyncColumns {
+  late final packId = text().references(UnitPacks, #id)();
+  late final part = text()();
+  late final completedAt = dateTime()();
+  late final score = integer().withDefault(const Constant(0))();
+  late final total = integer().withDefault(const Constant(0))();
+}
+
+@DataClassName('ExerciseAttemptRow')
+class ExerciseAttempts extends Table with SyncColumns {
+  late final packId = text().references(UnitPacks, #id)();
+  late final part = text()();
+  late final itemIndex = integer()();
+  late final userAnswer = text()();
+  late final isCorrect = boolean()();
+}
+
+@DataClassName('WritingAttemptRow')
+class WritingAttempts extends Table with SyncColumns {
+  late final packId = text().references(UnitPacks, #id)();
+  late final userText = text()();
+  late final correctedText = text().withDefault(const Constant(''))();
+  late final nativeText = text().withDefault(const Constant(''))();
+  late final summary = text().withDefault(const Constant(''))();
+}
+
+/// A mistake worth remembering, from any skill. Phase 8 builds the weak-spot
+/// screens on these rows.
+@DataClassName('MistakeRow')
+class Mistakes extends Table with SyncColumns {
+  late final skill = text()();
+  late final category = text()();
+  late final original = text().withDefault(const Constant(''))();
+  late final corrected = text().withDefault(const Constant(''))();
+  late final explanation = text().withDefault(const Constant(''))();
+  late final packId = text().nullable().references(UnitPacks, #id)();
+}

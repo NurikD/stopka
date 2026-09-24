@@ -78,6 +78,7 @@ flutter:
     - prompts/answer_appeal.md
     - prompts/unit_page.md
     - prompts/personal_words.md
+    - prompts/pack/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
