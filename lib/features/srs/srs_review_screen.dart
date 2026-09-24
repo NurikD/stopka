@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/dictation/answer_checker.dart';
 import '../../core/providers/core_providers.dart';
+import '../../core/srs/auto_rating.dart';
 import '../../core/srs/srs_engine.dart' as engine;
 import '../../core/theme/app_theme_extension.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/app_header_bar.dart';
+import '../../core/widgets/diff_row.dart';
+import '../../core/widgets/dictation_field.dart';
+import '../../core/widgets/ghost_button.dart';
 import '../../core/widgets/primary_button.dart';
 import '../../core/widgets/stacked_card.dart';
 import '../../core/widgets/sticky_action_bar.dart';
@@ -24,8 +29,10 @@ class _QueueItem {
 
 enum _Phase { loading, reviewing, done }
 
-/// The Anki-style review loop: show the prompt, reveal the answer, rate
-/// your own recall.
+/// The review loop: show the prompt, the learner types the answer, and the
+/// checker — not the learner — decides the rating. Only a Russian answer
+/// (English prompt), where synonyms are legitimate, can be overruled by the
+/// learner with "Засчитать".
 class SrsReviewScreen extends ConsumerStatefulWidget {
   const SrsReviewScreen({super.key});
 
@@ -37,12 +44,32 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
   _Phase _phase = _Phase.loading;
   List<_QueueItem> _queue = [];
   int _index = 0;
-  bool _revealed = false;
+  final _controller = TextEditingController();
+  DictationVerdict? _verdict; // null while the learner is still answering
+  bool _overruled = false;
 
   @override
   void initState() {
     super.initState();
     _load();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _check({bool skipped = false}) {
+    final input = _controller.text.trim();
+    if (!skipped && input.isEmpty) return;
+    FocusManager.instance.primaryFocus?.unfocus();
+    setState(() {
+      _verdict = skipped
+          ? DictationVerdict.skipped
+          : AnswerChecker.check(userInput: input, correctAnswer: _answer);
+      _overruled = false;
+    });
   }
 
   Future<void> _load() async {
@@ -64,7 +91,6 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
     setState(() {
       _queue = items;
       _index = 0;
-      _revealed = false;
       _phase = items.isEmpty ? _Phase.done : _Phase.reviewing;
     });
   }
@@ -73,13 +99,22 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
 
   bool get _ruToEn => _current.state.direction == DictationDirection.ruEn;
 
-  String get _prompt => _ruToEn ? _current.card.translation : _current.card.term;
+  String get _prompt =>
+      _ruToEn ? _current.card.translation : _current.card.term;
 
-  String get _answer => _ruToEn ? _current.card.term : _current.card.translation;
+  String get _answer =>
+      _ruToEn ? _current.card.term : _current.card.translation;
 
-  Future<void> _rate(engine.SrsRating rating) async {
+  Future<void> _next() async {
+    final verdict = _verdict;
+    if (verdict == null) return;
+    final rating = _overruled
+        ? engine.SrsRating.good
+        : ratingForVerdict(verdict);
     final item = _current;
-    final result = ref.read(srsEngineProvider).review(_toEngineSnapshot(item.state), rating);
+    final result = ref
+        .read(srsEngineProvider)
+        .review(_toEngineSnapshot(item.state), rating);
 
     final updated = item.state.copyWith(
       due: result.snapshot.due,
@@ -87,7 +122,9 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
       difficulty: result.snapshot.difficulty,
       step: result.snapshot.step,
       reps: item.state.reps + 1,
-      lapses: rating == engine.SrsRating.again ? item.state.lapses + 1 : item.state.lapses,
+      lapses: rating == engine.SrsRating.again
+          ? item.state.lapses + 1
+          : item.state.lapses,
       state: domain.SrsState.values.byName(result.snapshot.state.name),
       lastReview: result.snapshot.lastReview,
     );
@@ -99,8 +136,10 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
     );
 
     if (!mounted) return;
+    _controller.clear();
     setState(() {
-      _revealed = false;
+      _verdict = null;
+      _overruled = false;
       if (_index + 1 < _queue.length) {
         _index++;
       } else {
@@ -138,8 +177,13 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
       bottomNavigationBar: switch (_phase) {
         _Phase.reviewing => _buildActionBar(context),
         _Phase.done => StickyActionBar(
-            children: [PrimaryButton(label: 'Готово', onPressed: () => Navigator.of(context).pop())],
-          ),
+          children: [
+            PrimaryButton(
+              label: 'Готово',
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
         _Phase.loading => null,
       },
     );
@@ -166,115 +210,129 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
   Widget _buildReviewing(BuildContext context) {
     final colors = context.colors;
     final layers = (_queue.length - _index - 1).clamp(0, 2);
+    final verdict = _verdict;
 
     // English text is mono; Russian is Onest.
     TextStyle promptStyle(bool english) => english
-        ? AppTypography.monoWord.copyWith(fontSize: 34, height: 40 / 34, letterSpacing: 0)
+        ? AppTypography.monoWord.copyWith(
+            fontSize: 34,
+            height: 40 / 34,
+            letterSpacing: 0,
+          )
         : AppTypography.display;
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.screen, AppSpacing.s22, AppSpacing.screen, AppSpacing.s22),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.screen,
+        AppSpacing.s22,
+        AppSpacing.screen,
+        AppSpacing.s22,
+      ),
       children: [
         StackedCard(
           layers: layers,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.s22),
-            child: Column(
-              children: [
-                Text(
-                  _prompt,
-                  textAlign: TextAlign.center,
-                  style: promptStyle(!_ruToEn).copyWith(color: colors.ink),
-                ),
-                if (_revealed) ...[
-                  const SizedBox(height: AppSpacing.s22),
-                  Divider(color: colors.line, height: 1),
-                  const SizedBox(height: AppSpacing.s22),
-                  Text(
-                    _answer,
-                    textAlign: TextAlign.center,
-                    style: (_ruToEn ? AppTypography.monoWord.copyWith(fontSize: 26) : AppTypography.heading)
-                        .copyWith(color: colors.accent),
-                  ),
-                  if (_current.card.transcription.isNotEmpty) ...[
-                    const SizedBox(height: AppSpacing.s8),
-                    Text(
-                      _current.card.transcription,
-                      style: AppTypography.transcription.copyWith(color: colors.muted),
-                    ),
-                  ],
-                  const SizedBox(height: AppSpacing.s8),
-                  IconButton(
-                    icon: const Icon(Icons.volume_up_outlined),
-                    color: colors.muted,
-                    constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-                    onPressed: () => ref.read(ttsServiceProvider).speak(_current.card.term),
-                  ),
-                ],
-              ],
+            child: Text(
+              _prompt,
+              textAlign: TextAlign.center,
+              style: promptStyle(!_ruToEn).copyWith(color: colors.ink),
             ),
           ),
+        ),
+        const SizedBox(height: AppSpacing.s22),
+        if (verdict == null)
+          DictationField(
+            key: ValueKey(_index),
+            controller: _controller,
+            onSubmitted: _check,
+          )
+        else
+          _buildResult(context, verdict),
+      ],
+    );
+  }
+
+  Widget _buildResult(BuildContext context, DictationVerdict verdict) {
+    final colors = context.colors;
+    final input = _controller.text.trim();
+    final correct = AnswerChecker.closestVariant(
+      userInput: input,
+      storedAnswer: _answer,
+    );
+    final accepted = _overruled || verdict == DictationVerdict.correct;
+
+    final (String label, Color color) = _overruled
+        ? ('Засчитано', colors.success)
+        : switch (verdict) {
+            DictationVerdict.correct => ('Верно', colors.success),
+            DictationVerdict.typo => ('Почти, опечатка', colors.markLine),
+            DictationVerdict.wrong => ('Неверно', colors.danger),
+            DictationVerdict.skipped => ('Не знаю', colors.danger),
+          };
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: AppTypography.label.copyWith(color: color)),
+        const SizedBox(height: AppSpacing.s10),
+        if (!accepted && _ruToEn && input.isNotEmpty)
+          DiffRow(user: input, correct: correct)
+        else
+          Text(
+            correct,
+            style:
+                (_ruToEn
+                        ? AppTypography.monoWord.copyWith(fontSize: 26)
+                        : AppTypography.heading)
+                    .copyWith(color: colors.ink),
+          ),
+        if (_current.card.transcription.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.s8),
+          Text(
+            _current.card.transcription,
+            style: AppTypography.transcription.copyWith(color: colors.muted),
+          ),
+        ],
+        const SizedBox(height: AppSpacing.s8),
+        IconButton(
+          icon: const Icon(Icons.volume_up_outlined),
+          color: colors.muted,
+          constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+          onPressed: () =>
+              ref.read(ttsServiceProvider).speak(_current.card.term),
         ),
       ],
     );
   }
 
   Widget _buildActionBar(BuildContext context) {
-    if (!_revealed) {
+    final verdict = _verdict;
+    if (verdict == null) {
       return StickyActionBar(
-        children: [PrimaryButton(label: 'Показать ответ', onPressed: () => setState(() => _revealed = true))],
+        flexes: const [1, 2],
+        children: [
+          GhostButton(label: 'Не знаю', onPressed: () => _check(skipped: true)),
+          PrimaryButton(label: 'Проверить', onPressed: _check),
+        ],
       );
     }
+    final canOverrule =
+        !_ruToEn && !_overruled && verdict != DictationVerdict.correct;
     return StickyActionBar(
+      flexes: canOverrule ? const [1, 2] : null,
       children: [
-        _RatingButton(label: 'Забыл', onPressed: () => _rate(engine.SrsRating.again)),
-        _RatingButton(label: 'Трудно', onPressed: () => _rate(engine.SrsRating.hard)),
-        _RatingButton(label: 'Хорошо', primary: true, onPressed: () => _rate(engine.SrsRating.good)),
-        _RatingButton(label: 'Легко', onPressed: () => _rate(engine.SrsRating.easy)),
-      ],
-    );
-  }
-}
-
-/// Four ratings share one row, so these have tighter padding than the
-/// full-width buttons. "Хорошо" is the ink-filled default.
-class _RatingButton extends StatelessWidget {
-  final String label;
-  final VoidCallback onPressed;
-  final bool primary;
-
-  const _RatingButton({required this.label, required this.onPressed, this.primary = false});
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.button));
-    const padding = EdgeInsets.symmetric(horizontal: AppSpacing.s4);
-    final text = Text(label, style: AppTypography.label, maxLines: 1, textAlign: TextAlign.center);
-
-    if (primary) {
-      return FilledButton(
-        onPressed: onPressed,
-        style: FilledButton.styleFrom(
-          minimumSize: const Size(0, 56),
-          padding: padding,
-          shape: shape,
-          backgroundColor: colors.ink,
-          foregroundColor: colors.inkOn,
+        if (canOverrule)
+          GhostButton(
+            label: 'Засчитать',
+            onPressed: () => setState(() => _overruled = true),
+          ),
+        PrimaryButton(
+          label: 'Дальше',
+          trailingIcon: Icons.arrow_forward,
+          onPressed: _next,
         ),
-        child: text,
-      );
-    }
-    return OutlinedButton(
-      onPressed: onPressed,
-      style: OutlinedButton.styleFrom(
-        minimumSize: const Size(0, 56),
-        padding: padding,
-        shape: shape,
-        foregroundColor: colors.muted,
-        side: BorderSide(color: colors.lineStrong),
-      ),
-      child: text,
+      ],
     );
   }
 }

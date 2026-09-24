@@ -113,72 +113,140 @@ class _FakeCardStateRepository implements CardStateRepository {
   Stream<int> watchNewCount() => throw UnimplementedError();
 }
 
-void main() {
-  testWidgets('reveals the answer, rates it, and advances to the next card', (tester) async {
-    final cardRepo = _FakeWordCardRepository([
-      _card('c1', 'achieve', 'достигать'),
-      _card('c2', 'goal', 'цель'),
-    ]);
-    final stateRepo = _FakeCardStateRepository(fresh: [
-      _freshState('s1', 'c1'),
-      _freshState('s2', 'c2'),
-    ]);
+Future<_FakeCardStateRepository> _pump(
+  WidgetTester tester, {
+  required List<WordCard> cards,
+  required List<CardState> fresh,
+}) async {
+  final stateRepo = _FakeCardStateRepository(fresh: fresh);
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [
+        wordCardRepositoryProvider.overrideWithValue(_FakeWordCardRepository(cards)),
+        cardStateRepositoryProvider.overrideWithValue(stateRepo),
+        srsSettingsStoreProvider.overrideWithValue(_FakeSrsSettingsStore()),
+      ],
+      child: MaterialApp(theme: AppTheme.dark(), home: const SrsReviewScreen()),
+    ),
+  );
+  await tester.pumpAndSettle();
+  return stateRepo;
+}
 
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          wordCardRepositoryProvider.overrideWithValue(cardRepo),
-          cardStateRepositoryProvider.overrideWithValue(stateRepo),
-          srsSettingsStoreProvider.overrideWithValue(_FakeSrsSettingsStore()),
-        ],
-        child: MaterialApp(theme: AppTheme.dark(), home: const SrsReviewScreen()),
-      ),
+Future<void> _answer(WidgetTester tester, String text) async {
+  await tester.enterText(find.byType(TextField), text);
+  await tester.tap(find.text('Проверить'));
+  await tester.pumpAndSettle();
+}
+
+void main() {
+  testWidgets('a typed right answer is rated good by the checker, not by the learner', (tester) async {
+    final stateRepo = await _pump(
+      tester,
+      cards: [_card('c1', 'achieve', 'достигать'), _card('c2', 'goal', 'цель')],
+      fresh: [_freshState('s1', 'c1'), _freshState('s2', 'c2')],
     );
 
-    await tester.pumpAndSettle();
-    expect(find.text('достигать'), findsOneWidget); // RU -> EN prompt
-    expect(find.text('achieve'), findsNothing); // answer not revealed yet
+    expect(find.text('достигать'), findsOneWidget);
+    expect(find.text('Хорошо'), findsNothing); // no self-grading buttons at all
+    expect(find.text('Легко'), findsNothing);
 
-    await tester.tap(find.text('Показать ответ'));
-    await tester.pump();
-    expect(find.text('achieve'), findsOneWidget);
-
-    await tester.tap(find.text('Хорошо'));
+    await _answer(tester, 'achieve');
+    expect(find.text('Верно'), findsOneWidget);
+    await tester.tap(find.text('Дальше'));
     await tester.pumpAndSettle();
 
-    // Advanced to the second card, answer hidden again.
     expect(find.text('цель'), findsOneWidget);
-    expect(find.text('goal'), findsNothing);
-    expect(stateRepo.saved, hasLength(1));
-    expect(stateRepo.saved.first.reps, 1);
-    // Every grade also lands in the review history the streak is built from.
+    expect(stateRepo.saved.single.reps, 1);
     expect(stateRepo.logged.single.cardStateId, 's1');
     expect(stateRepo.logged.single.rating, ReviewRating.good);
   });
 
-  testWidgets('rating "Забыл" (again) increments lapses', (tester) async {
-    final cardRepo = _FakeWordCardRepository([_card('c1', 'achieve', 'достигать')]);
-    final stateRepo = _FakeCardStateRepository(fresh: [_freshState('s1', 'c1')]);
-
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          wordCardRepositoryProvider.overrideWithValue(cardRepo),
-          cardStateRepositoryProvider.overrideWithValue(stateRepo),
-          srsSettingsStoreProvider.overrideWithValue(_FakeSrsSettingsStore()),
-        ],
-        child: MaterialApp(theme: AppTheme.dark(), home: const SrsReviewScreen()),
-      ),
+  testWidgets('a wrong answer is "again" and counts as a lapse; the right word is shown', (tester) async {
+    final stateRepo = await _pump(
+      tester,
+      cards: [_card('c1', 'achieve', 'достигать')],
+      fresh: [_freshState('s1', 'c1')],
     );
 
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Показать ответ'));
-    await tester.pump();
-    await tester.tap(find.text('Забыл'));
+    await _answer(tester, 'reach');
+    expect(find.text('Неверно'), findsOneWidget);
+    await tester.tap(find.text('Дальше'));
     await tester.pumpAndSettle();
 
     expect(stateRepo.saved.first.lapses, 1);
+    expect(stateRepo.logged.single.rating, ReviewRating.again);
     expect(find.text('На сегодня всё'), findsOneWidget);
+  });
+
+  testWidgets('a typo is "hard"', (tester) async {
+    final stateRepo = await _pump(
+      tester,
+      cards: [_card('c1', 'achieve', 'достигать')],
+      fresh: [_freshState('s1', 'c1')],
+    );
+
+    await _answer(tester, 'acheive');
+    expect(find.text('Почти, опечатка'), findsOneWidget);
+    await tester.tap(find.text('Дальше'));
+    await tester.pumpAndSettle();
+
+    expect(stateRepo.logged.single.rating, ReviewRating.hard);
+  });
+
+  testWidgets('"Не знаю" is "again" without typing anything', (tester) async {
+    final stateRepo = await _pump(
+      tester,
+      cards: [_card('c1', 'achieve', 'достигать')],
+      fresh: [_freshState('s1', 'c1')],
+    );
+
+    await tester.tap(find.text('Не знаю'));
+    await tester.pumpAndSettle();
+    expect(find.text('achieve'), findsOneWidget);
+    await tester.tap(find.text('Дальше'));
+    await tester.pumpAndSettle();
+
+    expect(stateRepo.logged.single.rating, ReviewRating.again);
+  });
+
+  testWidgets('an empty answer cannot be submitted', (tester) async {
+    await _pump(
+      tester,
+      cards: [_card('c1', 'achieve', 'достигать')],
+      fresh: [_freshState('s1', 'c1')],
+    );
+
+    await tester.tap(find.text('Проверить'));
+    await tester.pumpAndSettle();
+    expect(find.text('Дальше'), findsNothing);
+  });
+
+  testWidgets('in the English -> Russian direction a synonym can be overruled', (tester) async {
+    final state = CardState(
+      id: 's1',
+      cardId: 'c1',
+      direction: DictationDirection.enRu,
+      due: DateTime.now().toUtc(),
+      reps: 0,
+      lapses: 0,
+      state: SrsState.learning,
+    );
+    final stateRepo = await _pump(
+      tester,
+      cards: [_card('c1', 'achieve', 'достигать')],
+      fresh: [state],
+    );
+
+    await _answer(tester, 'добиваться');
+    expect(find.text('Неверно'), findsOneWidget);
+    await tester.tap(find.text('Засчитать'));
+    await tester.pumpAndSettle();
+    expect(find.text('Засчитано'), findsOneWidget);
+    await tester.tap(find.text('Дальше'));
+    await tester.pumpAndSettle();
+
+    expect(stateRepo.logged.single.rating, ReviewRating.good);
   });
 
   testWidgets('a due-for-review card (not just new ones) is shown', (tester) async {
