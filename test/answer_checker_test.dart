@@ -78,6 +78,33 @@ void main() {
     });
   });
 
+  group('AnswerChecker.closestVariant', () {
+    test('returns the only variant as written', () {
+      expect(AnswerChecker.closestVariant(userInput: 'achive', storedAnswer: 'Achieve'), 'Achieve');
+    });
+
+    test('picks the variant the user was aiming for, in original spelling', () {
+      expect(
+        AnswerChecker.closestVariant(userInput: 'reech', storedAnswer: 'achieve / To reach'),
+        'To reach',
+      );
+    });
+
+    test('an empty input falls back to the shortest edit, i.e. a valid variant', () {
+      expect(
+        AnswerChecker.rawVariantsOf('achieve / reach'),
+        contains(AnswerChecker.closestVariant(userInput: '', storedAnswer: 'achieve / reach')),
+      );
+    });
+
+    test('keeps a phrase with an internal comma whole', () {
+      expect(
+        AnswerChecker.closestVariant(userInput: 'despite', storedAnswer: 'несмотря на то, что'),
+        'несмотря на то, что',
+      );
+    });
+  });
+
   group('AnswerChecker.check', () {
     test('exact match is correct', () {
       expect(
