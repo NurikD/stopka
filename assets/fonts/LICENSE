@@ -1,19 +1,19 @@
 Fonts bundled in this directory (assets/fonts/):
-- Literata-Variable.ttf
-- GolosText-Variable.ttf
-- NotoSans-Variable.ttf
+- Onest-Variable.ttf (Russian UI)
+- JetBrainsMono-Variable.ttf (English words, input, counters)
+- NotoSans-Variable.ttf (IPA transcription)
 
 All three are licensed under the SIL Open Font License, Version 1.1.
-Sources: https://github.com/google/fonts (ofl/literata, ofl/golostext, ofl/notosans)
+Sources: https://github.com/google/fonts (ofl/onest, ofl/jetbrainsmono, ofl/notosans)
 
 ================================================================
-Literata
+Onest
 ================================================================
-Copyright 2017 The Literata Project Authors (https://github.com/googlefonts/literata)
+Copyright 2021 The Onest Project Authors (https://github.com/googlefonts/onest)
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:
-http://scripts.sil.org/OFL
+https://scripts.sil.org/OFL
 
 
 -----------------------------------------------------------
@@ -104,13 +104,13 @@ FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
 OTHER DEALINGS IN THE FONT SOFTWARE.
 
 ================================================================
-Golos Text
+JetBrains Mono
 ================================================================
-Copyright 2019 The Golos Text Project Authors (https://github.com/googlefonts/golos-text)
+Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
-This license is copied below, and is also available with a FAQ at:
-https://scripts.sil.org/OFL
+
+This license is copied below, and is also available with a FAQ at: https://scripts.sil.org/OFL
 
 
 -----------------------------------------------------------
@@ -126,7 +126,7 @@ with others.
 
 The OFL allows the licensed fonts to be used, studied, modified and
 redistributed freely as long as they are not sold by themselves. The
-fonts, including any derivative works, can be bundled, embedded, 
+fonts, including any derivative works, can be bundled, embedded,
 redistributed and/or sold with any software provided that any reserved
 names are not used by derivative works. The fonts and derivatives,
 however, cannot be released under any other type of license. The
