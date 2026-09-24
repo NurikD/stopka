@@ -4,11 +4,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/llm/api_key_store.dart';
 import '../../core/llm/llm_exception.dart';
 import '../../core/providers/core_providers.dart';
+import '../../core/srs/srs_settings_store.dart';
 import '../../core/theme/app_theme_extension.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
+import '../../core/widgets/app_card.dart';
+import '../../core/widgets/app_header_bar.dart';
 import '../../core/widgets/ghost_button.dart';
+import '../../core/widgets/labeled_field.dart';
 import '../../core/widgets/primary_button.dart';
+import '../../core/widgets/segmented_choice.dart';
 
 /// Known Gemini flash model ids as of the last documentation check
 /// (ai.google.dev/gemini-api/docs/models, checked 2026-09-23). Re-verify
@@ -20,6 +25,8 @@ const List<String> knownGeminiModels = [
   'gemini-3.5-flash',
   'gemini-3.5-flash-lite',
 ];
+
+const List<int> newCardLimitChoices = [10, 20, 30, 50];
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -39,6 +46,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   _KeyCheckStatus _checkStatus = _KeyCheckStatus.idle;
   String? _checkErrorMessage;
   int _requestsToday = 0;
+  int _newCardLimit = defaultNewCardLimit;
 
   ApiKeyStore get _store => ref.read(apiKeyStoreProvider);
 
@@ -52,11 +60,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final key = await _store.getApiKey();
     final model = await _store.getModel();
     final requestsToday = await ref.read(llmRequestCounterProvider).getTodayCount();
+    final newCardLimit = await ref.read(srsSettingsStoreProvider).getNewCardLimit();
     if (!mounted) return;
     setState(() {
       _keyController.text = key ?? '';
       _model = model;
       _requestsToday = requestsToday;
+      _newCardLimit = newCardLimit;
       _loading = false;
     });
   }
@@ -76,6 +86,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Настройки сохранены')),
     );
+  }
+
+  Future<void> _setNewCardLimit(int value) async {
+    setState(() => _newCardLimit = value);
+    await ref.read(srsSettingsStoreProvider).setNewCardLimit(value);
   }
 
   Future<void> _checkKey() async {
@@ -106,66 +121,113 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     if (_loading) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Настройки')),
-        body: const Center(child: CircularProgressIndicator()),
+      return const Scaffold(
+        appBar: AppHeaderBar(),
+        body: Center(child: CircularProgressIndicator()),
       );
     }
 
     final modelOptions = {...knownGeminiModels, _model}.toList();
+    final limitChoices = {...newCardLimitChoices, _newCardLimit}.toList()..sort();
+    final themeMode = ref.watch(themeModeProvider);
+    final mono = AppTypography.monoWord.copyWith(fontSize: 15, color: colors.ink);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Настройки')),
+      appBar: const AppHeaderBar(),
       body: ListView(
-        padding: const EdgeInsets.all(AppSpacing.s14),
+        padding: const EdgeInsets.fromLTRB(AppSpacing.screen, AppSpacing.s8, AppSpacing.screen, AppSpacing.s22),
         children: [
-          Text('Gemini API', style: AppTypography.heading.copyWith(color: context.colors.ink)),
-          const SizedBox(height: AppSpacing.s8),
-          TextField(
-            controller: _keyController,
-            obscureText: _obscureKey,
-            decoration: InputDecoration(
-              labelText: 'Ключ Gemini API',
-              border: const OutlineInputBorder(),
-              suffixIcon: IconButton(
-                icon: Icon(_obscureKey ? Icons.visibility : Icons.visibility_off),
-                onPressed: () => setState(() => _obscureKey = !_obscureKey),
+          Text('Настройки', style: AppTypography.title.copyWith(color: colors.ink)),
+          const SizedBox(height: AppSpacing.s22),
+          AppCard(
+            child: LabeledField(
+              label: 'Тема',
+              child: SegmentedChoice<ThemeMode>(
+                options: const [
+                  ChoiceOption(ThemeMode.light, 'Светлая'),
+                  ChoiceOption(ThemeMode.dark, 'Тёмная'),
+                  ChoiceOption(ThemeMode.system, 'Как в системе'),
+                ],
+                selected: themeMode,
+                onChanged: (mode) => ref.read(themeModeProvider.notifier).set(mode),
               ),
             ),
-            onChanged: (_) => setState(() => _checkStatus = _KeyCheckStatus.idle),
-          ),
-          const SizedBox(height: 12),
-          DropdownButtonFormField<String>(
-            initialValue: _model,
-            decoration: const InputDecoration(
-              labelText: 'Модель',
-              border: OutlineInputBorder(),
-            ),
-            items: modelOptions
-                .map((m) => DropdownMenuItem(value: m, child: Text(m)))
-                .toList(),
-            onChanged: (value) {
-              if (value != null) setState(() => _model = value);
-            },
-          ),
-          const SizedBox(height: AppSpacing.s14),
-          Row(
-            children: [
-              PrimaryButton(label: 'Сохранить', onPressed: _save, loading: _saving),
-              const SizedBox(width: AppSpacing.s10),
-              GhostButton(
-                label: 'Проверить ключ',
-                onPressed: _checkStatus == _KeyCheckStatus.checking ? null : _checkKey,
-              ),
-            ],
           ),
           const SizedBox(height: AppSpacing.s10),
-          _buildCheckStatus(context),
-          const SizedBox(height: AppSpacing.s22),
-          Text(
-            'Запросов к ИИ сегодня: $_requestsToday',
-            style: AppTypography.caption.copyWith(color: context.colors.muted),
+          AppCard(
+            child: LabeledField(
+              label: 'Новых карточек за одно повторение',
+              child: SegmentedChoice<int>(
+                options: [for (final n in limitChoices) ChoiceOption(n, '$n')],
+                selected: _newCardLimit,
+                onChanged: _setNewCardLimit,
+              ),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.s10),
+          AppCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Gemini API', style: AppTypography.heading.copyWith(color: colors.ink)),
+                const SizedBox(height: AppSpacing.s14),
+                LabeledField(
+                  label: 'Ключ',
+                  child: TextField(
+                    controller: _keyController,
+                    obscureText: _obscureKey,
+                    autocorrect: false,
+                    enableSuggestions: false,
+                    style: mono,
+                    cursorColor: colors.accent,
+                    decoration: InputDecoration(
+                      hintText: 'Вставьте ключ',
+                      suffixIcon: IconButton(
+                        icon: Icon(_obscureKey ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+                        color: colors.muted,
+                        onPressed: () => setState(() => _obscureKey = !_obscureKey),
+                      ),
+                    ),
+                    onChanged: (_) => setState(() => _checkStatus = _KeyCheckStatus.idle),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.s14),
+                LabeledField(
+                  label: 'Модель',
+                  child: DropdownButtonFormField<String>(
+                    initialValue: _model,
+                    style: mono,
+                    dropdownColor: colors.surface,
+                    items: modelOptions.map((m) => DropdownMenuItem(value: m, child: Text(m))).toList(),
+                    onChanged: (value) {
+                      if (value != null) setState(() => _model = value);
+                    },
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.s18),
+                Row(
+                  children: [
+                    Expanded(child: PrimaryButton(label: 'Сохранить', onPressed: _save, loading: _saving)),
+                    const SizedBox(width: AppSpacing.s10),
+                    Expanded(
+                      child: GhostButton(
+                        label: 'Проверить ключ',
+                        onPressed: _checkStatus == _KeyCheckStatus.checking ? null : _checkKey,
+                      ),
+                    ),
+                  ],
+                ),
+                _buildCheckStatus(context),
+                const SizedBox(height: AppSpacing.s14),
+                Text(
+                  'Запросов к ИИ сегодня: $_requestsToday',
+                  style: AppTypography.monoMeta.copyWith(color: colors.muted),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -174,25 +236,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Widget _buildCheckStatus(BuildContext context) {
     final colors = context.colors;
-    switch (_checkStatus) {
-      case _KeyCheckStatus.idle:
-      case _KeyCheckStatus.checking:
-        return const SizedBox.shrink();
-      case _KeyCheckStatus.valid:
-        return Text(
-          'Ключ работает.',
-          style: AppTypography.bodyText.copyWith(color: colors.success),
-        );
-      case _KeyCheckStatus.invalid:
-        return Text(
+    final (String? text, Color color) = switch (_checkStatus) {
+      _KeyCheckStatus.idle || _KeyCheckStatus.checking => (null, colors.muted),
+      _KeyCheckStatus.valid => ('Ключ работает.', colors.success),
+      _KeyCheckStatus.invalid => (
           _checkErrorMessage ?? 'Ключ недействителен. Проверьте его и попробуйте снова.',
-          style: AppTypography.bodyText.copyWith(color: colors.danger),
-        );
-      case _KeyCheckStatus.error:
-        return Text(
-          _checkErrorMessage ?? 'Не удалось проверить ключ.',
-          style: AppTypography.bodyText.copyWith(color: colors.danger),
-        );
-    }
+          colors.danger,
+        ),
+      _KeyCheckStatus.error => (_checkErrorMessage ?? 'Не удалось проверить ключ.', colors.danger),
+    };
+    if (text == null) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.s10),
+      child: Text(text, style: AppTypography.bodyText.copyWith(color: color)),
+    );
   }
 }
