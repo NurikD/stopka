@@ -5,8 +5,11 @@ on:
   pull_request:
 
 jobs:
-  analyze-and-test:
+  flutter-app:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: stopka_flutter
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2

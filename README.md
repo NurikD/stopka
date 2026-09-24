@@ -14,9 +14,15 @@
 - Gemini API (`dio`) — распознавание фото и обогащение карточек, ключ хранится в `flutter_secure_storage`
 - `flutter_tts` — офлайн-озвучка
 
-## Запуск
+## Структура
+
+Монорепо: `stopka_flutter/` — приложение, `stopka_server/` и `stopka_client/` —
+сервер на Serverpod и сгенерированный клиент (появляются по этапам B0–B6).
+
+## Запуск приложения
 
 ```
+cd stopka_flutter
 flutter pub get
 flutter run
 ```
@@ -27,6 +33,7 @@ flutter run
 ## Разработка
 
 ```
+cd stopka_flutter
 flutter analyze
 flutter test
 ```
