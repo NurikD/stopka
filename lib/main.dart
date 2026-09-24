@@ -26,7 +26,7 @@ class BootstrapApp extends ConsumerWidget {
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: themeMode,
-      routerConfig: appRouter,
+      routerConfig: ref.watch(routerProvider),
       builder: (context, child) {
         return bootstrap.when(
           data: (_) => child ?? const SizedBox.shrink(),

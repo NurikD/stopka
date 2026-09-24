@@ -61,6 +61,11 @@ class AppDatabase extends _$AppDatabase {
           await m.addColumn(profiles, profiles.interests);
           await m.addColumn(profiles, profiles.currentTopic);
           await m.addColumn(profiles, profiles.onboardedAt);
+          // Someone who already has a course has been through setup by hand.
+          await customStatement(
+            "UPDATE profiles SET onboarded_at = CAST(strftime('%s','now') AS INTEGER) "
+            'WHERE EXISTS (SELECT 1 FROM courses)',
+          );
         }
       },
     );
