@@ -139,6 +139,21 @@ void main() {
     });
   });
 
+  group('DictationEngine.unintroducedCount', () {
+    test('drops as new words are pulled into stacks', () {
+      final engine = DictationEngine(words: _words(30), stackSize: 12);
+      expect(engine.unintroducedCount, 30);
+      engine.nextStack();
+      expect(engine.unintroducedCount, 18);
+    });
+
+    test('is zero once everything has been introduced', () {
+      final engine = DictationEngine(words: _words(5), stackSize: 12);
+      engine.nextStack();
+      expect(engine.unintroducedCount, 0);
+    });
+  });
+
   group('DictationEngine.resume', () {
     test('empty history resumes to the exact same state as a fresh engine', () {
       final live = DictationEngine(words: _words(5), stackSize: 3);
