@@ -79,6 +79,7 @@ class _FakeCardStateRepository implements CardStateRepository {
   final List<CardState> due;
   final List<CardState> fresh;
   final List<CardState> saved = [];
+  final List<({String cardStateId, ReviewRating rating})> logged = [];
 
   _FakeCardStateRepository({this.due = const [], this.fresh = const []});
 
@@ -90,6 +91,11 @@ class _FakeCardStateRepository implements CardStateRepository {
 
   @override
   Future<void> saveState(CardState state) async => saved.add(state);
+
+  @override
+  Future<void> logReview({required String cardStateId, required ReviewRating rating, DateTime? at}) async {
+    logged.add((cardStateId: cardStateId, rating: rating));
+  }
 
   @override
   Future<CardState> ensureState(String cardId, DictationDirection direction) => throw UnimplementedError();
@@ -142,6 +148,9 @@ void main() {
     expect(find.text('goal'), findsNothing);
     expect(stateRepo.saved, hasLength(1));
     expect(stateRepo.saved.first.reps, 1);
+    // Every grade also lands in the review history the streak is built from.
+    expect(stateRepo.logged.single.cardStateId, 's1');
+    expect(stateRepo.logged.single.rating, ReviewRating.good);
   });
 
   testWidgets('rating "Забыл" (again) increments lapses', (tester) async {
@@ -166,7 +175,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(stateRepo.saved.first.lapses, 1);
-    expect(find.text('На сегодня всё!'), findsOneWidget);
+    expect(find.text('На сегодня всё'), findsOneWidget);
   });
 
   testWidgets('a due-for-review card (not just new ones) is shown', (tester) async {
@@ -204,6 +213,6 @@ void main() {
     );
 
     await tester.pumpAndSettle();
-    expect(find.text('На сегодня всё!'), findsOneWidget);
+    expect(find.text('На сегодня всё'), findsOneWidget);
   });
 }
