@@ -171,8 +171,9 @@ void main() {
 
     // Both words answered -> stack review screen.
     expect(find.text('1 из 2'), findsOneWidget);
-    expect(find.text('1 слов вернутся в стопку'), findsOneWidget);
-    expect(find.text('goal'), findsOneWidget); // the missed word shown for review
+    expect(find.text('1 слово вернётся в стопку'), findsOneWidget);
+    // The missed word is shown letter by letter in the diff.
+    expect(find.text('goal', findRichText: true), findsOneWidget);
     expect(dictationRepo.recordedAnswers, 2);
   });
 
