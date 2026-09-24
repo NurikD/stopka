@@ -6,11 +6,14 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../core/llm/llm_exception.dart';
 import '../../../core/providers/core_providers.dart';
+import '../../../core/text/russian_plural.dart';
 import '../../../core/text/word_paste_parser.dart';
 import '../../../core/theme/app_theme_extension.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/theme/typography.dart';
+import '../../../core/widgets/app_header_bar.dart';
 import '../../../core/widgets/ghost_button.dart';
+import '../../../core/widgets/labeled_field.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../core/widgets/sticky_action_bar.dart';
 import '../../../domain/models/word_card.dart';
@@ -226,7 +229,7 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(_titleFor(_mode))),
+      appBar: AppHeaderBar(nested: true, title: _titleFor(_mode)),
       body: _buildBody(context),
     );
   }
@@ -240,7 +243,7 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
       case _Mode.pasteInput:
         return 'Вставить список';
       case _Mode.recognizing:
-        return 'Распознаю фото...';
+        return 'Распознаю фото';
       case _Mode.draftReview:
         return 'Проверьте слова';
     }
@@ -261,15 +264,17 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
     }
   }
 
+  TextStyle get _monoField => AppTypography.monoWord.copyWith(fontSize: 15, color: context.colors.ink);
+
   Widget _buildChooser(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.all(AppSpacing.s14),
+      padding: const EdgeInsets.all(AppSpacing.screen),
       children: [
-        PrimaryButton(label: 'Добавить вручную', onPressed: () => setState(() => _mode = _Mode.manual)),
+        PrimaryButton(label: 'Сфотографировать список', onPressed: _showPhotoSourceSheet),
         const SizedBox(height: AppSpacing.s10),
         GhostButton(label: 'Вставить список слов', onPressed: () => setState(() => _mode = _Mode.pasteInput)),
         const SizedBox(height: AppSpacing.s10),
-        GhostButton(label: 'Сфотографировать список', onPressed: _showPhotoSourceSheet),
+        GhostButton(label: 'Добавить вручную', onPressed: () => setState(() => _mode = _Mode.manual)),
       ],
     );
   }
@@ -278,26 +283,29 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
     showModalBottomSheet(
       context: context,
       builder: (sheetContext) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.photo_camera_outlined),
-              title: const Text('Камера'),
-              onTap: () {
-                Navigator.of(sheetContext).pop();
-                _pickPhoto(ImageSource.camera);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.photo_library_outlined),
-              title: const Text('Галерея'),
-              onTap: () {
-                Navigator.of(sheetContext).pop();
-                _pickPhoto(ImageSource.gallery);
-              },
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.screen),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              PrimaryButton(
+                label: 'Камера',
+                onPressed: () {
+                  Navigator.of(sheetContext).pop();
+                  _pickPhoto(ImageSource.camera);
+                },
+              ),
+              const SizedBox(height: AppSpacing.s10),
+              GhostButton(
+                label: 'Галерея',
+                onPressed: () {
+                  Navigator.of(sheetContext).pop();
+                  _pickPhoto(ImageSource.gallery);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -306,29 +314,24 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
   Widget _buildManual(BuildContext context) {
     final colors = context.colors;
     return ListView(
-      padding: const EdgeInsets.all(AppSpacing.s14),
+      padding: const EdgeInsets.all(AppSpacing.screen),
       children: [
-        TextField(
-          controller: _manualTermController,
-          autofocus: true,
-          decoration: const InputDecoration(labelText: 'Слово', border: OutlineInputBorder()),
+        LabeledField(
+          label: 'Слово',
+          child: TextField(controller: _manualTermController, autofocus: true, style: _monoField),
         ),
-        const SizedBox(height: AppSpacing.s8),
-        TextField(
-          controller: _manualTranslationController,
-          decoration: const InputDecoration(
-            labelText: 'Перевод (необязательно — ИИ подберёт сам)',
-            border: OutlineInputBorder(),
-          ),
-          onSubmitted: (_) => _addManualWord(),
+        const SizedBox(height: AppSpacing.s14),
+        LabeledField(
+          label: 'Перевод (необязательно — ИИ подберёт сам)',
+          child: TextField(controller: _manualTranslationController, onSubmitted: (_) => _addManualWord()),
         ),
-        const SizedBox(height: AppSpacing.s8),
+        const SizedBox(height: AppSpacing.s18),
         PrimaryButton(label: 'Добавить', onPressed: _addManualWord, loading: _addingManual),
         if (_addedThisSession.isNotEmpty) ...[
-          const SizedBox(height: AppSpacing.s10),
+          const SizedBox(height: AppSpacing.s14),
           Text(
             'Добавлено: ${_addedThisSession.join(', ')}',
-            style: AppTypography.caption.copyWith(color: colors.muted),
+            style: AppTypography.monoMeta.copyWith(color: colors.muted),
           ),
         ],
       ],
@@ -336,27 +339,22 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
   }
 
   Widget _buildPasteInput(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(AppSpacing.s14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            'По одному слову на строку или через запятую. Формат "word - перевод" тоже понимаю.',
-            style: AppTypography.caption.copyWith(color: context.colors.muted),
-          ),
-          const SizedBox(height: AppSpacing.s10),
-          TextField(
+    return ListView(
+      padding: const EdgeInsets.all(AppSpacing.screen),
+      children: [
+        LabeledField(
+          label: 'По одному слову на строку или через запятую. Формат "word - перевод" тоже понимаю.',
+          child: TextField(
             controller: _pasteController,
             autofocus: true,
             minLines: 6,
             maxLines: 12,
-            decoration: const InputDecoration(border: OutlineInputBorder()),
+            style: _monoField,
           ),
-          const SizedBox(height: AppSpacing.s10),
-          PrimaryButton(label: 'Разобрать', onPressed: _parsePaste),
-        ],
-      ),
+        ),
+        const SizedBox(height: AppSpacing.s18),
+        PrimaryButton(label: 'Разобрать', onPressed: _parsePaste),
+      ],
     );
   }
 
@@ -366,7 +364,7 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
       children: [
         Expanded(
           child: ListView.builder(
-            padding: const EdgeInsets.all(AppSpacing.s14),
+            padding: const EdgeInsets.all(AppSpacing.screen),
             itemCount: _draft.length,
             itemBuilder: (context, i) {
               final entry = _draft[i];
@@ -377,7 +375,8 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
                     Expanded(
                       child: TextFormField(
                         initialValue: entry.term,
-                        decoration: const InputDecoration(labelText: 'Слово', isDense: true),
+                        style: _monoField,
+                        decoration: const InputDecoration(hintText: 'Слово', isDense: true),
                         onChanged: (v) => entry.term = v,
                       ),
                     ),
@@ -385,12 +384,13 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
                     Expanded(
                       child: TextFormField(
                         initialValue: entry.translation,
-                        decoration: const InputDecoration(labelText: 'Перевод', isDense: true),
+                        decoration: const InputDecoration(hintText: 'Перевод', isDense: true),
                         onChanged: (v) => entry.translation = v,
                       ),
                     ),
                     IconButton(
                       icon: Icon(Icons.close, color: colors.muted),
+                      constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
                       onPressed: () => setState(() => _draft.removeAt(i)),
                     ),
                   ],
@@ -402,7 +402,7 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
         StickyActionBar(
           children: [
             PrimaryButton(
-              label: 'Сохранить ${_draft.length} слов',
+              label: 'Сохранить ${_draft.length} ${pluralRu(_draft.length, one: 'слово', few: 'слова', many: 'слов')}',
               onPressed: _draft.isEmpty ? null : _saveDraft,
               loading: _saving,
             ),
