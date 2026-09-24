@@ -20,6 +20,16 @@ void main() {
     expect(exerciseAnswerMatches(_ex("haven't"), 'haven’t'), isTrue);
   });
 
+  test('a contraction and its full form are the same answer', () {
+    final answer = _ex('We did not hear this track.', ExerciseKind.translate);
+    expect(exerciseAnswerMatches(answer, "We didn't hear this track"), isTrue);
+    expect(exerciseAnswerMatches(_ex("I haven't seen it."), 'I have not seen it'), isTrue);
+    expect(exerciseAnswerMatches(_ex("She can't swim."), 'She cannot swim'), isTrue);
+    expect(exerciseAnswerMatches(_ex("They're late."), 'They are late'), isTrue);
+    // ...but a contraction does not hide a real difference.
+    expect(exerciseAnswerMatches(answer, "We don't hear this track"), isFalse);
+  });
+
   test('alternatives separated by a slash are all accepted', () {
     expect(exerciseAnswerMatches(_ex('has / has got'), 'has got'), isTrue);
     expect(exerciseAnswerMatches(_ex('has / has got'), 'had'), isFalse);

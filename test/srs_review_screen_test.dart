@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:stopka/core/llm/answer_appeal_service.dart';
+import 'package:stopka/core/llm/api_key_store.dart';
 import 'package:stopka/core/providers/core_providers.dart';
 import 'package:stopka/core/srs/srs_settings_store.dart';
 import 'package:stopka/core/theme/app_theme.dart';
@@ -26,6 +28,27 @@ WordCard _card(String id, String term, String translation) {
     createdAt: now,
     updatedAt: now,
   );
+}
+
+class _FakeKey extends ApiKeyStore {
+  @override
+  Future<String?> getApiKey() async => 'key';
+}
+
+class _FakeAppeal implements AnswerAppealService {
+  final bool accepted;
+
+  _FakeAppeal({required this.accepted});
+
+  @override
+  Future<AnswerAppealResult> appeal({
+    required String term,
+    required String correctAnswer,
+    required String userAnswer,
+    required String direction,
+  }) async {
+    return AnswerAppealResult(accepted: accepted, explanationRu: accepted ? 'Тоже верно.' : 'Не подходит по смыслу.');
+  }
 }
 
 class _FakeSrsSettingsStore extends SrsSettingsStore {
@@ -222,7 +245,7 @@ void main() {
     expect(find.text('Дальше'), findsNothing);
   });
 
-  testWidgets('in the English -> Russian direction a synonym can be overruled', (tester) async {
+  Future<_FakeCardStateRepository> pumpEnRu(WidgetTester tester, {required bool accepted}) async {
     final state = CardState(
       id: 's1',
       cardId: 'c1',
@@ -232,21 +255,50 @@ void main() {
       lapses: 0,
       state: SrsState.learning,
     );
-    final stateRepo = await _pump(
-      tester,
-      cards: [_card('c1', 'achieve', 'достигать')],
-      fresh: [state],
+    final stateRepo = _FakeCardStateRepository(fresh: [state]);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          wordCardRepositoryProvider.overrideWithValue(_FakeWordCardRepository([_card('c1', 'achieve', 'достигать')])),
+          cardStateRepositoryProvider.overrideWithValue(stateRepo),
+          srsSettingsStoreProvider.overrideWithValue(_FakeSrsSettingsStore()),
+          apiKeyStoreProvider.overrideWithValue(_FakeKey()),
+          answerAppealServiceProvider.overrideWithValue(_FakeAppeal(accepted: accepted)),
+        ],
+        child: MaterialApp(theme: AppTheme.dark(), home: const SrsReviewScreen()),
+      ),
     );
+    await tester.pumpAndSettle();
+    return stateRepo;
+  }
+
+  testWidgets('in the English -> Russian direction only the AI can accept another wording', (tester) async {
+    final stateRepo = await pumpEnRu(tester, accepted: true);
 
     await _answer(tester, 'добиваться');
     expect(find.text('Неверно'), findsOneWidget);
-    await tester.tap(find.text('Засчитать'));
+    expect(find.text('Засчитать'), findsNothing); // no way to grade yourself
+    await tester.tap(find.text('Мой ответ тоже верный?'));
     await tester.pumpAndSettle();
-    expect(find.text('Засчитано'), findsOneWidget);
+    expect(find.text('Засчитано ИИ'), findsOneWidget);
     await tester.tap(find.text('Дальше'));
     await tester.pumpAndSettle();
 
     expect(stateRepo.logged.single.rating, ReviewRating.good);
+  });
+
+  testWidgets('when the AI says no, the answer stays wrong and cannot be appealed again', (tester) async {
+    final stateRepo = await pumpEnRu(tester, accepted: false);
+
+    await _answer(tester, 'кошка');
+    await tester.tap(find.text('Мой ответ тоже верный?'));
+    await tester.pumpAndSettle();
+    expect(find.text('Неверно'), findsOneWidget);
+    expect(find.text('Мой ответ тоже верный?'), findsNothing);
+    await tester.tap(find.text('Дальше'));
+    await tester.pumpAndSettle();
+
+    expect(stateRepo.logged.single.rating, ReviewRating.again);
   });
 
   testWidgets('a due-for-review card (not just new ones) is shown', (tester) async {

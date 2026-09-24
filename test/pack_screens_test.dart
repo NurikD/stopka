@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:drift/drift.dart' show Value, driftRuntimeOptions;
+import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -48,7 +48,10 @@ class _FakeTts extends TtsService {
   static Future<void> _noWrite(String key, String value) async {}
 
   @override
-  Future<void> speakDialogue(List<({int speaker, String text})> lines, {double speed = 0.5}) async {
+  Future<void> speakDialogue(
+    List<({int speaker, String text})> lines, {
+    double speed = 0.5,
+  }) async {
     speeds.add(speed);
   }
 
@@ -65,7 +68,10 @@ class _Client implements LlmClient {
   _Client(this.replies);
 
   @override
-  Future<String> complete({required String systemPrompt, required String userMessage}) async {
+  Future<String> complete({
+    required String systemPrompt,
+    required String userMessage,
+  }) async {
     final reply = replies[calls < replies.length ? calls : replies.length - 1];
     calls++;
     return reply;
@@ -77,8 +83,7 @@ class _Client implements LlmClient {
     required String userMessage,
     required Uint8List imageBytes,
     required String mimeType,
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   Future<bool> validateApiKey(String apiKey) => throw UnimplementedError();
@@ -100,14 +105,22 @@ class _Source implements ContentSource {
   }
 }
 
-const _key = PackKey(level: 'B1', grammarTopic: 'Present perfect', interest: 'games');
+const _key = PackKey(
+  level: 'B1',
+  grammarTopic: 'Present perfect',
+  interest: 'games',
+);
 
 Map<PackPart, Object> _good() => {
-      PackPart.reading: validatePart(PackPart.reading, readingJson(), level: 'B1'),
-      PackPart.listening: validatePart(PackPart.listening, listeningJson(), level: 'B1'),
-      PackPart.grammar: validatePart(PackPart.grammar, grammarJson(), level: 'B1'),
-      PackPart.writing: validatePart(PackPart.writing, writingJson(), level: 'B1'),
-    };
+  PackPart.reading: validatePart(PackPart.reading, readingJson(), level: 'B1'),
+  PackPart.listening: validatePart(
+    PackPart.listening,
+    listeningJson(),
+    level: 'B1',
+  ),
+  PackPart.grammar: validatePart(PackPart.grammar, grammarJson(), level: 'B1'),
+  PackPart.writing: validatePart(PackPart.writing, writingJson(), level: 'B1'),
+};
 
 class _Env {
   final AppDatabase db;
@@ -118,12 +131,25 @@ class _Env {
   final PackContext pack;
   final Widget Function(Widget home) wrap;
 
-  _Env(this.db, this.packs, this.service, this.tts, this.llm, this.pack, this.wrap);
+  _Env(
+    this.db,
+    this.packs,
+    this.service,
+    this.tts,
+    this.llm,
+    this.pack,
+    this.wrap,
+  );
 }
 
 Future<_Env> _env({
   bool hasKey = true,
-  Set<PackPart> ready = const {PackPart.reading, PackPart.listening, PackPart.grammar, PackPart.writing},
+  Set<PackPart> ready = const {
+    PackPart.reading,
+    PackPart.listening,
+    PackPart.grammar,
+    PackPart.writing,
+  },
   Map<PackPart, List<Object>>? scripts,
   List<String> llmReplies = const ['{}'],
 }) async {
@@ -132,44 +158,69 @@ Future<_Env> _env({
   final stored = await packs.getOrCreate(_key);
   final good = _good();
   for (final part in ready) {
-    await packs.setPart(stored.id, part, payload: good[part]! as Map<String, dynamic>, status: PartStatus.ready);
+    await packs.setPart(
+      stored.id,
+      part,
+      payload: good[part]! as Map<String, dynamic>,
+      status: PartStatus.ready,
+    );
   }
-  final source = _Source(scripts ?? {for (final e in good.entries) e.key: [e.value]});
-  final service = PackService(repo: packs, source: source, hasKey: () async => hasKey);
+  final source = _Source(
+    scripts ??
+        {
+          for (final e in good.entries) e.key: [e.value],
+        },
+  );
+  final service = PackService(
+    repo: packs,
+    source: source,
+    hasKey: () async => hasKey,
+  );
   final tts = _FakeTts();
   final llm = _Client(llmReplies);
   final sets = DriftWordSetRepository(db, 'o');
   final cards = DriftWordCardRepository(db, 'o');
 
   Widget wrap(Widget home) => ProviderScope(
-        key: UniqueKey(),
-        overrides: [
-          packRepositoryProvider.overrideWithValue(packs),
-          packServiceProvider.overrideWithValue(service),
-          apiKeyStoreProvider.overrideWithValue(_Key(hasKey)),
-          ttsServiceProvider.overrideWithValue(tts),
-          wordSetRepositoryProvider.overrideWithValue(sets),
-          wordCardRepositoryProvider.overrideWithValue(cards),
-          writingCheckServiceProvider.overrideWithValue(
-            WritingCheckService(llm, loadPrompt: (_) async => 'PROMPT'),
-          ),
-        ],
-        child: MaterialApp(theme: AppTheme.light(), home: home),
-      );
+    key: UniqueKey(),
+    overrides: [
+      packRepositoryProvider.overrideWithValue(packs),
+      packServiceProvider.overrideWithValue(service),
+      apiKeyStoreProvider.overrideWithValue(_Key(hasKey)),
+      ttsServiceProvider.overrideWithValue(tts),
+      wordSetRepositoryProvider.overrideWithValue(sets),
+      wordCardRepositoryProvider.overrideWithValue(cards),
+      writingCheckServiceProvider.overrideWithValue(
+        WritingCheckService(llm, loadPrompt: (_) async => 'PROMPT'),
+      ),
+    ],
+    child: MaterialApp(theme: AppTheme.light(), home: home),
+  );
 
-  return _Env(db, packs, service, tts, llm, PackContext(packId: stored.id, key: _key, unitId: 'u1'), wrap);
+  return _Env(
+    db,
+    packs,
+    service,
+    tts,
+    llm,
+    PackContext(packId: stored.id, key: _key, unitId: 'u1'),
+    wrap,
+  );
 }
 
 /// Database calls finish on the real event loop, which the fake clock of
 /// testWidgets does not run: give it a moment, then settle the frames.
 Future<void> _settle(WidgetTester tester) async {
-  await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 60)));
+  await tester.runAsync(
+    () => Future<void>.delayed(const Duration(milliseconds: 60)),
+  );
   await tester.pumpAndSettle();
 }
 
 /// Streams need real timers too, so anything that awaits one runs outside
 /// the fake clock.
-Future<T> _real<T>(WidgetTester tester, Future<T> Function() body) async => (await tester.runAsync(body)) as T;
+Future<T> _real<T>(WidgetTester tester, Future<T> Function() body) async =>
+    (await tester.runAsync(body)) as T;
 
 /// A tall screen so that long lists are fully built.
 void _tall(WidgetTester tester) {
@@ -183,6 +234,11 @@ void _tall(WidgetTester tester) {
 /// fake clock.
 Future<void> _dispose(WidgetTester tester, _Env env) async {
   await tester.pumpWidget(const SizedBox());
+  // Let the stream-cancel timers of the unmounted providers fire.
+  await tester.runAsync(
+    () => Future<void>.delayed(const Duration(milliseconds: 60)),
+  );
+  await tester.pump(const Duration(seconds: 1));
 }
 
 Future<void> _tap(WidgetTester tester, String text) async {
@@ -196,57 +252,82 @@ void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
 
   group('ExerciseFlow', () {
-    Future<List<(int, String, bool)>> run(WidgetTester tester, List<Exercise> items, List<String> answers,
-        {List<(int, int)>? finished}) async {
+    Future<List<(int, String, bool)>> run(
+      WidgetTester tester,
+      List<Exercise> items,
+      List<String> answers, {
+      List<(int, int)>? finished,
+    }) async {
       final log = <(int, String, bool)>[];
-      await tester.pumpWidget(MaterialApp(
-        theme: AppTheme.light(),
-        home: Scaffold(
-          body: SingleChildScrollView(
-            child: ExerciseFlow(
-              items: items,
-              onAnswer: (i, a, c) async => log.add((i, a, c)),
-              onFinished: (s, t) async => finished?.add((s, t)),
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: ExerciseFlow(
+                items: items,
+                onAnswer: (i, a, c) async => log.add((i, a, c)),
+                onFinished: (s, t) async => finished?.add((s, t)),
+              ),
             ),
           ),
         ),
-      ));
+      );
       return log;
     }
 
-    testWidgets('a wrong choice shows the right answer and why, then goes on; the score is reported', (tester) async {
-      final finished = <(int, int)>[];
-      final items = [
-        const Exercise(
-          kind: ExerciseKind.choice,
-          prompt: 'I ___ it.',
-          options: ['see', 'have seen'],
-          answer: 'have seen',
-          why: 'Опыт до сейчас.',
-        ),
-        const Exercise(kind: ExerciseKind.choice, prompt: 'She ___.', options: ['is', 'are'], answer: 'is'),
-      ];
-      final log = await run(tester, items, [], finished: finished);
+    testWidgets(
+      'a wrong choice shows the right answer and why, then goes on; the score is reported',
+      (tester) async {
+        final finished = <(int, int)>[];
+        final items = [
+          const Exercise(
+            kind: ExerciseKind.choice,
+            prompt: 'I ___ it.',
+            options: ['see', 'have seen'],
+            answer: 'have seen',
+            why: 'Опыт до сейчас.',
+          ),
+          const Exercise(
+            kind: ExerciseKind.choice,
+            prompt: 'She ___.',
+            options: ['is', 'are'],
+            answer: 'is',
+          ),
+        ];
+        final log = await run(tester, items, [], finished: finished);
 
-      await _tap(tester, 'see');
-      expect(find.text('Неверно'), findsOneWidget);
-      expect(find.text('have seen'), findsNWidgets(2)); // the option and the answer line
-      expect(find.text('Опыт до сейчас.'), findsOneWidget);
-      await _tap(tester, 'Дальше');
+        await _tap(tester, 'see');
+        expect(find.text('Неверно'), findsOneWidget);
+        expect(
+          find.text('have seen'),
+          findsNWidgets(2),
+        ); // the option and the answer line
+        expect(find.text('Опыт до сейчас.'), findsOneWidget);
+        await _tap(tester, 'Дальше');
 
-      await _tap(tester, 'is');
-      expect(find.text('Верно'), findsOneWidget);
-      await _tap(tester, 'Завершить');
+        await _tap(tester, 'is');
+        expect(find.text('Верно'), findsOneWidget);
+        await _tap(tester, 'Завершить');
 
-      expect(log, [(0, 'see', false), (1, 'is', true)]);
-      expect(finished, [(1, 2)]);
-      expect(find.text('1 из 2'), findsOneWidget);
-    });
+        expect(log, [(0, 'see', false), (1, 'is', true)]);
+        expect(finished, [(1, 2)]);
+        expect(find.text('1 из 2'), findsOneWidget);
+      },
+    );
 
     testWidgets('a typed gap accepts the exact form only', (tester) async {
       final log = await run(tester, [
-        const Exercise(kind: ExerciseKind.gap, prompt: 'She ___ played.', answer: 'has'),
-        const Exercise(kind: ExerciseKind.gap, prompt: 'He ___ played.', answer: 'has'),
+        const Exercise(
+          kind: ExerciseKind.gap,
+          prompt: 'She ___ played.',
+          answer: 'has',
+        ),
+        const Exercise(
+          kind: ExerciseKind.gap,
+          prompt: 'He ___ played.',
+          answer: 'has',
+        ),
       ], []);
 
       await tester.enterText(find.byType(TextField), 'Has');
@@ -257,46 +338,160 @@ void main() {
       await tester.enterText(find.byType(TextField), 'have');
       await _tap(tester, 'Проверить');
       expect(find.text('Неверно'), findsOneWidget);
-      expect(find.text('Засчитать'), findsNothing); // only translations can be overruled
+      expect(
+        find.text('Засчитать'),
+        findsNothing,
+      ); // only translations can be overruled
       await _tap(tester, 'Завершить');
 
       expect(log.map((e) => e.$3), [true, false]);
     });
 
-    testWidgets('a wrong translation can be overruled and then counts as right', (tester) async {
+    testWidgets('a wrong translation can only be flipped by the AI, once', (
+      tester,
+    ) async {
       final finished = <(int, int)>[];
-      final log = await run(
-        tester,
-        [const Exercise(kind: ExerciseKind.translate, prompt: 'Я поел.', answer: 'I have eaten.')],
-        [],
-        finished: finished,
+      final asked = <String>[];
+      final log = <(int, String, bool)>[];
+      const items = [
+        Exercise(
+          kind: ExerciseKind.translate,
+          prompt: 'Я поел.',
+          answer: 'I have eaten.',
+        ),
+      ];
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: ExerciseFlow(
+                items: items,
+                onAnswer: (i, a, c) async => log.add((i, a, c)),
+                onFinished: (s, t) async => finished.add((s, t)),
+                onAppeal: (exercise, given) async {
+                  asked.add(given);
+                  return const AppealOutcome(
+                    accepted: false,
+                    note: 'Здесь нужно Present Perfect.',
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
       );
 
       await tester.enterText(find.byType(TextField), 'I ate');
       await _tap(tester, 'Проверить');
       expect(find.text('Неверно'), findsOneWidget);
-      await _tap(tester, 'Засчитать');
-      expect(find.text('Засчитано'), findsOneWidget);
-      await _tap(tester, 'Завершить');
+      expect(find.text('Засчитать'), findsNothing); // no way to grade yourself
 
-      expect(log.single.$3, isTrue);
+      await _tap(tester, 'Мой ответ тоже верный?');
+      expect(asked, ['I ate']);
+      expect(find.text('Здесь нужно Present Perfect.'), findsOneWidget);
+      expect(find.text('Неверно'), findsOneWidget); // the AI said no
+      expect(
+        find.text('Мой ответ тоже верный?'),
+        findsNothing,
+      ); // one appeal per answer
+
+      await _tap(tester, 'Завершить');
+      expect(log.single.$3, isFalse);
+      expect(finished, [(0, 1)]);
+    });
+
+    testWidgets('when the AI agrees the answer counts', (tester) async {
+      final finished = <(int, int)>[];
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: ExerciseFlow(
+                items: const [
+                  Exercise(
+                    kind: ExerciseKind.translate,
+                    prompt: 'Я поел.',
+                    answer: 'I have eaten.',
+                  ),
+                ],
+                onAnswer: (i, a, c) async {},
+                onFinished: (s, t) async => finished.add((s, t)),
+                onAppeal: (e, g) async =>
+                    const AppealOutcome(accepted: true, note: 'Тоже верно.'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.enterText(find.byType(TextField), 'I have just eaten');
+      await _tap(tester, 'Проверить');
+      await _tap(tester, 'Мой ответ тоже верный?');
+      expect(find.text('Засчитано ИИ'), findsOneWidget);
+      await _tap(tester, 'Завершить');
       expect(finished, [(1, 1)]);
+    });
+
+    testWidgets('an AI failure leaves the answer wrong and shows why', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: ExerciseFlow(
+                items: const [
+                  Exercise(
+                    kind: ExerciseKind.translate,
+                    prompt: 'Я поел.',
+                    answer: 'I have eaten.',
+                  ),
+                ],
+                onAnswer: (i, a, c) async {},
+                onFinished: (s, t) async {},
+                onAppeal: (e, g) async => throw const LlmException(
+                  'Сервис ИИ сейчас перегружен (код 503).',
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.enterText(find.byType(TextField), 'I ate');
+      await _tap(tester, 'Проверить');
+      await _tap(tester, 'Мой ответ тоже верный?');
+      expect(find.textContaining('перегружен'), findsOneWidget);
+      expect(find.text('Неверно'), findsOneWidget);
     });
   });
 
   group('reading', () {
-    testWidgets('a tapped word shows its translation and goes to the deck', (tester) async {
+    testWidgets('a tapped word shows its translation and goes to the deck', (
+      tester,
+    ) async {
       _tall(tester);
       final env = await _env();
       await tester.pumpWidget(env.wrap(ReadingScreen(pack: env.pack)));
       await _settle(tester);
 
       expect(find.text('My game'), findsOneWidget);
-      final paragraph = tester.renderObject<RenderParagraph>(find.byWidgetPredicate(
-        (w) => w is RichText && w.text.toPlainText().startsWith('I have played this game'),
-      ));
+      final paragraph = tester.renderObject<RenderParagraph>(
+        find.byWidgetPredicate(
+          (w) =>
+              w is RichText &&
+              w.text.toPlainText().startsWith('I have played this game'),
+        ),
+      );
       // "game" sits at characters 19..23 of the first sentence.
-      final box = paragraph.getBoxesForSelection(const TextSelection(baseOffset: 19, extentOffset: 23)).first;
+      final box = paragraph
+          .getBoxesForSelection(
+            const TextSelection(baseOffset: 19, extentOffset: 23),
+          )
+          .first;
       await tester.tapAt(paragraph.localToGlobal(box.toRect().center));
       await _settle(tester);
 
@@ -304,14 +499,28 @@ void main() {
       await _tap(tester, 'В колоду');
       expect(find.textContaining('добавлено в колоду'), findsOneWidget);
 
-      final sets = await _real(tester, () => DriftWordSetRepository(env.db, 'o').watchWordSets(unitId: 'u1').first);
-      final cards = await _real(tester, () => DriftWordCardRepository(env.db, 'o').watchCards(sets.single.id).first);
+      final sets = await _real(
+        tester,
+        () => DriftWordSetRepository(
+          env.db,
+          'o',
+        ).watchWordSets(unitId: 'u1').first,
+      );
+      final cards = await _real(
+        tester,
+        () => DriftWordCardRepository(
+          env.db,
+          'o',
+        ).watchCards(sets.single.id).first,
+      );
       expect(cards.single.term, 'game');
       expect(cards.single.translation, 'игра');
       await _dispose(tester, env);
     });
 
-    testWidgets('questions are answered in place and the result is stored', (tester) async {
+    testWidgets('questions are answered in place and the result is stored', (
+      tester,
+    ) async {
       _tall(tester);
       final env = await _env();
       await tester.pumpWidget(env.wrap(ReadingScreen(pack: env.pack)));
@@ -322,7 +531,10 @@ void main() {
         await _tap(tester, i < 4 ? 'Дальше' : 'Завершить');
       }
 
-      final progress = await _real(tester, () => env.packs.watchProgress(env.pack.packId).first);
+      final progress = await _real(
+        tester,
+        () => env.packs.watchProgress(env.pack.packId).first,
+      );
       expect(progress[PackPart.reading]!.score, 5);
       expect(progress[PackPart.reading]!.total, 5);
       await _dispose(tester, env);
@@ -330,7 +542,9 @@ void main() {
   });
 
   group('listening', () {
-    testWidgets('the text stays hidden until the questions are answered', (tester) async {
+    testWidgets('the text stays hidden until the questions are answered', (
+      tester,
+    ) async {
       _tall(tester);
       final env = await _env();
       await tester.pumpWidget(env.wrap(ListeningScreen(pack: env.pack)));
@@ -346,7 +560,9 @@ void main() {
       await _dispose(tester, env);
     });
 
-    testWidgets('the speed switch changes the rate the dialogue is read at', (tester) async {
+    testWidgets('the speed switch changes the rate the dialogue is read at', (
+      tester,
+    ) async {
       final env = await _env();
       await tester.pumpWidget(env.wrap(ListeningScreen(pack: env.pack)));
       await _settle(tester);
@@ -362,31 +578,34 @@ void main() {
   });
 
   group('grammar', () {
-    testWidgets('a wrong exercise is stored as a mistake with the topic as its category', (tester) async {
-      _tall(tester);
-      final env = await _env();
-      await tester.pumpWidget(env.wrap(GrammarScreen(pack: env.pack)));
-      await _settle(tester);
+    testWidgets(
+      'a wrong exercise is stored as a mistake with the topic as its category',
+      (tester) async {
+        _tall(tester);
+        final env = await _env();
+        await tester.pumpWidget(env.wrap(GrammarScreen(pack: env.pack)));
+        await _settle(tester);
 
-      expect(find.text('Present perfect'), findsWidgets);
-      expect(find.textContaining('уже случилось'), findsOneWidget);
+        expect(find.text('Present perfect'), findsWidgets);
+        expect(find.textContaining('уже случилось'), findsOneWidget);
 
-      await tester.enterText(find.byType(TextField), 'have');
-      await _tap(tester, 'Проверить');
-      await tester.pumpAndSettle();
+        await tester.enterText(find.byType(TextField), 'have');
+        await _tap(tester, 'Проверить');
+        await tester.pumpAndSettle();
 
-      final rows = await env.db.select(env.db.mistakes).get();
-      // Written when the learner moves on.
-      expect(rows, isEmpty);
-      await _tap(tester, 'Дальше');
+        final rows = await env.db.select(env.db.mistakes).get();
+        // Written when the learner moves on.
+        expect(rows, isEmpty);
+        await _tap(tester, 'Дальше');
 
-      final after = await env.db.select(env.db.mistakes).get();
-      expect(after.single.skill, 'grammar');
-      expect(after.single.category, 'Present perfect');
-      expect(after.single.original, 'have');
-      expect(after.single.corrected, 'has');
-      await _dispose(tester, env);
-    });
+        final after = await env.db.select(env.db.mistakes).get();
+        expect(after.single.skill, 'grammar');
+        expect(after.single.category, 'Present perfect');
+        expect(after.single.original, 'have');
+        expect(after.single.corrected, 'has');
+        await _dispose(tester, env);
+      },
+    );
   });
 
   group('writing', () {
@@ -396,49 +615,68 @@ void main() {
  "summary":"Хорошо, что вы использовали yesterday."}
 ''';
 
-    testWidgets('without a key the text stays and nothing is requested', (tester) async {
+    testWidgets('without a key the text stays and nothing is requested', (
+      tester,
+    ) async {
       final env = await _env(hasKey: false, llmReplies: [feedback]);
       await tester.pumpWidget(env.wrap(WritingScreen(pack: env.pack)));
       await _settle(tester);
 
-      await tester.enterText(find.byType(TextField), 'I play this game yesterday and it was fun.');
+      await tester.enterText(
+        find.byType(TextField),
+        'I play this game yesterday and it was fun.',
+      );
       await _tap(tester, 'Проверить');
 
       expect(find.textContaining('нужен'), findsNothing);
       expect(find.textContaining('ключ'), findsOneWidget);
-      expect(find.text('I play this game yesterday and it was fun.'), findsOneWidget);
+      expect(
+        find.text('I play this game yesterday and it was fun.'),
+        findsOneWidget,
+      );
       expect(env.llm.calls, 0);
       await _dispose(tester, env);
     });
 
-    testWidgets('a checked text shows errors by category, the fix and the native version, and saves them', (tester) async {
-      _tall(tester);
-      final env = await _env(llmReplies: [feedback]);
-      await tester.pumpWidget(env.wrap(WritingScreen(pack: env.pack)));
-      await _settle(tester);
+    testWidgets(
+      'a checked text shows errors by category, the fix and the native version, and saves them',
+      (tester) async {
+        _tall(tester);
+        final env = await _env(llmReplies: [feedback]);
+        await tester.pumpWidget(env.wrap(WritingScreen(pack: env.pack)));
+        await _settle(tester);
 
-      await tester.enterText(find.byType(TextField), 'I play this game yesterday and it was fun.');
-      await _tap(tester, 'Проверить');
+        await tester.enterText(
+          find.byType(TextField),
+          'I play this game yesterday and it was fun.',
+        );
+        await _tap(tester, 'Проверить');
 
-      expect(find.text('1 ошибка'), findsOneWidget);
-      expect(find.text('Время глагола'), findsOneWidget);
-      expect(find.text('Вчера — прошедшее время.'), findsOneWidget);
-      expect(find.text('Исправленный текст'), findsOneWidget);
-      expect(find.text('Как сказал бы носитель'), findsOneWidget);
+        expect(find.text('1 ошибка'), findsOneWidget);
+        expect(find.text('Время глагола'), findsOneWidget);
+        expect(find.text('Вчера — прошедшее время.'), findsOneWidget);
+        expect(find.text('Исправленный текст'), findsOneWidget);
+        expect(find.text('Как сказал бы носитель'), findsOneWidget);
 
-      final mistakes = await env.db.select(env.db.mistakes).get();
-      expect(mistakes.single.skill, 'writing');
-      expect(mistakes.single.category, 'tense');
-      final attempts = await env.db.select(env.db.writingAttempts).get();
-      expect(attempts.single.correctedText, 'I played this game yesterday.');
-      final progress = await _real(tester, () => env.packs.watchProgress(env.pack.packId).first);
-      expect(progress.containsKey(PackPart.writing), isTrue);
-      await _dispose(tester, env);
-    });
+        final mistakes = await env.db.select(env.db.mistakes).get();
+        expect(mistakes.single.skill, 'writing');
+        expect(mistakes.single.category, 'tense');
+        final attempts = await env.db.select(env.db.writingAttempts).get();
+        expect(attempts.single.correctedText, 'I played this game yesterday.');
+        final progress = await _real(
+          tester,
+          () => env.packs.watchProgress(env.pack.packId).first,
+        );
+        expect(progress.containsKey(PackPart.writing), isTrue);
+        await _dispose(tester, env);
+      },
+    );
   });
 
   group('pack overview', () {
-    testWidgets('without a key it says so, and ready parts still open', (tester) async {
+    testWidgets('without a key it says so, and ready parts still open', (
+      tester,
+    ) async {
       final env = await _env(hasKey: false, ready: {PackPart.grammar});
       await tester.pumpWidget(env.wrap(PackScreen(pack: env.pack)));
       await _settle(tester);
@@ -452,11 +690,16 @@ void main() {
       await _dispose(tester, env);
     });
 
-    testWidgets('a failed part shows its message and retries when tapped', (tester) async {
+    testWidgets('a failed part shows its message and retries when tapped', (
+      tester,
+    ) async {
       final env = await _env(
         ready: {PackPart.reading, PackPart.listening, PackPart.grammar},
         scripts: {
-          PackPart.writing: [const LlmException('Лимит запросов.'), _good()[PackPart.writing]!],
+          PackPart.writing: [
+            const LlmException('Лимит запросов.'),
+            _good()[PackPart.writing]!,
+          ],
         },
       );
       await tester.pumpWidget(env.wrap(PackScreen(pack: env.pack)));
@@ -469,27 +712,40 @@ void main() {
       await _dispose(tester, env);
     });
 
-    testWidgets('"Материал плохой" replaces the part with a freshly generated one', (tester) async {
-      _tall(tester);
-      final second = {...(_good()[PackPart.writing]! as Map<String, dynamic>), 'task': 'Write 4-6 sentences about your favourite level today.'};
-      final env = await _env(scripts: {
-        PackPart.reading: [_good()[PackPart.reading]!],
-        PackPart.listening: [_good()[PackPart.listening]!],
-        PackPart.grammar: [_good()[PackPart.grammar]!],
-        PackPart.writing: [_good()[PackPart.writing]!, second],
-      });
-      await tester.pumpWidget(env.wrap(WritingScreen(pack: env.pack)));
-      await _settle(tester);
-      expect(find.textContaining('a game you have played'), findsOneWidget);
-      await _tap(tester, 'Материал плохой');
-      await _settle(tester);
+    testWidgets(
+      '"Материал плохой" replaces the part with a freshly generated one',
+      (tester) async {
+        _tall(tester);
+        final second = {
+          ...(_good()[PackPart.writing]! as Map<String, dynamic>),
+          'task': 'Write 4-6 sentences about your favourite level today.',
+        };
+        final env = await _env(
+          scripts: {
+            PackPart.reading: [_good()[PackPart.reading]!],
+            PackPart.listening: [_good()[PackPart.listening]!],
+            PackPart.grammar: [_good()[PackPart.grammar]!],
+            PackPart.writing: [second], // the stored part came from setup, so the first fetch is the replacement
+          },
+        );
+        await tester.pumpWidget(env.wrap(WritingScreen(pack: env.pack)));
+        await _settle(tester);
+        expect(find.textContaining('a game you have played'), findsOneWidget);
+        await _tap(tester, 'Материал плохой');
+        await _settle(tester);
+        await _settle(tester);
 
-      expect(find.textContaining('your favourite level today'), findsOneWidget);
-      expect((await env.packs.getPack(env.pack.packId))!.statusOf(PackPart.writing), PartStatus.ready);
-      await _dispose(tester, env);
-    });
+        expect(
+          find.textContaining('your favourite level today'),
+          findsOneWidget,
+        );
+        expect(
+          (await env.packs.getPack(env.pack.packId))!
+              .statusOf(PackPart.writing),
+          PartStatus.ready,
+        );
+        await _dispose(tester, env);
+      },
+    );
   });
-
-  // Silences the unused import of Value when the file is trimmed.
-  test('imports are used', () => expect(const Value(1).value, 1));
 }
