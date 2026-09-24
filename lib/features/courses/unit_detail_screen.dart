@@ -15,6 +15,7 @@ import '../../domain/models/unit.dart';
 import '../../domain/models/word_card.dart';
 import '../../domain/models/word_set.dart';
 import '../dictation/dictation_setup_screen.dart';
+import '../pack/pack_screen.dart';
 import 'add_words/add_words_screen.dart';
 import 'card_form_sheet.dart';
 
@@ -22,7 +23,11 @@ class UnitDetailScreen extends ConsumerStatefulWidget {
   final String courseId;
   final String unitId;
 
-  const UnitDetailScreen({super.key, required this.courseId, required this.unitId});
+  const UnitDetailScreen({
+    super.key,
+    required this.courseId,
+    required this.unitId,
+  });
 
   @override
   ConsumerState<UnitDetailScreen> createState() => _UnitDetailScreenState();
@@ -41,12 +46,17 @@ class _UnitDetailScreenState extends ConsumerState<UnitDetailScreen> {
 
   Future<void> _bootstrap() async {
     final unit = await ref.read(unitRepositoryProvider).getUnit(widget.unitId);
-    final sets = await ref.read(wordSetRepositoryProvider).watchWordSets(unitId: widget.unitId).first;
+    final sets = await ref
+        .read(wordSetRepositoryProvider)
+        .watchWordSets(unitId: widget.unitId)
+        .first;
     String setId;
     if (sets.isNotEmpty) {
       setId = sets.first.id;
     } else {
-      final created = await ref.read(wordSetRepositoryProvider).createWordSet(
+      final created = await ref
+          .read(wordSetRepositoryProvider)
+          .createWordSet(
             unitId: widget.unitId,
             title: unit?.code ?? 'Слова юнита',
             source: WordSetSource.manual,
@@ -79,43 +89,69 @@ class _UnitDetailScreenState extends ConsumerState<UnitDetailScreen> {
         final cards = _query.isEmpty
             ? allCards
             : allCards
-                .where((c) =>
-                    c.term.toLowerCase().contains(_query.toLowerCase()) ||
-                    c.translation.toLowerCase().contains(_query.toLowerCase()))
-                .toList();
+                  .where(
+                    (c) =>
+                        c.term.toLowerCase().contains(_query.toLowerCase()) ||
+                        c.translation.toLowerCase().contains(
+                          _query.toLowerCase(),
+                        ),
+                  )
+                  .toList();
 
         return Scaffold(
           appBar: AppHeaderBar(nested: true, title: _titleFor(unit)),
-          body: snapshot.connectionState == ConnectionState.waiting
-              ? const Center(child: CircularProgressIndicator())
-              : allCards.isEmpty
-                  ? EmptyState(
-                      message: 'Сфоткайте список слов с урока — разберу и переведу. '
-                          'Или добавьте слова вручную/вставкой.',
-                      actionLabel: 'Добавить слова',
-                      onAction: () => _openAddWords(context, setId, unit),
-                    )
-                  : Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(AppSpacing.screen, AppSpacing.s8, AppSpacing.screen, 0),
-                          child: TextField(
-                            decoration: const InputDecoration(
-                              hintText: 'Поиск по слову или переводу',
-                              prefixIcon: Icon(Icons.search),
+          body: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.screen,
+                  AppSpacing.s8,
+                  AppSpacing.screen,
+                  0,
+                ),
+                child: PackEntryCard(unitId: widget.unitId),
+              ),
+              Expanded(
+                child: snapshot.connectionState == ConnectionState.waiting
+                    ? const Center(child: CircularProgressIndicator())
+                    : allCards.isEmpty
+                    ? EmptyState(
+                        message:
+                            'Сфоткайте список слов с урока — разберу и переведу. '
+                            'Или добавьте слова вручную/вставкой.',
+                        actionLabel: 'Добавить слова',
+                        onAction: () => _openAddWords(context, setId, unit),
+                      )
+                    : Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(
+                              AppSpacing.screen,
+                              AppSpacing.s8,
+                              AppSpacing.screen,
+                              0,
                             ),
-                            onChanged: (v) => setState(() => _query = v),
+                            child: TextField(
+                              decoration: const InputDecoration(
+                                hintText: 'Поиск по слову или переводу',
+                                prefixIcon: Icon(Icons.search),
+                              ),
+                              onChanged: (v) => setState(() => _query = v),
+                            ),
                           ),
-                        ),
-                        Expanded(
-                          child: ListView.builder(
-                            padding: const EdgeInsets.all(AppSpacing.screen),
-                            itemCount: cards.length,
-                            itemBuilder: (context, i) => _CardTile(card: cards[i]),
+                          Expanded(
+                            child: ListView.builder(
+                              padding: const EdgeInsets.all(AppSpacing.screen),
+                              itemCount: cards.length,
+                              itemBuilder: (context, i) =>
+                                  _CardTile(card: cards[i]),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+              ),
+            ],
+          ),
           bottomNavigationBar: StickyActionBar(
             children: [
               if (allCards.isNotEmpty)
@@ -123,7 +159,10 @@ class _UnitDetailScreenState extends ConsumerState<UnitDetailScreen> {
                   label: 'Диктант',
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (_) => DictationSetupScreen(setId: setId, setTitle: unit?.code ?? 'слова'),
+                      builder: (_) => DictationSetupScreen(
+                        setId: setId,
+                        setTitle: unit?.code ?? 'слова',
+                      ),
                     ),
                   ),
                 ),
@@ -182,22 +221,41 @@ class _CardTile extends ConsumerWidget {
           ),
           child: Icon(Icons.delete_outline, color: colors.muted),
         ),
-        onDismissed: (_) => ref.read(wordCardRepositoryProvider).deleteCard(card.id),
+        onDismissed: (_) =>
+            ref.read(wordCardRepositoryProvider).deleteCard(card.id),
         child: AppCard(
           onTap: () => showCardFormSheet(context, ref, card: card),
-          padding: const EdgeInsets.fromLTRB(AppSpacing.s18, AppSpacing.s14, AppSpacing.s8, AppSpacing.s14),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.s18,
+            AppSpacing.s14,
+            AppSpacing.s8,
+            AppSpacing.s14,
+          ),
           child: Row(
             children: [
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(card.term, style: AppTypography.monoWord.copyWith(color: colors.ink)),
+                    Text(
+                      card.term,
+                      style: AppTypography.monoWord.copyWith(color: colors.ink),
+                    ),
                     if (card.transcription.isNotEmpty)
-                      Text(card.transcription, style: AppTypography.transcription.copyWith(color: colors.muted)),
+                      Text(
+                        card.transcription,
+                        style: AppTypography.transcription.copyWith(
+                          color: colors.muted,
+                        ),
+                      ),
                     if (card.translation.isNotEmpty) ...[
                       const SizedBox(height: AppSpacing.s4),
-                      Text(card.translation, style: AppTypography.bodyText.copyWith(color: colors.muted)),
+                      Text(
+                        card.translation,
+                        style: AppTypography.bodyText.copyWith(
+                          color: colors.muted,
+                        ),
+                      ),
                     ],
                   ],
                 ),

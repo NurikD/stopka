@@ -81,6 +81,45 @@ class TtsService {
     _configured = true;
   }
 
+  bool _cancelled = false;
+
+  /// Reads a dialogue line by line, one voice per speaker: two different
+  /// voices when the device has them, otherwise the same voice at a lower
+  /// pitch for the second speaker. [speed] is the speech rate; 0.42 is the
+  /// normal one used for single words. Stops when [stop] is called.
+  Future<void> speakDialogue(List<({int speaker, String text})> lines, {double speed = 0.5}) async {
+    _cancelled = false;
+    await _tts.awaitSpeakCompletion(true);
+    await _tts.setLanguage('en-US');
+    final voices = await englishVoices();
+    final us = voices.where((v) => v.locale.toLowerCase() == 'en-us').toList();
+    final pool = us.length >= 2 ? us : voices;
+    final saved = await savedVoice();
+
+    try {
+      await _tts.setSpeechRate(speed);
+      for (final line in lines) {
+        if (_cancelled) break;
+        final TtsVoice? voice = pool.isEmpty
+            ? null
+            : (line.speaker == 0 && saved != null
+                ? pool.where((v) => v.name == saved).firstOrNull ?? pool.first
+                : pool[line.speaker % pool.length]);
+        if (voice != null) await _tts.setVoice({'name': voice.name, 'locale': voice.locale});
+        await _tts.setPitch(pool.length >= 2 || line.speaker == 0 ? 1.0 : 0.8);
+        await _tts.speak(line.text);
+      }
+    } finally {
+      await _tts.awaitSpeakCompletion(false);
+      _configured = false; // single words must re-apply the chosen voice
+    }
+  }
+
+  Future<void> stop() async {
+    _cancelled = true;
+    await _tts.stop();
+  }
+
   Future<void> speak(String text) async {
     if (text.trim().isEmpty) return;
     await _ensureConfigured();

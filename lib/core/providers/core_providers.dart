@@ -6,6 +6,7 @@ import '../../data/repositories/card_state_repository_impl.dart';
 import '../../data/repositories/course_repository_impl.dart';
 import '../../data/repositories/dictation_repository_impl.dart';
 import '../../data/repositories/llm_cache_repository_impl.dart';
+import '../../data/repositories/pack_repository_impl.dart';
 import '../../data/repositories/profile_repository_impl.dart';
 import '../../data/repositories/unit_repository_impl.dart';
 import '../../data/repositories/word_card_repository_impl.dart';
@@ -15,6 +16,7 @@ import '../../domain/repositories/card_state_repository.dart';
 import '../../domain/repositories/course_repository.dart';
 import '../../domain/repositories/dictation_repository.dart';
 import '../../domain/repositories/llm_cache_repository.dart';
+import '../../domain/repositories/pack_repository.dart';
 import '../../domain/repositories/profile_repository.dart';
 import '../../domain/repositories/unit_repository.dart';
 import '../../domain/repositories/word_card_repository.dart';
@@ -29,8 +31,11 @@ import '../llm/llm_request_counter.dart';
 import '../llm/throttled_llm_client.dart';
 import '../llm/personal_words_service.dart';
 import '../llm/unit_page_service.dart';
+import '../llm/writing_check_service.dart';
 import '../llm/word_recognition_service.dart';
 import '../onboarding/onboarding_service.dart';
+import '../pack/content_source.dart';
+import '../pack/pack_service.dart';
 import '../srs/srs_engine.dart';
 import '../srs/srs_settings_store.dart';
 import '../theme/theme_mode_store.dart';
@@ -134,6 +139,30 @@ final onboardingServiceProvider = Provider<OnboardingService>((ref) {
           .timeout(const Duration(seconds: 20));
     },
   );
+});
+
+final packRepositoryProvider = Provider<PackRepository>((ref) {
+  final ownerId = ref.watch(currentOwnerIdProvider) ?? '';
+  return DriftPackRepository(ref.watch(appDatabaseProvider), ownerId);
+});
+
+final contentSourceProvider = Provider<ContentSource>((ref) {
+  return GeneratedContentSource(ref.watch(llmClientProvider));
+});
+
+/// Kept alive for the whole run, so a pack keeps generating while the
+/// learner moves between screens.
+final packServiceProvider = Provider<PackService>((ref) {
+  final store = ref.watch(apiKeyStoreProvider);
+  return PackService(
+    repo: ref.watch(packRepositoryProvider),
+    source: ref.watch(contentSourceProvider),
+    hasKey: store.hasKey,
+  );
+});
+
+final writingCheckServiceProvider = Provider<WritingCheckService>((ref) {
+  return WritingCheckService(ref.watch(llmClientProvider));
 });
 
 final ttsServiceProvider = Provider<TtsService>((ref) => TtsService());
