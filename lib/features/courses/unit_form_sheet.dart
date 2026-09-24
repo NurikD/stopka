@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/providers/core_providers.dart';
+import '../../core/theme/app_theme_extension.dart';
 import '../../core/theme/tokens.dart';
+import '../../core/theme/typography.dart';
+import '../../core/widgets/labeled_field.dart';
 import '../../core/widgets/primary_button.dart';
 
 /// Unit creation: code, title, and free-text grammar/vocab topics the user
@@ -57,40 +60,51 @@ class _UnitFormSheetState extends ConsumerState<_UnitFormSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    final colors = context.colors;
+    return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(
-        AppSpacing.s14,
-        AppSpacing.s14,
-        AppSpacing.s14,
-        AppSpacing.s14 + MediaQuery.of(context).viewInsets.bottom,
+        AppSpacing.screen,
+        AppSpacing.s22,
+        AppSpacing.screen,
+        AppSpacing.s22 + MediaQuery.of(context).viewInsets.bottom,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text('Новый юнит', style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: AppSpacing.s14),
-          TextField(
-            controller: _codeController,
-            autofocus: true,
-            decoration: const InputDecoration(labelText: 'Код (например, 4B)', border: OutlineInputBorder()),
-          ),
-          const SizedBox(height: AppSpacing.s10),
-          TextField(
-            controller: _titleController,
-            decoration: const InputDecoration(labelText: 'Название (необязательно)', border: OutlineInputBorder()),
-          ),
-          const SizedBox(height: AppSpacing.s10),
-          TextField(
-            controller: _grammarController,
-            decoration: const InputDecoration(labelText: 'Грамматика', border: OutlineInputBorder()),
-          ),
-          const SizedBox(height: AppSpacing.s10),
-          TextField(
-            controller: _vocabController,
-            decoration: const InputDecoration(labelText: 'Лексика', border: OutlineInputBorder()),
+          Text('Новый юнит', style: AppTypography.heading.copyWith(color: colors.ink)),
+          const SizedBox(height: AppSpacing.s18),
+          LabeledField(
+            label: 'Код',
+            child: TextField(
+              controller: _codeController,
+              autofocus: true,
+              style: AppTypography.monoWord.copyWith(fontSize: 15, color: colors.ink),
+              decoration: const InputDecoration(hintText: '4B'),
+            ),
           ),
           const SizedBox(height: AppSpacing.s14),
+          LabeledField(
+            label: 'Название (необязательно)',
+            child: TextField(controller: _titleController),
+          ),
+          const SizedBox(height: AppSpacing.s14),
+          LabeledField(
+            label: 'Грамматика',
+            child: TextField(
+              controller: _grammarController,
+              decoration: const InputDecoration(hintText: 'Present perfect'),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.s14),
+          LabeledField(
+            label: 'Лексика',
+            child: TextField(
+              controller: _vocabController,
+              decoration: const InputDecoration(hintText: 'Путешествия'),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.s22),
           PrimaryButton(label: 'Создать юнит', onPressed: _save, loading: _saving),
         ],
       ),
