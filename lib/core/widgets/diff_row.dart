@@ -15,7 +15,7 @@ class DiffRow extends StatelessWidget {
 
   const DiffRow({super.key, required this.user, required this.correct});
 
-  static const _labelWidth = 30.0;
+  static const _labelWidth = 44.0;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +59,7 @@ class DiffRow extends StatelessWidget {
         children: [
           SizedBox(
             width: _labelWidth,
-            child: Text(label, style: AppTypography.monoMeta.copyWith(color: colors.muted)),
+            child: Text(label, softWrap: false, style: AppTypography.monoMeta.copyWith(color: colors.muted)),
           ),
           Text.rich(TextSpan(children: spans), softWrap: false),
         ],

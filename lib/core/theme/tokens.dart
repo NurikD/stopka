@@ -35,9 +35,8 @@ class AppColorTokens {
   /// Progress, focus, the key action. At most ~10% of a screen.
   final Color accent;
 
-  /// Text and icons on an `accent` fill. White on light; dark on dark,
-  /// where white on the lilac accent measures ~3.5:1 and is unreadable in
-  /// bright light.
+  /// Text and icons on an `accent` fill: white on light, near-black on the
+  /// beige accent of the dark theme.
   final Color onAccent;
 
   /// Grammar highlights, chips.
@@ -86,9 +85,10 @@ class AppColorTokens {
     body: Color(0xFF2A2C32),
     // #6C6E74: 4.55:1 on bg. The doc's earlier #6E7076 was 4.42:1.
     muted: Color(0xFF6C6E74),
-    accent: Color(0xFF2B44FF),
+    // The accent is the ink itself: one neutral system, no blue.
+    accent: Color(0xFF17181C),
     onAccent: Color(0xFFFFFFFF),
-    accentTint: Color(0xFFE6E8FF),
+    accentTint: Color(0xFFE9E8E3),
     success: Color(0xFF1F7A54),
     danger: Color(0xFFC2412D),
     markBg: Color(0xFFFFF0CC),
@@ -105,9 +105,9 @@ class AppColorTokens {
     inkOn: Color(0xFF0F1012),
     body: Color(0xFFD9D7D2),
     muted: Color(0xFF8E8F94),
-    accent: Color(0xFF6E7BFF),
+    accent: Color(0xFFEDEBE6),
     onAccent: Color(0xFF0F1012),
-    accentTint: Color(0xFF232748),
+    accentTint: Color(0xFF26282C),
     success: Color(0xFF3DBE87),
     danger: Color(0xFFFF6B5A),
     markBg: Color(0xFF3A3218),
