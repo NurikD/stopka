@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../providers/core_providers.dart';
 
+import '../../features/courses/add_words/shared_text_screen.dart';
 import '../../features/courses/course_detail_screen.dart';
 import '../../features/courses/courses_screen.dart';
 import '../../features/courses/unit_detail_screen.dart';
@@ -87,6 +88,10 @@ final _routes = <RouteBase>[
         );
       },
     ),
+  ),
+  GoRoute(
+    path: '/share',
+    builder: (context, state) => SharedTextScreen(text: state.extra as String? ?? ''),
   ),
   GoRoute(
     path: '/dictation/:setId',

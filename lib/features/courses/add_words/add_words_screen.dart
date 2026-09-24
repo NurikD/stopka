@@ -36,12 +36,17 @@ class AddWordsScreen extends ConsumerStatefulWidget {
   final String grammarTopic;
   final String vocabTopic;
 
+  /// Text shared from another app: when set, the screen opens straight on the
+  /// draft review with this text already parsed.
+  final String? initialPaste;
+
   const AddWordsScreen({
     super.key,
     required this.setId,
     required this.level,
     required this.grammarTopic,
     required this.vocabTopic,
+    this.initialPaste,
   });
 
   @override
@@ -63,6 +68,17 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
   // Draft review (shared by paste + photo)
   final List<_DraftEntry> _draft = [];
   bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final shared = widget.initialPaste;
+    if (shared != null) {
+      _pasteController.text = shared;
+      _draft.addAll(WordPasteParser.parse(shared).map((w) => _DraftEntry(w.term, w.translation)));
+      _mode = _draft.isEmpty ? _Mode.pasteInput : _Mode.draftReview;
+    }
+  }
 
   @override
   void dispose() {
@@ -124,6 +140,13 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
   }
 
   Future<void> _pickPhoto(ImageSource source) async {
+    if (!await ref.read(apiKeyStoreProvider).hasKey()) {
+      if (mounted) {
+        _showError('Распознавание по фото работает через Gemini — добавьте ключ в «Профиле». '
+            'Пока можно вставить список или ввести слова вручную.');
+      }
+      return;
+    }
     final picker = ImagePicker();
     final XFile? file;
     try {
@@ -197,6 +220,15 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
             translation: entry.translation.trim(),
           );
       createdCards[card.term] = card;
+    }
+
+    if (!await ref.read(apiKeyStoreProvider).hasKey()) {
+      // Nothing is blocked without a key; only the extras wait for one.
+      if (mounted) {
+        _showError('Слова сохранены. Транскрипцию и примеры добавит ИИ, когда появится ключ Gemini.');
+        Navigator.of(context).pop();
+      }
+      return;
     }
 
     try {
@@ -322,7 +354,7 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
         ),
         const SizedBox(height: AppSpacing.s14),
         LabeledField(
-          label: 'Перевод (необязательно — ИИ подберёт сам)',
+          label: ref.watch(hasApiKeyProvider).value ?? false ? 'Перевод (необязательно — ИИ подберёт сам)' : 'Перевод',
           child: TextField(controller: _manualTranslationController, onSubmitted: (_) => _addManualWord()),
         ),
         const SizedBox(height: AppSpacing.s18),
