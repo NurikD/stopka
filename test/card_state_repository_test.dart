@@ -141,4 +141,20 @@ void main() {
       expect(await repo.getStreakDays(), 2);
     });
   });
+
+  group('countReviewsSince', () {
+    test('counts only reviews at or after the cut-off', () async {
+      final state = await repo.ensureState('card1', DictationDirection.ruEn);
+      final startOfToday = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+      await repo.logReview(cardStateId: state.id, rating: ReviewRating.good, at: startOfToday.subtract(const Duration(hours: 2)));
+      await repo.logReview(cardStateId: state.id, rating: ReviewRating.good, at: startOfToday.add(const Duration(hours: 1)));
+      await repo.logReview(cardStateId: state.id, rating: ReviewRating.again, at: startOfToday.add(const Duration(hours: 2)));
+
+      expect(await repo.countReviewsSince(startOfToday), 2);
+    });
+
+    test('is zero with no history', () async {
+      expect(await repo.countReviewsSince(DateTime(2000)), 0);
+    });
+  });
 }

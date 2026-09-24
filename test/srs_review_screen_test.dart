@@ -101,6 +101,9 @@ class _FakeCardStateRepository implements CardStateRepository {
   Future<CardState> ensureState(String cardId, DictationDirection direction) => throw UnimplementedError();
 
   @override
+  Future<int> countReviewsSince(DateTime since) => throw UnimplementedError();
+
+  @override
   Future<int> getStreakDays() => throw UnimplementedError();
 
   @override
