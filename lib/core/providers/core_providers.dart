@@ -156,3 +156,9 @@ final newCardLimitProvider = FutureProvider.autoDispose<int>((ref) {
 final streakDaysProvider = FutureProvider.autoDispose<int>((ref) {
   return ref.watch(cardStateRepositoryProvider).getStreakDays();
 });
+
+/// Graded reviews since local midnight — the "done" half of today's words.
+final reviewsTodayProvider = FutureProvider.autoDispose<int>((ref) {
+  final now = DateTime.now();
+  return ref.watch(cardStateRepositoryProvider).countReviewsSince(DateTime(now.year, now.month, now.day));
+});
