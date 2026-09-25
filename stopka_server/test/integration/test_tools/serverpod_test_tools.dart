@@ -13,8 +13,11 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _ida;
 import 'dart:io' as _idi;
+import 'dart:typed_data' as _idt;
 import 'package:serverpod/serverpod.dart' as _is;
 import 'package:serverpod_test/serverpod_test.dart' as _ist;
+import 'package:stopka_server/src/generated/ai/mistake_example.dart'
+    as _io7sjmjk;
 import 'package:stopka_server/src/generated/device/device_registration.dart'
     as _io5ccp11;
 import 'package:stopka_server/src/generated/protocol.dart';
@@ -145,6 +148,8 @@ void withServerpod(
 }
 
 class TestEndpoints {
+  late final _AiEndpoint ai;
+
   late final _CatalogEndpoint catalog;
 
   late final _DeviceEndpoint device;
@@ -157,6 +162,10 @@ class _InternalTestEndpoints extends TestEndpoints
     _is.SerializationManager serializationManager,
     _is.EndpointDispatch endpoints,
   ) {
+    ai = _AiEndpoint(
+      endpoints,
+      serializationManager,
+    );
     catalog = _CatalogEndpoint(
       endpoints,
       serializationManager,
@@ -165,6 +174,257 @@ class _InternalTestEndpoints extends TestEndpoints
       endpoints,
       serializationManager,
     );
+  }
+}
+
+class _AiEndpoint {
+  _AiEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _is.EndpointDispatch _endpointDispatch;
+
+  final _is.SerializationManager _serializationManager;
+
+  _ida.Future<String> checkWriting(
+    _ist.TestSessionBuilder sessionBuilder,
+    String level,
+    String task,
+    String text,
+    bool strict,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'ai',
+            method: 'checkWriting',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'ai',
+          methodName: 'checkWriting',
+          parameters: _ist.testObjectToJson({
+            'level': level,
+            'task': task,
+            'text': text,
+            'strict': strict,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<String>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<String> appeal(
+    _ist.TestSessionBuilder sessionBuilder,
+    String term,
+    String correctAnswer,
+    String userAnswer,
+    String direction,
+    bool strict,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'ai',
+            method: 'appeal',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'ai',
+          methodName: 'appeal',
+          parameters: _ist.testObjectToJson({
+            'term': term,
+            'correctAnswer': correctAnswer,
+            'userAnswer': userAnswer,
+            'direction': direction,
+            'strict': strict,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<String>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<String> weakSpotDrill(
+    _ist.TestSessionBuilder sessionBuilder,
+    String level,
+    String category,
+    String categoryRu,
+    List<String> interests,
+    List<String> words,
+    List<_io7sjmjk.MistakeExample> mistakes,
+    bool strict,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'ai',
+            method: 'weakSpotDrill',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'ai',
+          methodName: 'weakSpotDrill',
+          parameters: _ist.testObjectToJson({
+            'level': level,
+            'category': category,
+            'categoryRu': categoryRu,
+            'interests': interests,
+            'words': words,
+            'mistakes': mistakes,
+            'strict': strict,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<String>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<String> enrichCards(
+    _ist.TestSessionBuilder sessionBuilder,
+    String level,
+    String grammarTopic,
+    String vocabTopic,
+    List<String> terms,
+    bool strict,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'ai',
+            method: 'enrichCards',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'ai',
+          methodName: 'enrichCards',
+          parameters: _ist.testObjectToJson({
+            'level': level,
+            'grammarTopic': grammarTopic,
+            'vocabTopic': vocabTopic,
+            'terms': terms,
+            'strict': strict,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<String>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<String> recognizeWords(
+    _ist.TestSessionBuilder sessionBuilder,
+    _idt.ByteData image,
+    String mimeType,
+    bool strict,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'ai',
+            method: 'recognizeWords',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'ai',
+          methodName: 'recognizeWords',
+          parameters: _ist.testObjectToJson({
+            'image': image,
+            'mimeType': mimeType,
+            'strict': strict,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<String>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<String> readUnitPage(
+    _ist.TestSessionBuilder sessionBuilder,
+    _idt.ByteData image,
+    String mimeType,
+    bool strict,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'ai',
+            method: 'readUnitPage',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'ai',
+          methodName: 'readUnitPage',
+          parameters: _ist.testObjectToJson({
+            'image': image,
+            'mimeType': mimeType,
+            'strict': strict,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<String>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
   }
 }
 

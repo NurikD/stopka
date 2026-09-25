@@ -1,3 +1,10 @@
+ai:
+  - checkWriting:
+  - appeal:
+  - weakSpotDrill:
+  - enrichCards:
+  - recognizeWords:
+  - readUnitPage:
 catalog:
   - getMinAppVersion:
 device:
