@@ -52,6 +52,17 @@ class WeakPracticeService {
         userMessage: attempt == 0
             ? message
             : 'Ответ должен быть строго JSON без markdown-обёрток.\n$message',
+        request: AiRequest(AiKind.weakSpotDrill, {
+          'level': aiLevel(level),
+          'category': category,
+          'categoryRu': categoryRu,
+          'interests': interests,
+          'words': words.take(10).toList(),
+          'mistakes': [
+            for (final e in examples.take(4))
+              {'original': e.original, 'corrected': e.corrected},
+          ],
+        }, strict: attempt > 0),
       );
       try {
         return parse(raw);
