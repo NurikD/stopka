@@ -30,12 +30,12 @@ jobs:
       - run: dart pub get
       - run: dart analyze
         working-directory: stopka_server
-      - name: Test database
+      - name: Passwords for the test run
         working-directory: stopka_server
-        run: |
-          printf 'test:\n  database: ci-test-password\n' > config/passwords.yaml
-          docker compose up -d postgres_test
-          sleep 10
+        # Tests use Serverpod's embedded PostgreSQL, so no Docker is needed.
+        run: printf 'test:
+  database: ci-test-password
+' > config/passwords.yaml
       - run: dart test
         working-directory: stopka_server
 
