@@ -1,0 +1,5 @@
+### One real mistake of the learner, used to build a practice set.
+class: MistakeExample
+fields:
+  original: String
+  corrected: String

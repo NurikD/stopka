@@ -1,0 +1,18 @@
+### How many AI requests one device made of one kind on one UTC day.
+class: AiUsage
+table: ai_usage
+
+fields:
+  id: UuidValue?, defaultPersist=random
+  deviceId: UuidValue
+  ### UTC day, `yyyy-MM-dd`.
+  day: String
+  kind: String
+  requests: int
+
+indexes:
+  ai_usage_device_day_kind_idx:
+    fields: deviceId, day, kind
+    unique: true
+  ai_usage_day_idx:
+    fields: day

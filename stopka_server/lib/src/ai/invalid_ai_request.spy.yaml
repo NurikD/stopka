@@ -1,0 +1,4 @@
+### The request was refused before reaching the AI: empty, too long, wrong type.
+exception: InvalidAiRequest
+fields:
+  reason: String
