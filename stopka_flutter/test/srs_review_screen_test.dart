@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stopka/core/llm/answer_appeal_service.dart';
-import 'package:stopka/core/llm/api_key_store.dart';
 import 'package:stopka/core/providers/core_providers.dart';
+
+import 'fixed_ai_availability.dart';
+
 import 'package:stopka/core/srs/srs_settings_store.dart';
 import 'package:stopka/core/theme/app_theme.dart';
 import 'package:stopka/domain/models/card_state.dart';
@@ -30,11 +32,6 @@ WordCard _card(String id, String term, String translation) {
   );
 }
 
-class _FakeKey extends ApiKeyStore {
-  @override
-  Future<String?> getApiKey() async => 'key';
-}
-
 class _FakeAppeal implements AnswerAppealService {
   final bool accepted;
 
@@ -47,7 +44,10 @@ class _FakeAppeal implements AnswerAppealService {
     required String userAnswer,
     required String direction,
   }) async {
-    return AnswerAppealResult(accepted: accepted, explanationRu: accepted ? 'Тоже верно.' : 'Не подходит по смыслу.');
+    return AnswerAppealResult(
+      accepted: accepted,
+      explanationRu: accepted ? 'Тоже верно.' : 'Не подходит по смыслу.',
+    );
   }
 }
 
@@ -70,7 +70,8 @@ CardState _freshState(String id, String cardId) {
 
 class _FakeWordCardRepository implements WordCardRepository {
   final Map<String, WordCard> cards;
-  _FakeWordCardRepository(List<WordCard> list) : cards = {for (final c in list) c.id: c};
+  _FakeWordCardRepository(List<WordCard> list)
+    : cards = {for (final c in list) c.id: c};
 
   @override
   Future<WordCard?> getCard(String id) async => cards[id];
@@ -88,8 +89,7 @@ class _FakeWordCardRepository implements WordCardRepository {
     List<String> examples = const [],
     String note = '',
     String? imageRef,
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   Future<void> updateCard(WordCard card) => throw UnimplementedError();
@@ -110,18 +110,24 @@ class _FakeCardStateRepository implements CardStateRepository {
   Future<List<CardState>> getDueForReview({required DateTime now}) async => due;
 
   @override
-  Future<List<CardState>> getNewCards({required int limit}) async => fresh.take(limit).toList();
+  Future<List<CardState>> getNewCards({required int limit}) async =>
+      fresh.take(limit).toList();
 
   @override
   Future<void> saveState(CardState state) async => saved.add(state);
 
   @override
-  Future<void> logReview({required String cardStateId, required ReviewRating rating, DateTime? at}) async {
+  Future<void> logReview({
+    required String cardStateId,
+    required ReviewRating rating,
+    DateTime? at,
+  }) async {
     logged.add((cardStateId: cardStateId, rating: rating));
   }
 
   @override
-  Future<CardState> ensureState(String cardId, DictationDirection direction) => throw UnimplementedError();
+  Future<CardState> ensureState(String cardId, DictationDirection direction) =>
+      throw UnimplementedError();
 
   @override
   Future<int> countReviewsSince(DateTime since) => throw UnimplementedError();
@@ -145,7 +151,9 @@ Future<_FakeCardStateRepository> _pump(
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        wordCardRepositoryProvider.overrideWithValue(_FakeWordCardRepository(cards)),
+        wordCardRepositoryProvider.overrideWithValue(
+          _FakeWordCardRepository(cards),
+        ),
         cardStateRepositoryProvider.overrideWithValue(stateRepo),
         srsSettingsStoreProvider.overrideWithValue(_FakeSrsSettingsStore()),
       ],
@@ -163,44 +171,56 @@ Future<void> _answer(WidgetTester tester, String text) async {
 }
 
 void main() {
-  testWidgets('a typed right answer is rated good by the checker, not by the learner', (tester) async {
-    final stateRepo = await _pump(
-      tester,
-      cards: [_card('c1', 'achieve', 'достигать'), _card('c2', 'goal', 'цель')],
-      fresh: [_freshState('s1', 'c1'), _freshState('s2', 'c2')],
-    );
+  testWidgets(
+    'a typed right answer is rated good by the checker, not by the learner',
+    (tester) async {
+      final stateRepo = await _pump(
+        tester,
+        cards: [
+          _card('c1', 'achieve', 'достигать'),
+          _card('c2', 'goal', 'цель'),
+        ],
+        fresh: [_freshState('s1', 'c1'), _freshState('s2', 'c2')],
+      );
 
-    expect(find.text('достигать'), findsOneWidget);
-    expect(find.text('Хорошо'), findsNothing); // no self-grading buttons at all
-    expect(find.text('Легко'), findsNothing);
+      expect(find.text('достигать'), findsOneWidget);
+      expect(
+        find.text('Хорошо'),
+        findsNothing,
+      ); // no self-grading buttons at all
+      expect(find.text('Легко'), findsNothing);
 
-    await _answer(tester, 'achieve');
-    expect(find.text('Верно'), findsOneWidget);
-    await tester.tap(find.text('Дальше'));
-    await tester.pumpAndSettle();
+      await _answer(tester, 'achieve');
+      expect(find.text('Верно'), findsOneWidget);
+      await tester.tap(find.text('Дальше'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('цель'), findsOneWidget);
-    expect(stateRepo.saved.single.reps, 1);
-    expect(stateRepo.logged.single.cardStateId, 's1');
-    expect(stateRepo.logged.single.rating, ReviewRating.good);
-  });
+      expect(find.text('цель'), findsOneWidget);
+      expect(stateRepo.saved.single.reps, 1);
+      expect(stateRepo.logged.single.cardStateId, 's1');
+      expect(stateRepo.logged.single.rating, ReviewRating.good);
+    },
+  );
 
-  testWidgets('a wrong answer is "again" and counts as a lapse; the right word is shown', (tester) async {
-    final stateRepo = await _pump(
-      tester,
-      cards: [_card('c1', 'achieve', 'достигать')],
-      fresh: [_freshState('s1', 'c1')],
-    );
+  testWidgets(
+    'a wrong answer is "again" and counts as a lapse; the right word is shown',
+    (tester) async {
+      final stateRepo = await _pump(
+        tester,
+        cards: [_card('c1', 'achieve', 'достигать')],
+        fresh: [_freshState('s1', 'c1')],
+      );
 
-    await _answer(tester, 'reach');
-    expect(find.text('Неверно'), findsOneWidget);
-    await tester.tap(find.text('Дальше'));
-    await tester.pumpAndSettle();
+      await _answer(tester, 'reach');
+      expect(find.text('Неверно'), findsOneWidget);
+      await tester.tap(find.text('Дальше'));
+      await tester.pumpAndSettle();
 
-    expect(stateRepo.saved.first.lapses, 1);
-    expect(stateRepo.logged.single.rating, ReviewRating.again);
-    expect(find.text('На сегодня всё'), findsOneWidget);
-  });
+      expect(stateRepo.saved.first.lapses, 1);
+      expect(stateRepo.logged.single.rating, ReviewRating.again);
+      expect(find.text('На сегодня всё'), findsOneWidget);
+    },
+  );
 
   testWidgets('a typo is "hard"', (tester) async {
     final stateRepo = await _pump(
@@ -245,7 +265,10 @@ void main() {
     expect(find.text('Дальше'), findsNothing);
   });
 
-  Future<_FakeCardStateRepository> pumpEnRu(WidgetTester tester, {required bool accepted}) async {
+  Future<_FakeCardStateRepository> pumpEnRu(
+    WidgetTester tester, {
+    required bool accepted,
+  }) async {
     final state = CardState(
       id: 's1',
       cardId: 'c1',
@@ -259,50 +282,67 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          wordCardRepositoryProvider.overrideWithValue(_FakeWordCardRepository([_card('c1', 'achieve', 'достигать')])),
+          wordCardRepositoryProvider.overrideWithValue(
+            _FakeWordCardRepository([_card('c1', 'achieve', 'достигать')]),
+          ),
           cardStateRepositoryProvider.overrideWithValue(stateRepo),
           srsSettingsStoreProvider.overrideWithValue(_FakeSrsSettingsStore()),
-          apiKeyStoreProvider.overrideWithValue(_FakeKey()),
-          answerAppealServiceProvider.overrideWithValue(_FakeAppeal(accepted: accepted)),
+          aiAvailabilityProvider.overrideWithValue(FixedAiAvailability(true)),
+          answerAppealServiceProvider.overrideWithValue(
+            _FakeAppeal(accepted: accepted),
+          ),
         ],
-        child: MaterialApp(theme: AppTheme.dark(), home: const SrsReviewScreen()),
+        child: MaterialApp(
+          theme: AppTheme.dark(),
+          home: const SrsReviewScreen(),
+        ),
       ),
     );
     await tester.pumpAndSettle();
     return stateRepo;
   }
 
-  testWidgets('in the English -> Russian direction only the AI can accept another wording', (tester) async {
-    final stateRepo = await pumpEnRu(tester, accepted: true);
+  testWidgets(
+    'in the English -> Russian direction only the AI can accept another wording',
+    (tester) async {
+      final stateRepo = await pumpEnRu(tester, accepted: true);
 
-    await _answer(tester, 'добиваться');
-    expect(find.text('Неверно'), findsOneWidget);
-    expect(find.text('Засчитать'), findsNothing); // no way to grade yourself
-    await tester.tap(find.text('Мой ответ тоже верный?'));
-    await tester.pumpAndSettle();
-    expect(find.text('Засчитано ИИ'), findsOneWidget);
-    await tester.tap(find.text('Дальше'));
-    await tester.pumpAndSettle();
+      await _answer(tester, 'добиваться');
+      expect(find.text('Неверно'), findsOneWidget);
+      expect(find.text('Засчитать'), findsNothing); // no way to grade yourself
+      await tester.tap(find.text('Мой ответ тоже верный?'));
+      await tester.pumpAndSettle();
+      expect(find.text('Засчитано ИИ'), findsOneWidget);
+      await tester.tap(find.text('Дальше'));
+      await tester.pumpAndSettle();
 
-    expect(stateRepo.logged.single.rating, ReviewRating.good);
-  });
+      expect(stateRepo.logged.single.rating, ReviewRating.good);
+    },
+  );
 
-  testWidgets('when the AI says no, the answer stays wrong and cannot be appealed again', (tester) async {
-    final stateRepo = await pumpEnRu(tester, accepted: false);
+  testWidgets(
+    'when the AI says no, the answer stays wrong and cannot be appealed again',
+    (tester) async {
+      final stateRepo = await pumpEnRu(tester, accepted: false);
 
-    await _answer(tester, 'кошка');
-    await tester.tap(find.text('Мой ответ тоже верный?'));
-    await tester.pumpAndSettle();
-    expect(find.text('Неверно'), findsOneWidget);
-    expect(find.text('Мой ответ тоже верный?'), findsNothing);
-    await tester.tap(find.text('Дальше'));
-    await tester.pumpAndSettle();
+      await _answer(tester, 'кошка');
+      await tester.tap(find.text('Мой ответ тоже верный?'));
+      await tester.pumpAndSettle();
+      expect(find.text('Неверно'), findsOneWidget);
+      expect(find.text('Мой ответ тоже верный?'), findsNothing);
+      await tester.tap(find.text('Дальше'));
+      await tester.pumpAndSettle();
 
-    expect(stateRepo.logged.single.rating, ReviewRating.again);
-  });
+      expect(stateRepo.logged.single.rating, ReviewRating.again);
+    },
+  );
 
-  testWidgets('a due-for-review card (not just new ones) is shown', (tester) async {
-    final cardRepo = _FakeWordCardRepository([_card('c1', 'achieve', 'достигать')]);
+  testWidgets('a due-for-review card (not just new ones) is shown', (
+    tester,
+  ) async {
+    final cardRepo = _FakeWordCardRepository([
+      _card('c1', 'achieve', 'достигать'),
+    ]);
     final stateRepo = _FakeCardStateRepository(due: [_freshState('s1', 'c1')]);
 
     await tester.pumpWidget(
@@ -312,7 +352,10 @@ void main() {
           cardStateRepositoryProvider.overrideWithValue(stateRepo),
           srsSettingsStoreProvider.overrideWithValue(_FakeSrsSettingsStore()),
         ],
-        child: MaterialApp(theme: AppTheme.dark(), home: const SrsReviewScreen()),
+        child: MaterialApp(
+          theme: AppTheme.dark(),
+          home: const SrsReviewScreen(),
+        ),
       ),
     );
 
@@ -331,7 +374,10 @@ void main() {
           cardStateRepositoryProvider.overrideWithValue(stateRepo),
           srsSettingsStoreProvider.overrideWithValue(_FakeSrsSettingsStore()),
         ],
-        child: MaterialApp(theme: AppTheme.dark(), home: const SrsReviewScreen()),
+        child: MaterialApp(
+          theme: AppTheme.dark(),
+          home: const SrsReviewScreen(),
+        ),
       ),
     );
 
