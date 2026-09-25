@@ -33,9 +33,8 @@ jobs:
       - name: Passwords for the test run
         working-directory: stopka_server
         # Tests use Serverpod's embedded PostgreSQL, so no Docker is needed.
-        run: printf 'test:
-  database: ci-test-password
-' > config/passwords.yaml
+        run: |
+          printf 'test:\n  database: ci-test-password\n' > config/passwords.yaml
       - run: dart test
         working-directory: stopka_server
 
