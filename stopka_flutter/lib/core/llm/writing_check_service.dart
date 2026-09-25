@@ -63,7 +63,9 @@ class WritingFeedback {
   factory WritingFeedback.parse(String raw) {
     final json = LlmJson.decode(raw);
     final corrected = (json['corrected'] as String? ?? '').trim();
-    if (corrected.isEmpty) throw const LlmException('ИИ вернул ответ неожиданной формы.');
+    if (corrected.isEmpty) {
+      throw const LlmException('ИИ вернул ответ неожиданной формы.');
+    }
 
     final errors = <WritingError>[];
     final rawErrors = json['errors'];
@@ -72,13 +74,17 @@ class WritingFeedback {
         final original = (e['original'] as String? ?? '').trim();
         final fixed = (e['fixed'] as String? ?? '').trim();
         if (original.isEmpty || fixed.isEmpty || original == fixed) continue;
-        final category = mistakeCategories.contains(e['category']) ? e['category'] as String : 'other';
-        errors.add(WritingError(
-          category: category,
-          original: original,
-          fixed: fixed,
-          explanation: (e['explanation'] as String? ?? '').trim(),
-        ));
+        final category = mistakeCategories.contains(e['category'])
+            ? e['category'] as String
+            : 'other';
+        errors.add(
+          WritingError(
+            category: category,
+            original: original,
+            fixed: fixed,
+            explanation: (e['explanation'] as String? ?? '').trim(),
+          ),
+        );
         if (errors.length == 8) break;
       }
     }
@@ -100,29 +106,51 @@ class WritingCheckService {
   final LlmClient _client;
   final PromptLoader _loadPrompt;
 
-  WritingCheckService(this._client, {PromptLoader? loadPrompt}) : _loadPrompt = loadPrompt ?? rootBundle.loadString;
+  WritingCheckService(this._client, {PromptLoader? loadPrompt})
+    : _loadPrompt = loadPrompt ?? rootBundle.loadString;
 
-  Future<WritingFeedback> check({required String level, required String task, required String text}) async {
+  Future<WritingFeedback> check({
+    required String level,
+    required String task,
+    required String text,
+  }) async {
     final trimmed = text.trim();
     if (countWords(trimmed) < minWords) {
       throw const LlmException('Напишите хотя бы пару предложений.');
     }
     if (trimmed.length > maxChars) {
-      throw const LlmException('Текст слишком длинный. Сократите его до 4–6 предложений.');
+      throw const LlmException(
+        'Текст слишком длинный. Сократите его до 4–6 предложений.',
+      );
     }
 
     final prompt = await _loadPrompt('prompts/pack/writing_check.md');
-    final message = jsonEncode({'level': effectiveLevel(level), 'task': task, 'text': trimmed});
+    final message = jsonEncode({
+      'level': effectiveLevel(level),
+      'task': task,
+      'text': trimmed,
+    });
 
     for (var attempt = 0; attempt < 2; attempt++) {
       final raw = await _client.complete(
         systemPrompt: prompt,
-        userMessage: attempt == 0 ? message : 'Ответ должен быть строго JSON без markdown-обёрток.\n$message',
+        userMessage: attempt == 0
+            ? message
+            : 'Ответ должен быть строго JSON без markdown-обёрток.\n$message',
+        request: AiRequest(AiKind.checkWriting, {
+          'level': aiLevel(level),
+          'task': task,
+          'text': trimmed,
+        }, strict: attempt > 0),
       );
       try {
         return WritingFeedback.parse(raw);
       } on LlmException {
-        if (attempt == 1) throw const LlmException('Не удалось проверить текст. Попробуйте ещё раз.');
+        if (attempt == 1) {
+          throw const LlmException(
+            'Не удалось проверить текст. Попробуйте ещё раз.',
+          );
+        }
       }
     }
     throw const LlmException('Не удалось проверить текст.');
