@@ -59,7 +59,7 @@ class PackService {
     final slotId = slot(packId, part);
     if (generating.value.contains(slotId)) return false;
     if (!await _hasKey()) {
-      lastError[slotId] = 'Для подготовки материала нужен ключ Gemini. Добавьте его в «Профиле».';
+      lastError[slotId] = 'Для подготовки материала нужна связь с сервером.';
       return false;
     }
     _setGenerating(slotId, true);

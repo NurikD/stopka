@@ -8,10 +8,10 @@ import 'exercise_flow.dart';
 /// learner is told that this needs a key. Shared by every place that runs an
 /// [ExerciseFlow].
 Future<AppealOutcome> appealTranslation(WidgetRef ref, Exercise exercise, String given) async {
-  if (!await ref.read(apiKeyStoreProvider).hasKey()) {
+  if (!await ref.read(aiAvailabilityProvider).isAvailable()) {
     return const AppealOutcome(
       accepted: false,
-      note: 'Проверка ответа через ИИ работает с ключом Gemini — добавьте его в «Профиле».',
+      note: 'Проверка ответа через ИИ сейчас недоступна: нет связи с сервером.',
     );
   }
   final result = await ref.read(answerAppealServiceProvider).appeal(
