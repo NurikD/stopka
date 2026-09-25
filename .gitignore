@@ -71,3 +71,9 @@ secrets.json
 /DESIGN*.md
 /TASK*.md
 /BACKEND*.md
+
+# Server secrets and local state
+/stopka_server/config/passwords.yaml
+/stopka_server/.env
+.dart_tool/
+pubspec_overrides.yaml
