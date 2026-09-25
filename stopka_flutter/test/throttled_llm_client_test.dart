@@ -11,7 +11,11 @@ class _FakeLlmClient implements LlmClient {
   bool shouldThrow = false;
 
   @override
-  Future<String> complete({required String systemPrompt, required String userMessage}) async {
+  Future<String> complete({
+    required String systemPrompt,
+    required String userMessage,
+    AiRequest? request,
+  }) async {
     callTimestamps.add(DateTime.now());
     if (shouldThrow) throw const LlmException('boom');
     return 'ok';
@@ -23,6 +27,7 @@ class _FakeLlmClient implements LlmClient {
     required String userMessage,
     required Uint8List imageBytes,
     required String mimeType,
+    AiRequest? request,
   }) async {
     callTimestamps.add(DateTime.now());
     return 'ok';
@@ -46,7 +51,11 @@ void main() {
   test('a successful call increments the counter', () async {
     final store = <String, String>{};
     final counter = _inMemoryCounter(store);
-    final client = ThrottledLlmClient(_FakeLlmClient(), counter, minInterval: Duration.zero);
+    final client = ThrottledLlmClient(
+      _FakeLlmClient(),
+      counter,
+      minInterval: Duration.zero,
+    );
 
     await client.complete(systemPrompt: 'sys', userMessage: 'hi');
 
@@ -57,9 +66,16 @@ void main() {
     final store = <String, String>{};
     final counter = _inMemoryCounter(store);
     final inner = _FakeLlmClient()..shouldThrow = true;
-    final client = ThrottledLlmClient(inner, counter, minInterval: Duration.zero);
+    final client = ThrottledLlmClient(
+      inner,
+      counter,
+      minInterval: Duration.zero,
+    );
 
-    await expectLater(client.complete(systemPrompt: 'sys', userMessage: 'hi'), throwsA(isA<LlmException>()));
+    await expectLater(
+      client.complete(systemPrompt: 'sys', userMessage: 'hi'),
+      throwsA(isA<LlmException>()),
+    );
 
     expect(await counter.getTodayCount(), 0);
   });
@@ -67,7 +83,11 @@ void main() {
   test('validateApiKey does not count toward the quota', () async {
     final store = <String, String>{};
     final counter = _inMemoryCounter(store);
-    final client = ThrottledLlmClient(_FakeLlmClient(), counter, minInterval: Duration.zero);
+    final client = ThrottledLlmClient(
+      _FakeLlmClient(),
+      counter,
+      minInterval: Duration.zero,
+    );
 
     await client.validateApiKey('key');
 
@@ -78,7 +98,11 @@ void main() {
     final store = <String, String>{};
     final counter = _inMemoryCounter(store);
     final inner = _FakeLlmClient();
-    final client = ThrottledLlmClient(inner, counter, minInterval: const Duration(milliseconds: 200));
+    final client = ThrottledLlmClient(
+      inner,
+      counter,
+      minInterval: const Duration(milliseconds: 200),
+    );
 
     final first = client.complete(systemPrompt: 'sys', userMessage: 'a');
     final second = client.complete(systemPrompt: 'sys', userMessage: 'b');
@@ -86,7 +110,10 @@ void main() {
 
     expect(inner.callTimestamps, hasLength(2));
     final gap = inner.callTimestamps[1].difference(inner.callTimestamps[0]);
-    expect(gap.inMilliseconds, greaterThanOrEqualTo(190)); // small tolerance for scheduling jitter
+    expect(
+      gap.inMilliseconds,
+      greaterThanOrEqualTo(190),
+    ); // small tolerance for scheduling jitter
   });
 
   test('calls never run concurrently — the second only starts after the first fully finishes', () async {
@@ -105,7 +132,11 @@ void main() {
     }
 
     // Swap in a client whose action itself tracks overlap via a wrapper.
-    final wrapped = ThrottledLlmClient(_OverlapTrackingClient(guardedComplete), counter, minInterval: const Duration(milliseconds: 10));
+    final wrapped = ThrottledLlmClient(
+      _OverlapTrackingClient(guardedComplete),
+      counter,
+      minInterval: const Duration(milliseconds: 10),
+    );
     await Future.wait([
       wrapped.complete(systemPrompt: 'a', userMessage: 'a'),
       wrapped.complete(systemPrompt: 'b', userMessage: 'b'),
@@ -121,7 +152,11 @@ class _OverlapTrackingClient implements LlmClient {
   _OverlapTrackingClient(this.onComplete);
 
   @override
-  Future<String> complete({required String systemPrompt, required String userMessage}) => onComplete();
+  Future<String> complete({
+    required String systemPrompt,
+    required String userMessage,
+    AiRequest? request,
+  }) => onComplete();
 
   @override
   Future<String> completeWithImage({
@@ -129,8 +164,8 @@ class _OverlapTrackingClient implements LlmClient {
     required String userMessage,
     required Uint8List imageBytes,
     required String mimeType,
-  }) =>
-      onComplete();
+    AiRequest? request,
+  }) => onComplete();
 
   @override
   Future<bool> validateApiKey(String apiKey) async => true;

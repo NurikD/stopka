@@ -13,7 +13,11 @@ class _Client implements LlmClient {
   _Client(this.replies);
 
   @override
-  Future<String> complete({required String systemPrompt, required String userMessage}) async {
+  Future<String> complete({
+    required String systemPrompt,
+    required String userMessage,
+    AiRequest? request,
+  }) async {
     lastMessage = userMessage;
     return replies[calls++ < replies.length ? calls - 1 : replies.length - 1];
   }
@@ -24,8 +28,8 @@ class _Client implements LlmClient {
     required String userMessage,
     required Uint8List imageBytes,
     required String mimeType,
-  }) =>
-      throw UnimplementedError();
+    AiRequest? request,
+  }) => throw UnimplementedError();
 
   @override
   Future<bool> validateApiKey(String apiKey) => throw UnimplementedError();
@@ -59,14 +63,20 @@ void main() {
   });
 
   test('an answer without a corrected text is rejected', () {
-    expect(() => WritingFeedback.parse('{"errors": []}'), throwsA(isA<LlmException>()));
+    expect(
+      () => WritingFeedback.parse('{"errors": []}'),
+      throwsA(isA<LlmException>()),
+    );
   });
 
   test('at most eight errors are kept', () {
     final many = [
-      for (var i = 0; i < 12; i++) '{"category":"tense","original":"a$i","fixed":"b$i","explanation":"x"}',
+      for (var i = 0; i < 12; i++)
+        '{"category":"tense","original":"a$i","fixed":"b$i","explanation":"x"}',
     ].join(',');
-    final feedback = WritingFeedback.parse('{"corrected":"ok","errors":[$many]}');
+    final feedback = WritingFeedback.parse(
+      '{"corrected":"ok","errors":[$many]}',
+    );
     expect(feedback.errors, hasLength(8));
   });
 
@@ -74,7 +84,10 @@ void main() {
     final client = _Client([_good]);
     final service = WritingCheckService(client, loadPrompt: _prompt);
 
-    await expectLater(service.check(level: 'A2', task: 't', text: 'Hi'), throwsA(isA<LlmException>()));
+    await expectLater(
+      service.check(level: 'A2', task: 't', text: 'Hi'),
+      throwsA(isA<LlmException>()),
+    );
     await expectLater(
       service.check(level: 'A2', task: 't', text: 'word ' * 400),
       throwsA(isA<LlmException>()),
@@ -85,7 +98,11 @@ void main() {
   test('a broken first answer is retried once', () async {
     final client = _Client(['nope', _good]);
     final feedback = await WritingCheckService(client, loadPrompt: _prompt)
-        .check(level: 'A2', task: 'Write about games.', text: 'I play this game yesterday and it was fun.');
+        .check(
+          level: 'A2',
+          task: 'Write about games.',
+          text: 'I play this game yesterday and it was fun.',
+        );
 
     expect(feedback.errors, isNotEmpty);
     expect(client.calls, 2);
@@ -95,9 +112,18 @@ void main() {
   test('two broken answers end in a Russian error', () async {
     final client = _Client(['nope', 'still nope']);
     await expectLater(
-      WritingCheckService(client, loadPrompt: _prompt)
-          .check(level: 'A2', task: 't', text: 'I play this game yesterday and it was fun.'),
-      throwsA(isA<LlmException>().having((e) => e.messageRu, 'message', contains('проверить'))),
+      WritingCheckService(client, loadPrompt: _prompt).check(
+        level: 'A2',
+        task: 't',
+        text: 'I play this game yesterday and it was fun.',
+      ),
+      throwsA(
+        isA<LlmException>().having(
+          (e) => e.messageRu,
+          'message',
+          contains('проверить'),
+        ),
+      ),
     );
   });
 }
