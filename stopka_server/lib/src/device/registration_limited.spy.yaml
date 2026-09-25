@@ -1,0 +1,4 @@
+### Too many devices were registered from this address today.
+exception: RegistrationLimited
+fields:
+  retryAfterHours: int

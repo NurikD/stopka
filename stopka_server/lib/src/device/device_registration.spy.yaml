@@ -1,0 +1,7 @@
+### What the app gets back after registering.
+class: DeviceRegistration
+
+fields:
+  ### Secret token; shown once, the app stores it.
+  token: String
+  deviceId: UuidValue

@@ -1,0 +1,23 @@
+### An anonymous installation of the app. There is no user account: the app
+### registers once and keeps the returned token in secure storage.
+class: Device
+table: device
+
+fields:
+  id: UuidValue?, defaultPersist=random
+  ### SHA-256 of the device token. The token itself is never stored.
+  tokenHash: String
+  appVersion: String
+  ### SHA-256 of the client IP and a server secret, only used to cap how many
+  ### devices one address can register per day.
+  ipHash: String?
+  createdAt: DateTime
+  lastSeenAt: DateTime
+  blocked: bool, default=false
+
+indexes:
+  device_token_hash_idx:
+    fields: tokenHash
+    unique: true
+  device_ip_hash_idx:
+    fields: ipHash

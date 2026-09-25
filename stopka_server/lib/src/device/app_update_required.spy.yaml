@@ -1,0 +1,4 @@
+### The app is older than the server supports and must be updated first.
+exception: AppUpdateRequired
+fields:
+  minVersion: String

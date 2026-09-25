@@ -1,0 +1,30 @@
+services:
+  # Development services
+  postgres:
+    image: ghcr.io/serverpod/postgres:16
+    ports:
+      - "8090:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: stopka
+      POSTGRES_PASSWORD: "${DEV_DB_PASSWORD}"
+    volumes:
+      - stopka_data:/var/lib/postgresql/data
+
+
+  # Test services
+  postgres_test:
+    image: ghcr.io/serverpod/postgres:16
+    ports:
+      - "9090:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: stopka_test
+      POSTGRES_PASSWORD: "${TEST_DB_PASSWORD}"
+    volumes:
+      - stopka_test_data:/var/lib/postgresql/data
+
+
+volumes:
+  stopka_data:
+  stopka_test_data:
