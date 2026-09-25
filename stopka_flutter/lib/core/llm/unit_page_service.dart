@@ -19,7 +19,11 @@ class UnitPageInfo {
     this.vocabTopic = '',
   });
 
-  bool get isEmpty => code.isEmpty && title.isEmpty && grammarTopic.isEmpty && vocabTopic.isEmpty;
+  bool get isEmpty =>
+      code.isEmpty &&
+      title.isEmpty &&
+      grammarTopic.isEmpty &&
+      vocabTopic.isEmpty;
 
   factory UnitPageInfo.parse(String raw) {
     final json = LlmJson.decode(raw);
@@ -40,17 +44,19 @@ class UnitPageService {
 
   UnitPageService(this._client);
 
-  Future<UnitPageInfo> read({required Uint8List imageBytes, required String mimeType}) async {
+  Future<UnitPageInfo> read({
+    required Uint8List imageBytes,
+    required String mimeType,
+  }) async {
     final prompt = await rootBundle.loadString('prompts/unit_page.md');
 
     for (var attempt = 0; attempt < 2; attempt++) {
       final raw = await _client.completeWithImage(
         systemPrompt: prompt,
-        userMessage: attempt == 0
-            ? 'Определи юнит и темы по фото страницы.'
-            : 'Ответ должен быть строго в формате JSON без markdown-обёрток. Повтори.',
+        userMessage: attempt == 0 ? 'Определи юнит и темы по фото страницы.' : 'Ответ должен быть строго в формате JSON без markdown-обёрток. Повтори.',
         imageBytes: imageBytes,
         mimeType: mimeType,
+        request: AiRequest(AiKind.readUnitPage, const {}, strict: attempt > 0),
       );
       try {
         final info = UnitPageInfo.parse(raw);
@@ -60,7 +66,9 @@ class UnitPageService {
         return info;
       } on LlmException {
         if (attempt == 1) {
-          throw const LlmException('Не удалось понять страницу по фото. Введите тему вручную.');
+          throw const LlmException(
+            'Не удалось понять страницу по фото. Введите тему вручную.',
+          );
         }
       }
     }
