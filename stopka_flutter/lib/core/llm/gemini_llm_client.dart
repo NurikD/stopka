@@ -46,6 +46,7 @@ class GeminiLlmClient implements LlmClient {
   Future<String> complete({
     required String systemPrompt,
     required String userMessage,
+    AiRequest? request,
   }) async {
     final key = await _requireApiKey();
     final model = await _keyStore.getModel();
@@ -75,6 +76,7 @@ class GeminiLlmClient implements LlmClient {
     required String userMessage,
     required Uint8List imageBytes,
     required String mimeType,
+    AiRequest? request,
   }) async {
     final key = await _requireApiKey();
     final model = await _keyStore.getModel();
