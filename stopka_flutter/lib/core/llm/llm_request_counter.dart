@@ -18,12 +18,13 @@ class LlmRequestCounter {
   LlmRequestCounter({
     Future<String?> Function(String key)? read,
     Future<void> Function(String key, String value)? write,
-  })  : _read = read ?? _defaultRead,
-        _write = write ?? _defaultWrite;
+  }) : _read = read ?? _defaultRead,
+       _write = write ?? _defaultWrite;
 
   static const _storage = FlutterSecureStorage();
   static Future<String?> _defaultRead(String key) => _storage.read(key: key);
-  static Future<void> _defaultWrite(String key, String value) => _storage.write(key: key, value: value);
+  static Future<void> _defaultWrite(String key, String value) =>
+      _storage.write(key: key, value: value);
 
   Future<int> getTodayCount() async {
     await _resetIfNewDay();

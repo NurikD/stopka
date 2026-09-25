@@ -10,13 +10,16 @@ class ApiKeyStore {
 
   final FlutterSecureStorage _storage;
 
-  ApiKeyStore([FlutterSecureStorage? storage]) : _storage = storage ?? const FlutterSecureStorage();
+  ApiKeyStore([FlutterSecureStorage? storage])
+    : _storage = storage ?? const FlutterSecureStorage();
 
   Future<String?> getApiKey() => _storage.read(key: _apiKeyKey);
 
-  Future<bool> hasKey() async => (await getApiKey())?.trim().isNotEmpty ?? false;
+  Future<bool> hasKey() async =>
+      (await getApiKey())?.trim().isNotEmpty ?? false;
 
-  Future<void> setApiKey(String value) => _storage.write(key: _apiKeyKey, value: value);
+  Future<void> setApiKey(String value) =>
+      _storage.write(key: _apiKeyKey, value: value);
 
   Future<void> clearApiKey() => _storage.delete(key: _apiKeyKey);
 
@@ -24,5 +27,6 @@ class ApiKeyStore {
     return await _storage.read(key: _modelKey) ?? defaultGeminiModel;
   }
 
-  Future<void> setModel(String value) => _storage.write(key: _modelKey, value: value);
+  Future<void> setModel(String value) =>
+      _storage.write(key: _modelKey, value: value);
 }
