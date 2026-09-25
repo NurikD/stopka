@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/flags/feature_flags.dart';
 import '../../core/llm/api_key_store.dart';
 import '../../core/llm/llm_exception.dart';
 import '../../core/providers/core_providers.dart';
@@ -265,87 +266,91 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ],
             ),
           ),
-          const SizedBox(height: AppSpacing.s10),
-          AppCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Gemini API',
-                  style: AppTypography.heading.copyWith(color: colors.ink),
-                ),
-                const SizedBox(height: AppSpacing.s14),
-                LabeledField(
-                  label: 'Ключ',
-                  child: TextField(
-                    controller: _keyController,
-                    obscureText: _obscureKey,
-                    autocorrect: false,
-                    enableSuggestions: false,
-                    style: mono,
-                    cursorColor: colors.accent,
-                    decoration: InputDecoration(
-                      hintText: 'Вставьте ключ',
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscureKey
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
+          if (FeatureFlags.directGemini) ...[
+            const SizedBox(height: AppSpacing.s10),
+            AppCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Gemini API',
+                    style: AppTypography.heading.copyWith(color: colors.ink),
+                  ),
+                  const SizedBox(height: AppSpacing.s14),
+                  LabeledField(
+                    label: 'Ключ',
+                    child: TextField(
+                      controller: _keyController,
+                      obscureText: _obscureKey,
+                      autocorrect: false,
+                      enableSuggestions: false,
+                      style: mono,
+                      cursorColor: colors.accent,
+                      decoration: InputDecoration(
+                        hintText: 'Вставьте ключ',
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscureKey
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
+                          ),
+                          color: colors.muted,
+                          onPressed: () =>
+                              setState(() => _obscureKey = !_obscureKey),
                         ),
-                        color: colors.muted,
-                        onPressed: () =>
-                            setState(() => _obscureKey = !_obscureKey),
                       ),
+                      onChanged: (_) =>
+                          setState(() => _checkStatus = _KeyCheckStatus.idle),
                     ),
-                    onChanged: (_) =>
-                        setState(() => _checkStatus = _KeyCheckStatus.idle),
                   ),
-                ),
-                const SizedBox(height: AppSpacing.s14),
-                LabeledField(
-                  label: 'Модель',
-                  child: DropdownButtonFormField<String>(
-                    initialValue: _model,
-                    style: mono,
-                    dropdownColor: colors.surface,
-                    items: modelOptions
-                        .map((m) => DropdownMenuItem(value: m, child: Text(m)))
-                        .toList(),
-                    onChanged: (value) {
-                      if (value != null) setState(() => _model = value);
-                    },
+                  const SizedBox(height: AppSpacing.s14),
+                  LabeledField(
+                    label: 'Модель',
+                    child: DropdownButtonFormField<String>(
+                      initialValue: _model,
+                      style: mono,
+                      dropdownColor: colors.surface,
+                      items: modelOptions
+                          .map(
+                            (m) => DropdownMenuItem(value: m, child: Text(m)),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        if (value != null) setState(() => _model = value);
+                      },
+                    ),
                   ),
-                ),
-                const SizedBox(height: AppSpacing.s18),
-                Row(
-                  children: [
-                    Expanded(
-                      child: PrimaryButton(
-                        label: 'Сохранить',
-                        onPressed: _save,
-                        loading: _saving,
+                  const SizedBox(height: AppSpacing.s18),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: PrimaryButton(
+                          label: 'Сохранить',
+                          onPressed: _save,
+                          loading: _saving,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: AppSpacing.s10),
-                    Expanded(
-                      child: GhostButton(
-                        label: 'Проверить ключ',
-                        onPressed: _checkStatus == _KeyCheckStatus.checking
-                            ? null
-                            : _checkKey,
+                      const SizedBox(width: AppSpacing.s10),
+                      Expanded(
+                        child: GhostButton(
+                          label: 'Проверить ключ',
+                          onPressed: _checkStatus == _KeyCheckStatus.checking
+                              ? null
+                              : _checkKey,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                _buildCheckStatus(context),
-                const SizedBox(height: AppSpacing.s14),
-                Text(
-                  'Запросов к ИИ сегодня: $_requestsToday',
-                  style: AppTypography.monoMeta.copyWith(color: colors.muted),
-                ),
-              ],
+                    ],
+                  ),
+                  _buildCheckStatus(context),
+                  const SizedBox(height: AppSpacing.s14),
+                  Text(
+                    'Запросов к ИИ сегодня: $_requestsToday',
+                    style: AppTypography.monoMeta.copyWith(color: colors.muted),
+                  ),
+                ],
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );
