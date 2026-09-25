@@ -9,3 +9,23 @@ registration:
   maxPerIpPerDay: 10
   # Turn on only behind a reverse proxy that sets X-Forwarded-For.
   trustForwardedFor: false
+
+# The AI proxy. The provider key is in passwords.yaml (geminiApiKey).
+ai:
+  # Master switch: off, and every AI call answers "unavailable".
+  enabled: true
+  # Model name, from the provider's documentation.
+  model: gemini-3.8-flash
+  # Ceiling for all devices together per UTC day. When reached, the proxy
+  # stops for everyone until the next day.
+  globalDailyRequests: 500
+  # Per device, per UTC day.
+  dailyLimits:
+    checkWriting: 20
+    appeal: 40
+    weakSpotDrill: 10
+    enrichCards: 30
+    recognizeWords: 10
+    readUnitPage: 10
+  maxTextChars: 4000
+  maxImageBytes: 4194304
