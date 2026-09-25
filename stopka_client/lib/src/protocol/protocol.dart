@@ -12,8 +12,14 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _isc;
-import 'greetings/greeting.dart' as _izw8z7ou;
-export 'greetings/greeting.dart';
+import 'device/app_update_required.dart' as _ilttxu9r;
+import 'device/device.dart' as _i7201wvo;
+import 'device/device_registration.dart' as _i9282m17;
+import 'device/registration_limited.dart' as _izlwod5n;
+export 'device/app_update_required.dart';
+export 'device/device.dart';
+export 'device/device_registration.dart';
+export 'device/registration_limited.dart';
 export 'client.dart';
 
 class Protocol extends _isc.SerializationManager {
@@ -50,18 +56,44 @@ class Protocol extends _isc.SerializationManager {
       }
     }
 
-    if (t == _izw8z7ou.Greeting) {
-      return _izw8z7ou.Greeting.fromJson(data) as T;
+    if (t == _ilttxu9r.AppUpdateRequired) {
+      return _ilttxu9r.AppUpdateRequired.fromJson(data) as T;
     }
-    if (t == _isc.getType<_izw8z7ou.Greeting?>()) {
-      return (data != null ? _izw8z7ou.Greeting.fromJson(data) : null) as T;
+    if (t == _i7201wvo.Device) {
+      return _i7201wvo.Device.fromJson(data) as T;
+    }
+    if (t == _i9282m17.DeviceRegistration) {
+      return _i9282m17.DeviceRegistration.fromJson(data) as T;
+    }
+    if (t == _izlwod5n.RegistrationLimited) {
+      return _izlwod5n.RegistrationLimited.fromJson(data) as T;
+    }
+    if (t == _isc.getType<_ilttxu9r.AppUpdateRequired?>()) {
+      return (data != null ? _ilttxu9r.AppUpdateRequired.fromJson(data) : null)
+          as T;
+    }
+    if (t == _isc.getType<_i7201wvo.Device?>()) {
+      return (data != null ? _i7201wvo.Device.fromJson(data) : null) as T;
+    }
+    if (t == _isc.getType<_i9282m17.DeviceRegistration?>()) {
+      return (data != null ? _i9282m17.DeviceRegistration.fromJson(data) : null)
+          as T;
+    }
+    if (t == _isc.getType<_izlwod5n.RegistrationLimited?>()) {
+      return (data != null
+              ? _izlwod5n.RegistrationLimited.fromJson(data)
+              : null)
+          as T;
     }
     return super.deserialize<T>(data, t);
   }
 
   static String? getClassNameForType(Type type) {
     return switch (type) {
-      _izw8z7ou.Greeting => 'Greeting',
+      _ilttxu9r.AppUpdateRequired => 'AppUpdateRequired',
+      _i7201wvo.Device => 'Device',
+      _i9282m17.DeviceRegistration => 'DeviceRegistration',
+      _izlwod5n.RegistrationLimited => 'RegistrationLimited',
       _ => null,
     };
   }
@@ -76,8 +108,14 @@ class Protocol extends _isc.SerializationManager {
     }
 
     switch (data) {
-      case _izw8z7ou.Greeting():
-        return 'Greeting';
+      case _ilttxu9r.AppUpdateRequired():
+        return 'AppUpdateRequired';
+      case _i7201wvo.Device():
+        return 'Device';
+      case _i9282m17.DeviceRegistration():
+        return 'DeviceRegistration';
+      case _izlwod5n.RegistrationLimited():
+        return 'RegistrationLimited';
     }
     return null;
   }
@@ -88,8 +126,17 @@ class Protocol extends _isc.SerializationManager {
     if (dataClassName is! String) {
       return super.deserializeByClassName(data);
     }
-    if (dataClassName == 'Greeting') {
-      return deserialize<_izw8z7ou.Greeting>(data['data']);
+    if (dataClassName == 'AppUpdateRequired') {
+      return deserialize<_ilttxu9r.AppUpdateRequired>(data['data']);
+    }
+    if (dataClassName == 'Device') {
+      return deserialize<_i7201wvo.Device>(data['data']);
+    }
+    if (dataClassName == 'DeviceRegistration') {
+      return deserialize<_i9282m17.DeviceRegistration>(data['data']);
+    }
+    if (dataClassName == 'RegistrationLimited') {
+      return deserialize<_izlwod5n.RegistrationLimited>(data['data']);
     }
     return super.deserializeByClassName(data);
   }

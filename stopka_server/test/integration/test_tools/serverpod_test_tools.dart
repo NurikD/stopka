@@ -15,8 +15,8 @@ import 'dart:async' as _ida;
 import 'dart:io' as _idi;
 import 'package:serverpod/serverpod.dart' as _is;
 import 'package:serverpod_test/serverpod_test.dart' as _ist;
-import 'package:stopka_server/src/generated/greetings/greeting.dart'
-    as _imh9d0af;
+import 'package:stopka_server/src/generated/device/device_registration.dart'
+    as _io5ccp11;
 import 'package:stopka_server/src/generated/protocol.dart';
 import 'package:stopka_server/src/generated/endpoints.dart';
 export 'package:serverpod_test/serverpod_test_public_exports.dart';
@@ -145,7 +145,9 @@ void withServerpod(
 }
 
 class TestEndpoints {
-  late final _GreetingEndpoint greeting;
+  late final _CatalogEndpoint catalog;
+
+  late final _DeviceEndpoint device;
 }
 
 class _InternalTestEndpoints extends TestEndpoints
@@ -155,15 +157,19 @@ class _InternalTestEndpoints extends TestEndpoints
     _is.SerializationManager serializationManager,
     _is.EndpointDispatch endpoints,
   ) {
-    greeting = _GreetingEndpoint(
+    catalog = _CatalogEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    device = _DeviceEndpoint(
       endpoints,
       serializationManager,
     );
   }
 }
 
-class _GreetingEndpoint {
-  _GreetingEndpoint(
+class _CatalogEndpoint {
+  _CatalogEndpoint(
     this._endpointDispatch,
     this._serializationManager,
   );
@@ -172,22 +178,21 @@ class _GreetingEndpoint {
 
   final _is.SerializationManager _serializationManager;
 
-  _ida.Future<_imh9d0af.Greeting> hello(
+  _ida.Future<String> getMinAppVersion(
     _ist.TestSessionBuilder sessionBuilder,
-    String name,
   ) async {
     return _ist.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
-            endpoint: 'greeting',
-            method: 'hello',
+            endpoint: 'catalog',
+            method: 'getMinAppVersion',
           );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'greeting',
-          methodName: 'hello',
-          parameters: _ist.testObjectToJson({'name': name}),
+          endpointPath: 'catalog',
+          methodName: 'getMinAppVersion',
+          parameters: _ist.testObjectToJson({}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =
@@ -195,7 +200,49 @@ class _GreetingEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _ida.Future<_imh9d0af.Greeting>);
+                as _ida.Future<String>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
+class _DeviceEndpoint {
+  _DeviceEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _is.EndpointDispatch _endpointDispatch;
+
+  final _is.SerializationManager _serializationManager;
+
+  _ida.Future<_io5ccp11.DeviceRegistration> register(
+    _ist.TestSessionBuilder sessionBuilder,
+    String appVersion,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'device',
+            method: 'register',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'device',
+          methodName: 'register',
+          parameters: _ist.testObjectToJson({'appVersion': appVersion}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_io5ccp11.DeviceRegistration>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

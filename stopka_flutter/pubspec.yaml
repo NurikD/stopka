@@ -47,6 +47,10 @@ dependencies:
   image_picker: ^1.2.3
   crypto: ^3.0.7
   fsrs: ^2.0.1
+  stopka_client:
+    path: ../stopka_client
+  package_info_plus: ^10.2.1
+  serverpod_client: 4.0.2
 
 dev_dependencies:
   flutter_test:

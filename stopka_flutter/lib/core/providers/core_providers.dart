@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart' show ThemeMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:serverpod_client/serverpod_client.dart' show ClientAuthKeyProvider, wrapAsBearerAuthHeaderValue;
+import 'package:stopka_client/stopka_client.dart' as api;
 
 import '../../data/db/app_database.dart';
 import '../../data/repositories/card_state_repository_impl.dart';
@@ -37,6 +40,10 @@ import '../llm/word_recognition_service.dart';
 import '../onboarding/onboarding_service.dart';
 import '../pack/content_source.dart';
 import '../pack/pack_service.dart';
+import '../server/device_registrar.dart';
+import '../server/device_token_store.dart';
+import '../server/server_config.dart';
+import '../server/serverpod_device_api.dart';
 import '../srs/srs_engine.dart';
 import '../srs/srs_settings_store.dart';
 import '../theme/theme_mode_store.dart';
@@ -233,4 +240,45 @@ final streakDaysProvider = FutureProvider.autoDispose<int>((ref) {
 final reviewsTodayProvider = FutureProvider.autoDispose<int>((ref) {
   final now = DateTime.now();
   return ref.watch(cardStateRepositoryProvider).countReviewsSince(DateTime(now.year, now.month, now.day));
+});
+
+
+// --- Server (devices) -------------------------------------------------------
+
+final deviceTokenStoreProvider = Provider<DeviceTokenStore>((ref) => DeviceTokenStore());
+
+class _DeviceAuthKeyProvider implements ClientAuthKeyProvider {
+  final DeviceTokenStore _store;
+
+  _DeviceAuthKeyProvider(this._store);
+
+  @override
+  Future<String?> get authHeaderValue async {
+    final token = await _store.load();
+    return token == null ? null : wrapAsBearerAuthHeaderValue(token);
+  }
+}
+
+/// The generated client. Only used when the app was built with a server
+/// address (`--dart-define=STOPKA_SERVER=...`).
+final serverClientProvider = Provider<api.Client>((ref) {
+  return api.Client(serverUrl)..authKeyProvider = _DeviceAuthKeyProvider(ref.watch(deviceTokenStoreProvider));
+});
+
+final appVersionProvider = FutureProvider<String>((ref) async {
+  final info = await PackageInfo.fromPlatform();
+  return info.buildNumber.isEmpty ? info.version : '${info.version}+${info.buildNumber}';
+});
+
+/// Runs once per start: version check against the server and, on the first
+/// launch, device registration. Never blocks the app; failures just mean
+/// "try again next time".
+final deviceCheckProvider = FutureProvider<DeviceCheck>((ref) async {
+  if (!serverConfigured) return const DeviceCheck(DeviceStatus.disabled);
+  final version = await ref.watch(appVersionProvider.future);
+  return DeviceRegistrar(
+    ServerpodDeviceApi(ref.watch(serverClientProvider)),
+    ref.watch(deviceTokenStoreProvider),
+    version,
+  ).check();
 });

@@ -1,2 +1,4 @@
-greeting:
-  - hello:
+catalog:
+  - getMinAppVersion:
+device:
+  - register:

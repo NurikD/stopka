@@ -11,28 +11,51 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _is;
-import '../greetings/greeting_endpoint.dart' as _il624ik7;
+import '../catalog/catalog_endpoint.dart' as _i34yojlc;
+import '../device/device_endpoint.dart' as _iems1xuo;
 
 class Endpoints extends _is.EndpointDispatch {
   @override
   void initializeEndpoints(_is.Server server) {
     var endpoints = <String, _is.Endpoint>{
-      'greeting': _il624ik7.GreetingEndpoint()
+      'catalog': _i34yojlc.CatalogEndpoint()
         ..initialize(
           server,
-          'greeting',
+          'catalog',
+          null,
+        ),
+      'device': _iems1xuo.DeviceEndpoint()
+        ..initialize(
+          server,
+          'device',
           null,
         ),
     };
-    connectors['greeting'] = _is.EndpointConnector(
-      name: 'greeting',
-      endpoint: endpoints['greeting']!,
+    connectors['catalog'] = _is.EndpointConnector(
+      name: 'catalog',
+      endpoint: endpoints['catalog']!,
       methodConnectors: {
-        'hello': _is.MethodConnector(
-          name: 'hello',
+        'getMinAppVersion': _is.MethodConnector(
+          name: 'getMinAppVersion',
+          params: {},
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['catalog'] as _i34yojlc.CatalogEndpoint)
+                  .getMinAppVersion(session),
+        ),
+      },
+    );
+    connectors['device'] = _is.EndpointConnector(
+      name: 'device',
+      endpoint: endpoints['device']!,
+      methodConnectors: {
+        'register': _is.MethodConnector(
+          name: 'register',
           params: {
-            'name': _is.ParameterDescription(
-              name: 'name',
+            'appVersion': _is.ParameterDescription(
+              name: 'appVersion',
               type: _is.getType<String>(),
               nullable: false,
             ),
@@ -42,9 +65,9 @@ class Endpoints extends _is.EndpointDispatch {
                 _is.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['greeting'] as _il624ik7.GreetingEndpoint).hello(
+                  (endpoints['device'] as _iems1xuo.DeviceEndpoint).register(
                     session,
-                    params['name'],
+                    params['appVersion'],
                   ),
         ),
       },

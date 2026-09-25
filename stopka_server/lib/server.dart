@@ -1,6 +1,7 @@
 import 'package:serverpod_cloud_storage/serverpod_cloud_storage.dart';
 
 import 'src/cache_busting.dart';
+import 'src/auth/device_auth.dart';
 import 'src/generated/serverpod.dart';
 import 'src/web/routes/root.dart';
 
@@ -8,7 +9,7 @@ import 'src/web/routes/root.dart';
 void run(List<String> args) async {
   // Initialize Serverpod. The generated Serverpod class is already connected
   // with your project's generated code.
-  final pod = Serverpod(args);
+  final pod = Serverpod(args, authenticationHandler: deviceAuthenticationHandler);
 
   // Setup a default page at the web root.
   // These are used by the default page.

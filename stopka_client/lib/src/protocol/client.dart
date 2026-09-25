@@ -13,25 +13,41 @@
 import 'dart:async' as _ida;
 import 'package:http/http.dart' as _i85jenna;
 import 'package:serverpod_client/serverpod_client.dart' as _isc;
-import 'package:stopka_client/src/protocol/greetings/greeting.dart'
-    as _iew7sofi;
+import 'package:stopka_client/src/protocol/device/device_registration.dart'
+    as _i6gxu4cm;
 import 'protocol.dart' as _il2as5qe;
 
-/// This is an example endpoint that returns a greeting message through
-/// its [hello] method.
 /// {@category Endpoint}
-class EndpointGreeting extends _isc.EndpointRef {
-  EndpointGreeting(_isc.EndpointCaller caller) : super(caller);
+class EndpointCatalog extends _isc.EndpointRef {
+  EndpointCatalog(_isc.EndpointCaller caller) : super(caller);
 
   @override
-  String get name => 'greeting';
+  String get name => 'catalog';
 
-  /// Returns a personalized greeting message: "Hello {name}".
-  _ida.Future<_iew7sofi.Greeting> hello(String name) =>
-      caller.callServerEndpoint<_iew7sofi.Greeting>(
-        'greeting',
-        'hello',
-        {'name': name},
+  /// The oldest app version this server supports. The app checks it at start
+  /// and shows an "update the app" screen when it is older.
+  _ida.Future<String> getMinAppVersion() => caller.callServerEndpoint<String>(
+    'catalog',
+    'getMinAppVersion',
+    {},
+  );
+}
+
+/// {@category Endpoint}
+class EndpointDevice extends _isc.EndpointRef {
+  EndpointDevice(_isc.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'device';
+
+  /// Registers this installation and returns its secret token. Called once, at
+  /// the first launch; the app keeps the token in secure storage. No account,
+  /// no personal data.
+  _ida.Future<_i6gxu4cm.DeviceRegistration> register(String appVersion) =>
+      caller.callServerEndpoint<_i6gxu4cm.DeviceRegistration>(
+        'device',
+        'register',
+        {'appVersion': appVersion},
       );
 }
 
@@ -62,13 +78,19 @@ class Client extends _isc.ServerpodClientShared {
              disconnectStreamsOnLostInternetConnection,
          httpClientOverride: httpClientOverride,
        ) {
-    greeting = EndpointGreeting(this);
+    catalog = EndpointCatalog(this);
+    device = EndpointDevice(this);
   }
 
-  late final EndpointGreeting greeting;
+  late final EndpointCatalog catalog;
+
+  late final EndpointDevice device;
 
   @override
-  Map<String, _isc.EndpointRef> get endpointRefLookup => {'greeting': greeting};
+  Map<String, _isc.EndpointRef> get endpointRefLookup => {
+    'catalog': catalog,
+    'device': device,
+  };
 
   @override
   Map<String, _isc.ModuleEndpointCaller> get moduleLookup => {};

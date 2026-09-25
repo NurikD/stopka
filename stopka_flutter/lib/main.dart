@@ -5,8 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/providers/core_providers.dart';
 import 'core/router/app_router.dart';
+import 'core/server/device_registrar.dart';
 import 'core/share/share_intake.dart';
 import 'core/theme/app_theme.dart';
+import 'features/server/update_required_screen.dart';
 
 void main() {
   runApp(const ProviderScope(child: BootstrapApp()));
@@ -65,6 +67,7 @@ class _BootstrapAppState extends ConsumerState<BootstrapApp> {
 
     final bootstrap = ref.watch(_profileBootstrapProvider);
     final themeMode = ref.watch(themeModeProvider);
+    final deviceCheck = ref.watch(deviceCheckProvider).value;
 
     return MaterialApp.router(
       title: 'Стопка',
@@ -74,11 +77,17 @@ class _BootstrapAppState extends ConsumerState<BootstrapApp> {
       themeMode: themeMode,
       routerConfig: ref.watch(routerProvider),
       builder: (context, child) {
+        if (deviceCheck?.status == DeviceStatus.updateRequired) {
+          return UpdateRequiredScreen(minVersion: deviceCheck?.minVersion);
+        }
         return bootstrap.when(
           data: (_) => child ?? const SizedBox.shrink(),
-          loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
+          loading: () =>
+              const Scaffold(body: Center(child: CircularProgressIndicator())),
           error: (error, _) => Scaffold(
-            body: Center(child: Text('Не удалось запустить приложение: $error')),
+            body: Center(
+              child: Text('Не удалось запустить приложение: $error'),
+            ),
           ),
         );
       },

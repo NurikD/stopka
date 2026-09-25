@@ -13,8 +13,14 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/protocol.dart' as _isp;
 import 'package:serverpod/serverpod.dart' as _is;
-import 'greetings/greeting.dart' as _izw8z7ou;
-export 'greetings/greeting.dart';
+import 'device/app_update_required.dart' as _ilttxu9r;
+import 'device/device.dart' as _i7201wvo;
+import 'device/device_registration.dart' as _i9282m17;
+import 'device/registration_limited.dart' as _izlwod5n;
+export 'device/app_update_required.dart';
+export 'device/device.dart';
+export 'device/device_registration.dart';
+export 'device/registration_limited.dart';
 
 class Protocol extends _is.DatabaseSerializationManager {
   Protocol._();
@@ -24,6 +30,88 @@ class Protocol extends _is.DatabaseSerializationManager {
   static final Protocol _instance = Protocol._();
 
   static List<_isp.TableDefinition> get targetTableDefinitions => [
+    _isp.TableDefinition(
+      name: 'device',
+      dartName: 'Device',
+      schema: 'public',
+      module: 'stopka',
+      columns: [
+        _isp.ColumnDefinition(
+          name: 'id',
+          columnType: _isp.ColumnType.uuid,
+          isNullable: false,
+          dartType: 'UuidValue?',
+          columnDefault: 'random',
+        ),
+        _isp.ColumnDefinition(
+          name: 'tokenHash',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'appVersion',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'ipHash',
+          columnType: _isp.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _isp.ColumnDefinition(
+          name: 'createdAt',
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _isp.ColumnDefinition(
+          name: 'lastSeenAt',
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _isp.ColumnDefinition(
+          name: 'blocked',
+          columnType: _isp.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+          columnDefault: 'false',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _isp.IndexDefinition(
+          indexName: 'device_token_hash_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'tokenHash',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
+        _isp.IndexDefinition(
+          indexName: 'device_ip_hash_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'ipHash',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
     ..._isp.Protocol.targetTableDefinitions,
   ];
 
@@ -54,11 +142,34 @@ class Protocol extends _is.DatabaseSerializationManager {
       }
     }
 
-    if (t == _izw8z7ou.Greeting) {
-      return _izw8z7ou.Greeting.fromJson(data) as T;
+    if (t == _ilttxu9r.AppUpdateRequired) {
+      return _ilttxu9r.AppUpdateRequired.fromJson(data) as T;
     }
-    if (t == _is.getType<_izw8z7ou.Greeting?>()) {
-      return (data != null ? _izw8z7ou.Greeting.fromJson(data) : null) as T;
+    if (t == _i7201wvo.Device) {
+      return _i7201wvo.Device.fromJson(data) as T;
+    }
+    if (t == _i9282m17.DeviceRegistration) {
+      return _i9282m17.DeviceRegistration.fromJson(data) as T;
+    }
+    if (t == _izlwod5n.RegistrationLimited) {
+      return _izlwod5n.RegistrationLimited.fromJson(data) as T;
+    }
+    if (t == _is.getType<_ilttxu9r.AppUpdateRequired?>()) {
+      return (data != null ? _ilttxu9r.AppUpdateRequired.fromJson(data) : null)
+          as T;
+    }
+    if (t == _is.getType<_i7201wvo.Device?>()) {
+      return (data != null ? _i7201wvo.Device.fromJson(data) : null) as T;
+    }
+    if (t == _is.getType<_i9282m17.DeviceRegistration?>()) {
+      return (data != null ? _i9282m17.DeviceRegistration.fromJson(data) : null)
+          as T;
+    }
+    if (t == _is.getType<_izlwod5n.RegistrationLimited?>()) {
+      return (data != null
+              ? _izlwod5n.RegistrationLimited.fromJson(data)
+              : null)
+          as T;
     }
     try {
       return _isp.Protocol().deserialize<T>(data, t);
@@ -68,7 +179,10 @@ class Protocol extends _is.DatabaseSerializationManager {
 
   static String? getClassNameForType(Type type) {
     return switch (type) {
-      _izw8z7ou.Greeting => 'Greeting',
+      _ilttxu9r.AppUpdateRequired => 'AppUpdateRequired',
+      _i7201wvo.Device => 'Device',
+      _i9282m17.DeviceRegistration => 'DeviceRegistration',
+      _izlwod5n.RegistrationLimited => 'RegistrationLimited',
       _ => null,
     };
   }
@@ -83,8 +197,14 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
 
     switch (data) {
-      case _izw8z7ou.Greeting():
-        return 'Greeting';
+      case _ilttxu9r.AppUpdateRequired():
+        return 'AppUpdateRequired';
+      case _i7201wvo.Device():
+        return 'Device';
+      case _i9282m17.DeviceRegistration():
+        return 'DeviceRegistration';
+      case _izlwod5n.RegistrationLimited():
+        return 'RegistrationLimited';
     }
     className = _isp.Protocol().getClassNameForObject(data);
     if (className != null) {
@@ -99,8 +219,17 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (dataClassName is! String) {
       return super.deserializeByClassName(data);
     }
-    if (dataClassName == 'Greeting') {
-      return deserialize<_izw8z7ou.Greeting>(data['data']);
+    if (dataClassName == 'AppUpdateRequired') {
+      return deserialize<_ilttxu9r.AppUpdateRequired>(data['data']);
+    }
+    if (dataClassName == 'Device') {
+      return deserialize<_i7201wvo.Device>(data['data']);
+    }
+    if (dataClassName == 'DeviceRegistration') {
+      return deserialize<_i9282m17.DeviceRegistration>(data['data']);
+    }
+    if (dataClassName == 'RegistrationLimited') {
+      return deserialize<_izlwod5n.RegistrationLimited>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -116,6 +245,10 @@ class Protocol extends _is.DatabaseSerializationManager {
       if (table != null) {
         return table;
       }
+    }
+    switch (t) {
+      case _i7201wvo.Device:
+        return _i7201wvo.Device.t;
     }
     return null;
   }

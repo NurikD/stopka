@@ -1,0 +1,11 @@
+# Non-secret settings of the Stopka server. Secrets are in passwords.yaml.
+
+# Oldest app version the API supports. Raise it together with any breaking
+# API change; older apps then get a clear "update the app" error.
+minAppVersion: 1.0.0
+
+registration:
+  # Devices one IP address may register per day.
+  maxPerIpPerDay: 10
+  # Turn on only behind a reverse proxy that sets X-Forwarded-For.
+  trustForwardedFor: false
