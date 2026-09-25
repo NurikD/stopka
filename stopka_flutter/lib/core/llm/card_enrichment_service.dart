@@ -24,12 +24,12 @@ class EnrichedCard {
   });
 
   Map<String, dynamic> toJson() => {
-        'term': term,
-        'translation': translation,
-        'transcription': transcription,
-        'partOfSpeech': partOfSpeech,
-        'examples': examples,
-      };
+    'term': term,
+    'translation': translation,
+    'transcription': transcription,
+    'partOfSpeech': partOfSpeech,
+    'examples': examples,
+  };
 
   factory EnrichedCard.fromJson(Map<String, dynamic> json) {
     return EnrichedCard(
@@ -37,7 +37,9 @@ class EnrichedCard {
       translation: (json['translation'] as String? ?? '').trim(),
       transcription: (json['transcription'] as String? ?? '').trim(),
       partOfSpeech: (json['partOfSpeech'] as String? ?? '').trim(),
-      examples: ((json['examples'] as List?) ?? const []).map((e) => e.toString()).toList(),
+      examples: ((json['examples'] as List?) ?? const [])
+          .map((e) => e.toString())
+          .toList(),
     );
   }
 }
@@ -65,16 +67,23 @@ class CardEnrichmentService {
     final toFetch = <String>[];
 
     for (final term in terms) {
-      final cached = await _cache.get(_termHash(term, level, grammarTopic, vocabTopic));
+      final cached = await _cache.get(
+        _termHash(term, level, grammarTopic, vocabTopic),
+      );
       if (cached != null) {
-        results[term] = EnrichedCard.fromJson(jsonDecode(cached) as Map<String, dynamic>);
+        results[term] = EnrichedCard.fromJson(
+          jsonDecode(cached) as Map<String, dynamic>,
+        );
       } else {
         toFetch.add(term);
       }
     }
 
     for (var i = 0; i < toFetch.length; i += _batchSize) {
-      final batch = toFetch.sublist(i, i + _batchSize > toFetch.length ? toFetch.length : i + _batchSize);
+      final batch = toFetch.sublist(
+        i,
+        i + _batchSize > toFetch.length ? toFetch.length : i + _batchSize,
+      );
       final fetched = await _enrichBatch(
         terms: batch,
         level: level,
@@ -110,9 +119,13 @@ class CardEnrichmentService {
     for (var attempt = 0; attempt < 2; attempt++) {
       final raw = await _client.complete(
         systemPrompt: prompt,
-        userMessage: attempt == 0
-            ? 'Составь карточки для слов из списка.'
-            : 'Ответ должен быть строго в формате JSON без markdown-обёрток. Повтори.',
+        userMessage: attempt == 0 ? 'Составь карточки для слов из списка.' : 'Ответ должен быть строго в формате JSON без markdown-обёрток. Повтори.',
+        request: AiRequest(AiKind.enrichCards, {
+          'level': aiLevel(level),
+          'grammarTopic': grammarTopic,
+          'vocabTopic': vocabTopic,
+          'terms': terms,
+        }, strict: attempt > 0),
       );
       try {
         final json = LlmJson.decode(raw);
@@ -120,7 +133,10 @@ class CardEnrichmentService {
         if (cards is! List) {
           throw const LlmException('ИИ вернул ответ неожиданной формы.');
         }
-        return cards.whereType<Map<String, dynamic>>().map(EnrichedCard.fromJson).toList();
+        return cards
+            .whereType<Map<String, dynamic>>()
+            .map(EnrichedCard.fromJson)
+            .toList();
       } on LlmException {
         if (attempt == 1) {
           throw const LlmException(
@@ -132,7 +148,12 @@ class CardEnrichmentService {
     throw const LlmException('Не удалось обогатить карточки.');
   }
 
-  String _termHash(String term, String level, String grammarTopic, String vocabTopic) {
+  String _termHash(
+    String term,
+    String level,
+    String grammarTopic,
+    String vocabTopic,
+  ) {
     final key = '${term.toLowerCase()}|$level|$grammarTopic|$vocabTopic';
     return sha256.convert(utf8.encode(key)).toString();
   }
