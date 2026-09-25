@@ -22,4 +22,7 @@ class DeviceTokenStore {
   }
 
   Future<void> save(String token) => _write(_key, token);
+
+  /// Forgets the token, so the next start registers the device again.
+  Future<void> clear() => _write(_key, '');
 }

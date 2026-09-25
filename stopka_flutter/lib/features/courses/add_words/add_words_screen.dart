@@ -140,9 +140,9 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
   }
 
   Future<void> _pickPhoto(ImageSource source) async {
-    if (!await ref.read(apiKeyStoreProvider).hasKey()) {
+    if (!await ref.read(aiAvailabilityProvider).isAvailable()) {
       if (mounted) {
-        _showError('Распознавание по фото работает через Gemini — добавьте ключ в «Профиле». '
+        _showError('Распознавание по фото сейчас недоступно: нет связи с сервером. '
             'Пока можно вставить список или ввести слова вручную.');
       }
       return;
@@ -222,10 +222,10 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
       createdCards[card.term] = card;
     }
 
-    if (!await ref.read(apiKeyStoreProvider).hasKey()) {
+    if (!await ref.read(aiAvailabilityProvider).isAvailable()) {
       // Nothing is blocked without a key; only the extras wait for one.
       if (mounted) {
-        _showError('Слова сохранены. Транскрипцию и примеры добавит ИИ, когда появится ключ Gemini.');
+        _showError('Слова сохранены. Транскрипцию и примеры добавит ИИ, когда сервер будет доступен.');
         Navigator.of(context).pop();
       }
       return;

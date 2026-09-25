@@ -29,11 +29,14 @@ class WordRecognitionService {
     for (var attempt = 0; attempt < 2; attempt++) {
       final raw = await _client.completeWithImage(
         systemPrompt: prompt,
-        userMessage: attempt == 0
-            ? 'Распознай слова на фото.'
-            : 'Ответ должен быть строго в формате JSON без markdown-обёрток. Повтори распознавание.',
+        userMessage: attempt == 0 ? 'Распознай слова на фото.' : 'Ответ должен быть строго в формате JSON без markdown-обёрток. Повтори распознавание.',
         imageBytes: imageBytes,
         mimeType: mimeType,
+        request: AiRequest(
+          AiKind.recognizeWords,
+          const {},
+          strict: attempt > 0,
+        ),
       );
 
       try {
@@ -58,10 +61,12 @@ class WordRecognitionService {
     }
     return words
         .whereType<Map<String, dynamic>>()
-        .map((w) => RecognizedWord(
-              term: (w['term'] as String? ?? '').trim(),
-              translation: (w['translation'] as String? ?? '').trim(),
-            ))
+        .map(
+          (w) => RecognizedWord(
+            term: (w['term'] as String? ?? '').trim(),
+            translation: (w['translation'] as String? ?? '').trim(),
+          ),
+        )
         .where((w) => w.term.isNotEmpty)
         .toList();
   }

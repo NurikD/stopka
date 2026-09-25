@@ -17,6 +17,7 @@ class _FakeLlmClient implements LlmClient {
     required String userMessage,
     required Uint8List imageBytes,
     required String mimeType,
+    AiRequest? request,
   }) async {
     final response = responses[calls];
     calls++;
@@ -24,7 +25,11 @@ class _FakeLlmClient implements LlmClient {
   }
 
   @override
-  Future<String> complete({required String systemPrompt, required String userMessage}) {
+  Future<String> complete({
+    required String systemPrompt,
+    required String userMessage,
+    AiRequest? request,
+  }) {
     throw UnimplementedError();
   }
 
@@ -43,7 +48,10 @@ void main() {
     ]);
     final service = WordRecognitionService(client);
 
-    final words = await service.recognize(imageBytes: Uint8List(0), mimeType: 'image/jpeg');
+    final words = await service.recognize(
+      imageBytes: Uint8List(0),
+      mimeType: 'image/jpeg',
+    );
 
     expect(words, hasLength(2));
     expect(words[0].term, 'achieve');
@@ -57,7 +65,10 @@ void main() {
     ]);
     final service = WordRecognitionService(client);
 
-    final words = await service.recognize(imageBytes: Uint8List(0), mimeType: 'image/jpeg');
+    final words = await service.recognize(
+      imageBytes: Uint8List(0),
+      mimeType: 'image/jpeg',
+    );
 
     expect(words, hasLength(1));
     expect(words.first.term, 'goal');
@@ -70,7 +81,10 @@ void main() {
     ]);
     final service = WordRecognitionService(client);
 
-    final words = await service.recognize(imageBytes: Uint8List(0), mimeType: 'image/jpeg');
+    final words = await service.recognize(
+      imageBytes: Uint8List(0),
+      mimeType: 'image/jpeg',
+    );
 
     expect(client.calls, 2);
     expect(words, hasLength(1));

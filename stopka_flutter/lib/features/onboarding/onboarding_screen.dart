@@ -58,10 +58,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   Future<void> _photo() async {
-    final hasKey = await ref.read(apiKeyStoreProvider).hasKey();
+    final hasKey = await ref.read(aiAvailabilityProvider).isAvailable();
     if (!mounted) return;
     if (!hasKey) {
-      setState(() => _message = 'Чтобы распознать страницу по фото, нужен ключ Gemini. Добавьте его в «Профиле» '
+      setState(() => _message = 'Фото страницы сейчас не распознать: нет связи с сервером. Впишите тему вручную. '
           'или просто впишите тему выше.');
       return;
     }

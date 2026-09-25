@@ -48,14 +48,18 @@ class PersonalWordsService {
   static List<StarterWord> parse(String raw) {
     final json = LlmJson.decode(raw);
     final words = json['words'];
-    if (words is! List) throw const LlmException('ИИ вернул ответ неожиданной формы.');
+    if (words is! List) {
+      throw const LlmException('ИИ вернул ответ неожиданной формы.');
+    }
     final seen = <String>{};
     final result = <StarterWord>[];
     for (final w in words.whereType<Map<String, dynamic>>()) {
       final term = (w['term'] as String? ?? '').trim();
       final translation = (w['translation'] as String? ?? '').trim();
       if (term.isEmpty || translation.isEmpty) continue;
-      if (seen.add(term.toLowerCase())) result.add(StarterWord(term, translation));
+      if (seen.add(term.toLowerCase())) {
+        result.add(StarterWord(term, translation));
+      }
     }
     return result;
   }

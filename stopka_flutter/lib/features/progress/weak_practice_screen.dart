@@ -53,12 +53,12 @@ class _WeakPracticeScreenState extends ConsumerState<WeakPracticeScreen> {
       _loading = true;
       _message = null;
     });
-    if (!await ref.read(apiKeyStoreProvider).hasKey()) {
+    if (!await ref.read(aiAvailabilityProvider).isAvailable()) {
       if (!mounted) return;
       setState(() {
         _loading = false;
         _message =
-            'Тренировка составляется через Gemini — добавьте ключ в «Профиле». '
+            'Тренировка составляется через ИИ, а сервер сейчас недоступен. '
             'Ваши ошибки при этом сохранены, ничего не потеряно.';
       });
       return;

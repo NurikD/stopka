@@ -13,10 +13,22 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/protocol.dart' as _isp;
 import 'package:serverpod/serverpod.dart' as _is;
+import 'package:stopka_server/src/generated/ai/mistake_example.dart'
+    as _io7sjmjk;
+import 'ai/ai_unavailable.dart' as _ikxykomk;
+import 'ai/ai_usage.dart' as _i5bl2z48;
+import 'ai/invalid_ai_request.dart' as _i9qluwjw;
+import 'ai/limit_exceeded.dart' as _im85lqkr;
+import 'ai/mistake_example.dart' as _izxgy7mp;
 import 'device/app_update_required.dart' as _ilttxu9r;
 import 'device/device.dart' as _i7201wvo;
 import 'device/device_registration.dart' as _i9282m17;
 import 'device/registration_limited.dart' as _izlwod5n;
+export 'ai/ai_unavailable.dart';
+export 'ai/ai_usage.dart';
+export 'ai/invalid_ai_request.dart';
+export 'ai/limit_exceeded.dart';
+export 'ai/mistake_example.dart';
 export 'device/app_update_required.dart';
 export 'device/device.dart';
 export 'device/device_registration.dart';
@@ -30,6 +42,83 @@ class Protocol extends _is.DatabaseSerializationManager {
   static final Protocol _instance = Protocol._();
 
   static List<_isp.TableDefinition> get targetTableDefinitions => [
+    _isp.TableDefinition(
+      name: 'ai_usage',
+      dartName: 'AiUsage',
+      schema: 'public',
+      module: 'stopka',
+      columns: [
+        _isp.ColumnDefinition(
+          name: 'id',
+          columnType: _isp.ColumnType.uuid,
+          isNullable: false,
+          dartType: 'UuidValue?',
+          columnDefault: 'random',
+        ),
+        _isp.ColumnDefinition(
+          name: 'deviceId',
+          columnType: _isp.ColumnType.uuid,
+          isNullable: false,
+          dartType: 'UuidValue',
+        ),
+        _isp.ColumnDefinition(
+          name: 'day',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'kind',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'requests',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _isp.IndexDefinition(
+          indexName: 'ai_usage_device_day_kind_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'deviceId',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'day',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'kind',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
+        _isp.IndexDefinition(
+          indexName: 'ai_usage_day_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'day',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
     _isp.TableDefinition(
       name: 'device',
       dartName: 'Device',
@@ -142,6 +231,21 @@ class Protocol extends _is.DatabaseSerializationManager {
       }
     }
 
+    if (t == _ikxykomk.AiUnavailable) {
+      return _ikxykomk.AiUnavailable.fromJson(data) as T;
+    }
+    if (t == _i5bl2z48.AiUsage) {
+      return _i5bl2z48.AiUsage.fromJson(data) as T;
+    }
+    if (t == _i9qluwjw.InvalidAiRequest) {
+      return _i9qluwjw.InvalidAiRequest.fromJson(data) as T;
+    }
+    if (t == _im85lqkr.LimitExceeded) {
+      return _im85lqkr.LimitExceeded.fromJson(data) as T;
+    }
+    if (t == _izxgy7mp.MistakeExample) {
+      return _izxgy7mp.MistakeExample.fromJson(data) as T;
+    }
     if (t == _ilttxu9r.AppUpdateRequired) {
       return _ilttxu9r.AppUpdateRequired.fromJson(data) as T;
     }
@@ -153,6 +257,25 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (t == _izlwod5n.RegistrationLimited) {
       return _izlwod5n.RegistrationLimited.fromJson(data) as T;
+    }
+    if (t == _is.getType<_ikxykomk.AiUnavailable?>()) {
+      return (data != null ? _ikxykomk.AiUnavailable.fromJson(data) : null)
+          as T;
+    }
+    if (t == _is.getType<_i5bl2z48.AiUsage?>()) {
+      return (data != null ? _i5bl2z48.AiUsage.fromJson(data) : null) as T;
+    }
+    if (t == _is.getType<_i9qluwjw.InvalidAiRequest?>()) {
+      return (data != null ? _i9qluwjw.InvalidAiRequest.fromJson(data) : null)
+          as T;
+    }
+    if (t == _is.getType<_im85lqkr.LimitExceeded?>()) {
+      return (data != null ? _im85lqkr.LimitExceeded.fromJson(data) : null)
+          as T;
+    }
+    if (t == _is.getType<_izxgy7mp.MistakeExample?>()) {
+      return (data != null ? _izxgy7mp.MistakeExample.fromJson(data) : null)
+          as T;
     }
     if (t == _is.getType<_ilttxu9r.AppUpdateRequired?>()) {
       return (data != null ? _ilttxu9r.AppUpdateRequired.fromJson(data) : null)
@@ -171,6 +294,15 @@ class Protocol extends _is.DatabaseSerializationManager {
               : null)
           as T;
     }
+    if (t == List<String>) {
+      return (data as List).map((e) => deserialize<String>(e)).toList() as T;
+    }
+    if (t == List<_io7sjmjk.MistakeExample>) {
+      return (data as List)
+              .map((e) => deserialize<_io7sjmjk.MistakeExample>(e))
+              .toList()
+          as T;
+    }
     try {
       return _isp.Protocol().deserialize<T>(data, t);
     } on _is.DeserializationTypeNotFoundException catch (_) {}
@@ -179,6 +311,11 @@ class Protocol extends _is.DatabaseSerializationManager {
 
   static String? getClassNameForType(Type type) {
     return switch (type) {
+      _ikxykomk.AiUnavailable => 'AiUnavailable',
+      _i5bl2z48.AiUsage => 'AiUsage',
+      _i9qluwjw.InvalidAiRequest => 'InvalidAiRequest',
+      _im85lqkr.LimitExceeded => 'LimitExceeded',
+      _izxgy7mp.MistakeExample => 'MistakeExample',
       _ilttxu9r.AppUpdateRequired => 'AppUpdateRequired',
       _i7201wvo.Device => 'Device',
       _i9282m17.DeviceRegistration => 'DeviceRegistration',
@@ -197,6 +334,16 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
 
     switch (data) {
+      case _ikxykomk.AiUnavailable():
+        return 'AiUnavailable';
+      case _i5bl2z48.AiUsage():
+        return 'AiUsage';
+      case _i9qluwjw.InvalidAiRequest():
+        return 'InvalidAiRequest';
+      case _im85lqkr.LimitExceeded():
+        return 'LimitExceeded';
+      case _izxgy7mp.MistakeExample():
+        return 'MistakeExample';
       case _ilttxu9r.AppUpdateRequired():
         return 'AppUpdateRequired';
       case _i7201wvo.Device():
@@ -218,6 +365,21 @@ class Protocol extends _is.DatabaseSerializationManager {
     var dataClassName = data['className'];
     if (dataClassName is! String) {
       return super.deserializeByClassName(data);
+    }
+    if (dataClassName == 'AiUnavailable') {
+      return deserialize<_ikxykomk.AiUnavailable>(data['data']);
+    }
+    if (dataClassName == 'AiUsage') {
+      return deserialize<_i5bl2z48.AiUsage>(data['data']);
+    }
+    if (dataClassName == 'InvalidAiRequest') {
+      return deserialize<_i9qluwjw.InvalidAiRequest>(data['data']);
+    }
+    if (dataClassName == 'LimitExceeded') {
+      return deserialize<_im85lqkr.LimitExceeded>(data['data']);
+    }
+    if (dataClassName == 'MistakeExample') {
+      return deserialize<_izxgy7mp.MistakeExample>(data['data']);
     }
     if (dataClassName == 'AppUpdateRequired') {
       return deserialize<_ilttxu9r.AppUpdateRequired>(data['data']);
@@ -247,6 +409,8 @@ class Protocol extends _is.DatabaseSerializationManager {
       }
     }
     switch (t) {
+      case _i5bl2z48.AiUsage:
+        return _i5bl2z48.AiUsage.t;
       case _i7201wvo.Device:
         return _i7201wvo.Device.t;
     }

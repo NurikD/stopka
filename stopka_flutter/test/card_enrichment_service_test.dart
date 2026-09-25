@@ -14,7 +14,11 @@ class _FakeLlmClient implements LlmClient {
   _FakeLlmClient(this.responses);
 
   @override
-  Future<String> complete({required String systemPrompt, required String userMessage}) async {
+  Future<String> complete({
+    required String systemPrompt,
+    required String userMessage,
+    AiRequest? request,
+  }) async {
     prompts.add(systemPrompt);
     final response = responses[calls];
     calls++;
@@ -27,6 +31,7 @@ class _FakeLlmClient implements LlmClient {
     required String userMessage,
     required Uint8List imageBytes,
     required String mimeType,
+    AiRequest? request,
   }) {
     throw UnimplementedError();
   }
@@ -74,8 +79,16 @@ void main() {
     final cache = _InMemoryCache();
     final service = CardEnrichmentService(client, cache);
 
-    await service.enrich(terms: ['achieve'], level: 'B1', grammarTopic: 'Present perfect');
-    await service.enrich(terms: ['achieve'], level: 'B1', grammarTopic: 'Present perfect');
+    await service.enrich(
+      terms: ['achieve'],
+      level: 'B1',
+      grammarTopic: 'Present perfect',
+    );
+    await service.enrich(
+      terms: ['achieve'],
+      level: 'B1',
+      grammarTopic: 'Present perfect',
+    );
 
     expect(client.calls, 1);
   });
@@ -87,31 +100,45 @@ void main() {
     ]);
     final service = CardEnrichmentService(client, _InMemoryCache());
 
-    final first = await service.enrich(terms: ['achieve'], level: 'B1', grammarTopic: 'Unit 1');
-    final second = await service.enrich(terms: ['achieve'], level: 'B1', grammarTopic: 'Unit 2');
+    final first = await service.enrich(
+      terms: ['achieve'],
+      level: 'B1',
+      grammarTopic: 'Unit 1',
+    );
+    final second = await service.enrich(
+      terms: ['achieve'],
+      level: 'B1',
+      grammarTopic: 'Unit 2',
+    );
 
     expect(first.first.translation, 'A');
     expect(second.first.translation, 'B');
     expect(client.calls, 2);
   });
 
-  test('throws a Russian error when both attempts return malformed JSON', () async {
-    final client = _FakeLlmClient(['not json', 'still not json']);
-    final service = CardEnrichmentService(client, _InMemoryCache());
+  test(
+    'throws a Russian error when both attempts return malformed JSON',
+    () async {
+      final client = _FakeLlmClient(['not json', 'still not json']);
+      final service = CardEnrichmentService(client, _InMemoryCache());
 
-    expect(
-      () => service.enrich(terms: ['achieve'], level: 'B1'),
-      throwsA(isA<LlmException>()),
-    );
-  });
+      expect(
+        () => service.enrich(terms: ['achieve'], level: 'B1'),
+        throwsA(isA<LlmException>()),
+      );
+    },
+  );
 
-  test('returns an empty list for an empty term list without calling the model', () async {
-    final client = _FakeLlmClient([]);
-    final service = CardEnrichmentService(client, _InMemoryCache());
+  test(
+    'returns an empty list for an empty term list without calling the model',
+    () async {
+      final client = _FakeLlmClient([]);
+      final service = CardEnrichmentService(client, _InMemoryCache());
 
-    final cards = await service.enrich(terms: [], level: 'B1');
+      final cards = await service.enrich(terms: [], level: 'B1');
 
-    expect(cards, isEmpty);
-    expect(client.calls, 0);
-  });
+      expect(cards, isEmpty);
+      expect(client.calls, 0);
+    },
+  );
 }

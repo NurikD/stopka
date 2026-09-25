@@ -54,11 +54,11 @@ class _WritingBodyState extends ConsumerState<_WritingBody> {
   }
 
   Future<void> _check() async {
-    if (!await ref.read(apiKeyStoreProvider).hasKey()) {
+    if (!await ref.read(aiAvailabilityProvider).isAvailable()) {
       if (mounted) {
         setState(
           () => _message =
-              'Проверка письма работает через Gemini — добавьте ключ в «Профиле». '
+              'Проверка письма сейчас недоступна: нет связи с сервером. '
               'Ваш текст останется в поле.',
         );
       }

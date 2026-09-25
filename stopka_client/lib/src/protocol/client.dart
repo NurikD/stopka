@@ -11,11 +11,133 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _ida;
+import 'dart:typed_data' as _idt;
 import 'package:http/http.dart' as _i85jenna;
 import 'package:serverpod_client/serverpod_client.dart' as _isc;
+import 'package:stopka_client/src/protocol/ai/mistake_example.dart'
+    as _i9f0frih;
 import 'package:stopka_client/src/protocol/device/device_registration.dart'
     as _i6gxu4cm;
 import 'protocol.dart' as _il2as5qe;
+
+/// Every method returns the model's raw JSON text; the app parses it, exactly
+/// as it did when it called the model itself. All need a registered device and
+/// count against that device's daily limit for their kind.
+/// {@category Endpoint}
+class EndpointAi extends _isc.EndpointRef {
+  EndpointAi(_isc.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'ai';
+
+  /// Checks a short English text: corrected version, mistakes, native version.
+  _ida.Future<String> checkWriting(
+    String level,
+    String task,
+    String text,
+    bool strict,
+  ) => caller.callServerEndpoint<String>(
+    'ai',
+    'checkWriting',
+    {
+      'level': level,
+      'task': task,
+      'text': text,
+      'strict': strict,
+    },
+  );
+
+  /// Judges "my answer is also right".
+  _ida.Future<String> appeal(
+    String term,
+    String correctAnswer,
+    String userAnswer,
+    String direction,
+    bool strict,
+  ) => caller.callServerEndpoint<String>(
+    'ai',
+    'appeal',
+    {
+      'term': term,
+      'correctAnswer': correctAnswer,
+      'userAnswer': userAnswer,
+      'direction': direction,
+      'strict': strict,
+    },
+  );
+
+  /// Six exercises on one weak category, built on the learner's own material.
+  _ida.Future<String> weakSpotDrill(
+    String level,
+    String category,
+    String categoryRu,
+    List<String> interests,
+    List<String> words,
+    List<_i9f0frih.MistakeExample> mistakes,
+    bool strict,
+  ) => caller.callServerEndpoint<String>(
+    'ai',
+    'weakSpotDrill',
+    {
+      'level': level,
+      'category': category,
+      'categoryRu': categoryRu,
+      'interests': interests,
+      'words': words,
+      'mistakes': mistakes,
+      'strict': strict,
+    },
+  );
+
+  /// Flashcard details (translation, transcription, examples) for words.
+  _ida.Future<String> enrichCards(
+    String level,
+    String grammarTopic,
+    String vocabTopic,
+    List<String> terms,
+    bool strict,
+  ) => caller.callServerEndpoint<String>(
+    'ai',
+    'enrichCards',
+    {
+      'level': level,
+      'grammarTopic': grammarTopic,
+      'vocabTopic': vocabTopic,
+      'terms': terms,
+      'strict': strict,
+    },
+  );
+
+  /// Reads the words off a photo of the learner's own word list.
+  _ida.Future<String> recognizeWords(
+    _idt.ByteData image,
+    String mimeType,
+    bool strict,
+  ) => caller.callServerEndpoint<String>(
+    'ai',
+    'recognizeWords',
+    {
+      'image': image,
+      'mimeType': mimeType,
+      'strict': strict,
+    },
+  );
+
+  /// Reads the unit code and topics off a photo of a textbook page.
+  _ida.Future<String> readUnitPage(
+    _idt.ByteData image,
+    String mimeType,
+    bool strict,
+  ) => caller.callServerEndpoint<String>(
+    'ai',
+    'readUnitPage',
+    {
+      'image': image,
+      'mimeType': mimeType,
+      'strict': strict,
+    },
+  );
+}
 
 /// {@category Endpoint}
 class EndpointCatalog extends _isc.EndpointRef {
@@ -78,9 +200,12 @@ class Client extends _isc.ServerpodClientShared {
              disconnectStreamsOnLostInternetConnection,
          httpClientOverride: httpClientOverride,
        ) {
+    ai = EndpointAi(this);
     catalog = EndpointCatalog(this);
     device = EndpointDevice(this);
   }
+
+  late final EndpointAi ai;
 
   late final EndpointCatalog catalog;
 
@@ -88,6 +213,7 @@ class Client extends _isc.ServerpodClientShared {
 
   @override
   Map<String, _isc.EndpointRef> get endpointRefLookup => {
+    'ai': ai,
     'catalog': catalog,
     'device': device,
   };

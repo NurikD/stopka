@@ -25,7 +25,10 @@ class ThrottledLlmClient implements LlmClient {
     // ignore: prefer_initializing_formals
   }) : _minInterval = minInterval;
 
-  Future<T> _throttled<T>(Future<T> Function() action, {required bool countsTowardQuota}) {
+  Future<T> _throttled<T>(
+    Future<T> Function() action, {
+    required bool countsTowardQuota,
+  }) {
     final previous = _queue;
     final gate = Completer<void>();
     _queue = gate.future;
@@ -44,9 +47,17 @@ class ThrottledLlmClient implements LlmClient {
   }
 
   @override
-  Future<String> complete({required String systemPrompt, required String userMessage}) {
+  Future<String> complete({
+    required String systemPrompt,
+    required String userMessage,
+    AiRequest? request,
+  }) {
     return _throttled(
-      () => _inner.complete(systemPrompt: systemPrompt, userMessage: userMessage),
+      () => _inner.complete(
+        systemPrompt: systemPrompt,
+        userMessage: userMessage,
+        request: request,
+      ),
       countsTowardQuota: true,
     );
   }
@@ -57,6 +68,7 @@ class ThrottledLlmClient implements LlmClient {
     required String userMessage,
     required Uint8List imageBytes,
     required String mimeType,
+    AiRequest? request,
   }) {
     return _throttled(
       () => _inner.completeWithImage(
@@ -64,6 +76,7 @@ class ThrottledLlmClient implements LlmClient {
         userMessage: userMessage,
         imageBytes: imageBytes,
         mimeType: mimeType,
+        request: request,
       ),
       countsTowardQuota: true,
     );
@@ -74,6 +87,9 @@ class ThrottledLlmClient implements LlmClient {
     // Throttled like everything else so a user mashing "Проверить ключ"
     // can't fire a burst of calls, but not counted — it's a cheap models
     // list call, not a generation request.
-    return _throttled(() => _inner.validateApiKey(apiKey), countsTowardQuota: false);
+    return _throttled(
+      () => _inner.validateApiKey(apiKey),
+      countsTowardQuota: false,
+    );
   }
 }

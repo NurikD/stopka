@@ -8,7 +8,10 @@ class AnswerAppealResult {
   final bool accepted;
   final String explanationRu;
 
-  const AnswerAppealResult({required this.accepted, required this.explanationRu});
+  const AnswerAppealResult({
+    required this.accepted,
+    required this.explanationRu,
+  });
 }
 
 /// One-off adjudication for "я считаю, мой вариант тоже верный" — the only
@@ -35,7 +38,15 @@ class AnswerAppealService {
     for (var attempt = 0; attempt < 2; attempt++) {
       final raw = await _client.complete(
         systemPrompt: prompt,
-        userMessage: attempt == 0 ? 'Оцени ответ.' : 'Ответ должен быть строго в формате JSON без markdown-обёрток.',
+        userMessage: attempt == 0
+            ? 'Оцени ответ.'
+            : 'Ответ должен быть строго в формате JSON без markdown-обёрток.',
+        request: AiRequest(AiKind.appeal, {
+          'term': term,
+          'correctAnswer': correctAnswer,
+          'userAnswer': userAnswer,
+          'direction': direction,
+        }, strict: attempt > 0),
       );
       try {
         final json = LlmJson.decode(raw);
@@ -45,7 +56,9 @@ class AnswerAppealService {
         );
       } on LlmException {
         if (attempt == 1) {
-          throw const LlmException('Не удалось проверить апелляцию. Попробуйте ещё раз.');
+          throw const LlmException(
+            'Не удалось проверить апелляцию. Попробуйте ещё раз.',
+          );
         }
       }
     }

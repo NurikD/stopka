@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:stopka/core/llm/api_key_store.dart';
 import 'package:stopka/core/llm/llm_client.dart';
 import 'package:stopka/core/llm/llm_exception.dart';
 import 'package:stopka/core/llm/writing_check_service.dart';
@@ -28,15 +27,8 @@ import 'package:stopka/features/pack/pack_screen.dart';
 import 'package:stopka/features/pack/reading_screen.dart';
 import 'package:stopka/features/pack/writing_screen.dart';
 
+import 'fixed_ai_availability.dart';
 import 'pack_fixtures.dart';
-
-class _Key extends ApiKeyStore {
-  final bool present;
-  _Key(this.present);
-
-  @override
-  Future<String?> getApiKey() async => present ? 'key' : null;
-}
 
 class _FakeTts extends TtsService {
   final List<double> speeds = [];
@@ -71,6 +63,7 @@ class _Client implements LlmClient {
   Future<String> complete({
     required String systemPrompt,
     required String userMessage,
+    AiRequest? request,
   }) async {
     final reply = replies[calls < replies.length ? calls : replies.length - 1];
     calls++;
@@ -83,6 +76,7 @@ class _Client implements LlmClient {
     required String userMessage,
     required Uint8List imageBytes,
     required String mimeType,
+    AiRequest? request,
   }) => throw UnimplementedError();
 
   @override
@@ -186,7 +180,7 @@ Future<_Env> _env({
     overrides: [
       packRepositoryProvider.overrideWithValue(packs),
       packServiceProvider.overrideWithValue(service),
-      apiKeyStoreProvider.overrideWithValue(_Key(hasKey)),
+      aiAvailabilityProvider.overrideWithValue(FixedAiAvailability(hasKey)),
       ttsServiceProvider.overrideWithValue(tts),
       wordSetRepositoryProvider.overrideWithValue(sets),
       wordCardRepositoryProvider.overrideWithValue(cards),
@@ -629,7 +623,7 @@ void main() {
       await _tap(tester, 'Проверить');
 
       expect(find.textContaining('нужен'), findsNothing);
-      expect(find.textContaining('ключ'), findsOneWidget);
+      expect(find.textContaining('связи с сервером'), findsOneWidget);
       expect(
         find.text('I play this game yesterday and it was fun.'),
         findsOneWidget,
@@ -681,8 +675,8 @@ void main() {
       await tester.pumpWidget(env.wrap(PackScreen(pack: env.pack)));
       await _settle(tester);
 
-      expect(find.textContaining('нужен ключ Gemini'), findsOneWidget);
-      expect(find.text('Нужен ключ Gemini'), findsNWidgets(3));
+      expect(find.textContaining('нужна связь с сервером'), findsOneWidget);
+      expect(find.text('Нет связи с сервером'), findsNWidgets(3));
       expect(find.text('Готово'), findsOneWidget);
 
       await _tap(tester, 'Грамматика');

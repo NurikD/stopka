@@ -1,0 +1,6 @@
+### This device used up its daily allowance for one kind of AI request.
+exception: LimitExceeded
+fields:
+  kind: String
+  limit: int
+  resetAt: DateTime

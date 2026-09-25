@@ -113,8 +113,8 @@ class PackScreen extends ConsumerWidget {
                       (p) => data.statusOf(p) != PartStatus.ready,
                     ))) ...[
               Text(
-                'Чтобы подготовить материал, нужен ключ Gemini — добавьте его в «Профиле». '
-                'Уже подготовленное открывается без ключа.',
+                'Чтобы подготовить материал, нужна связь с сервером. '
+                'Уже подготовленное открывается без связи.',
                 style: AppTypography.caption.copyWith(color: colors.muted),
               ),
               const SizedBox(height: AppSpacing.s14),
@@ -163,7 +163,7 @@ class PackScreen extends ConsumerWidget {
       case PartStatus.pending:
         return hasKey
             ? 'В очереди · нажмите, чтобы подготовить сейчас'
-            : 'Нужен ключ Gemini';
+            : 'Нет связи с сервером';
     }
   }
 

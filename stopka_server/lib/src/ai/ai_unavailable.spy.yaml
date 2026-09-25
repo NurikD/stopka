@@ -1,0 +1,7 @@
+### The AI could not be used right now. [reason] is one of: `disabled`,
+### `budget` (the server's daily ceiling is reached), `overloaded`,
+### `provider_limit`, `error`.
+exception: AiUnavailable
+fields:
+  reason: String
+  retryAfterMinutes: int?

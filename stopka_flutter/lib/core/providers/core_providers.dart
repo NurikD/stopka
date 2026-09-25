@@ -25,12 +25,15 @@ import '../../domain/repositories/unit_repository.dart';
 import '../../domain/repositories/word_card_repository.dart';
 import '../../domain/repositories/word_set_repository.dart';
 import '../analytics/event_logger.dart';
+import '../flags/feature_flags.dart';
+import '../llm/ai_availability.dart';
 import '../llm/answer_appeal_service.dart';
 import '../llm/api_key_store.dart';
 import '../llm/card_enrichment_service.dart';
 import '../llm/gemini_llm_client.dart';
 import '../llm/llm_client.dart';
 import '../llm/llm_request_counter.dart';
+import '../llm/server_llm_client.dart';
 import '../llm/throttled_llm_client.dart';
 import '../llm/personal_words_service.dart';
 import '../llm/unit_page_service.dart';
@@ -99,9 +102,23 @@ final apiKeyStoreProvider = Provider<ApiKeyStore>((ref) => ApiKeyStore());
 
 final llmRequestCounterProvider = Provider<LlmRequestCounter>((ref) => LlmRequestCounter());
 
+final aiModeProvider = Provider<AiMode>((ref) {
+  return chooseAiMode(directGemini: FeatureFlags.directGemini, serverConfigured: serverConfigured);
+});
+
+final aiAvailabilityProvider = Provider<AiAvailability>((ref) {
+  return AiAvailability(ref.watch(aiModeProvider), ref.watch(deviceTokenStoreProvider), ref.watch(apiKeyStoreProvider));
+});
+
+/// Where AI requests go: the server proxy by default, Gemini directly only
+/// behind the developer flag, and nowhere when the app has no server address.
 final llmClientProvider = Provider<LlmClient>((ref) {
-  final gemini = GeminiLlmClient(ref.watch(apiKeyStoreProvider));
-  return ThrottledLlmClient(gemini, ref.watch(llmRequestCounterProvider));
+  final LlmClient inner = switch (ref.watch(aiModeProvider)) {
+    AiMode.direct => GeminiLlmClient(ref.watch(apiKeyStoreProvider)),
+    AiMode.server => ServerLlmClient(ref.watch(serverClientProvider), ref.watch(deviceTokenStoreProvider)),
+    AiMode.none => UnavailableLlmClient(),
+  };
+  return ThrottledLlmClient(inner, ref.watch(llmRequestCounterProvider));
 });
 
 final eventLoggerProvider = Provider<EventLogger>((ref) => NoopEventLogger());
@@ -124,9 +141,8 @@ final personalWordsServiceProvider = Provider<PersonalWordsService>((ref) {
 
 /// Whether a Gemini key is stored. Nothing is blocked without one; AI
 /// features read this to say honestly that they need a key.
-final hasApiKeyProvider = FutureProvider.autoDispose<bool>((ref) async {
-  final key = await ref.watch(apiKeyStoreProvider).getApiKey();
-  return key != null && key.trim().isNotEmpty;
+final hasApiKeyProvider = FutureProvider.autoDispose<bool>((ref) {
+  return ref.watch(aiAvailabilityProvider).isAvailable();
 });
 
 final onboardingServiceProvider = Provider<OnboardingService>((ref) {
@@ -140,7 +156,7 @@ final onboardingServiceProvider = Provider<OnboardingService>((ref) {
     personalWords: ({required level, required interests, required topic}) async {
       // Without a key the personal list is impossible; the service then
       // falls back to the offline words.
-      if (!await ref.read(apiKeyStoreProvider).hasKey()) throw StateError('no key');
+      if (!await ref.read(aiAvailabilityProvider).isAvailable()) throw StateError('no AI');
       // A slow model must not hold the first minute hostage.
       return personal
           .generate(level: level, interests: interests, topic: topic)
@@ -161,11 +177,10 @@ final contentSourceProvider = Provider<ContentSource>((ref) {
 /// Kept alive for the whole run, so a pack keeps generating while the
 /// learner moves between screens.
 final packServiceProvider = Provider<PackService>((ref) {
-  final store = ref.watch(apiKeyStoreProvider);
   return PackService(
     repo: ref.watch(packRepositoryProvider),
     source: ref.watch(contentSourceProvider),
-    hasKey: store.hasKey,
+    hasKey: ref.watch(aiAvailabilityProvider).isAvailable,
   );
 });
 
