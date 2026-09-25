@@ -111,9 +111,9 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
 
   Future<void> _appeal() async {
     final messenger = ScaffoldMessenger.of(context);
-    if (!await ref.read(apiKeyStoreProvider).hasKey()) {
+    if (!await ref.read(aiAvailabilityProvider).isAvailable()) {
       messenger.showSnackBar(const SnackBar(
-        content: Text('Проверка ответа через ИИ работает с ключом Gemini — добавьте его в «Профиле».'),
+        content: Text('Проверка ответа через ИИ сейчас недоступна: нет связи с сервером.'),
       ));
       return;
     }
