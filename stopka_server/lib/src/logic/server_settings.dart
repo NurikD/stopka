@@ -69,7 +69,7 @@ class ServerSettings {
   final AiSettings ai;
 
   const ServerSettings({
-    this.minAppVersion = '1.0.0',
+    this.minAppVersion = '0.1.0',
     this.maxRegistrationsPerIpPerDay = 10,
     this.trustForwardedFor = false,
     this.ai = const AiSettings(),

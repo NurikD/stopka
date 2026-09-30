@@ -53,7 +53,7 @@ registration:
 
     test('fall back to safe defaults', () {
       final s = ServerSettings.parse('');
-      expect(s.minAppVersion, '1.0.0');
+      expect(s.minAppVersion, '0.1.0');
       expect(s.maxRegistrationsPerIpPerDay, 10);
       expect(s.trustForwardedFor, isFalse); // never trust the header by default
     });
