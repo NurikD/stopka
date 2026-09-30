@@ -21,6 +21,7 @@ import '../../core/pack/pack_content.dart';
 import '../session/session_screen.dart';
 import '../session/today_plan.dart';
 import '../srs/srs_review_screen.dart';
+import '../update/update_screen.dart';
 
 class TodayScreen extends ConsumerWidget {
   const TodayScreen({super.key});
@@ -33,6 +34,7 @@ class TodayScreen extends ConsumerWidget {
     final streak = ref.watch(streakDaysProvider).value ?? 0;
     final doneToday = ref.watch(reviewsTodayProvider).value ?? 0;
     final plan = ref.watch(todayPlanProvider).value;
+    final update = ref.watch(availableUpdateProvider).value;
     final now = DateTime.now();
 
     final streakMeta = streak > 0
@@ -81,6 +83,10 @@ class TodayScreen extends ConsumerWidget {
                           ),
                         ),
                         const SizedBox(height: AppSpacing.s22),
+                        if (update != null) ...[
+                          UpdateCard(release: update),
+                          const SizedBox(height: AppSpacing.s10),
+                        ],
                         if (planned == 0 && plan?.unit == null)
                           const EmptyState(
                             message:

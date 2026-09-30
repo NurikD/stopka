@@ -16,6 +16,7 @@ import '../../core/widgets/ghost_button.dart';
 import '../../core/widgets/labeled_field.dart';
 import '../../core/widgets/primary_button.dart';
 import '../../core/widgets/segmented_choice.dart';
+import '../update/update_screen.dart';
 
 /// Known Gemini flash model ids as of the last documentation check
 /// (ai.google.dev/gemini-api/docs/models, checked 2026-09-23). Re-verify
@@ -45,6 +46,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   String _model = defaultGeminiModel;
   bool _loading = true;
   bool _saving = false;
+  bool _checkingUpdate = false;
   _KeyCheckStatus _checkStatus = _KeyCheckStatus.idle;
   String? _checkErrorMessage;
   int _requestsToday = 0;
@@ -351,8 +353,44 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
             ),
           ],
+          if (ref.watch(updateServiceProvider).supported) ...[
+            const SizedBox(height: AppSpacing.s10),
+            AppCard(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'версия ${ref.watch(appVersionProvider).value ?? '…'}',
+                      style: AppTypography.monoMeta.copyWith(color: colors.muted),
+                    ),
+                  ),
+                  GhostButton(
+                    label: _checkingUpdate ? 'Проверяю…' : 'Проверить обновления',
+                    onPressed: _checkingUpdate ? null : _checkUpdate,
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
+    );
+  }
+
+  Future<void> _checkUpdate() async {
+    setState(() => _checkingUpdate = true);
+    ref.invalidate(availableUpdateProvider);
+    final release = await ref.read(availableUpdateProvider.future);
+    if (!mounted) return;
+    setState(() => _checkingUpdate = false);
+    if (release == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Установлена последняя версия.')),
+      );
+      return;
+    }
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => UpdateScreen(release: release)),
     );
   }
 

@@ -51,6 +51,8 @@ import '../srs/srs_engine.dart';
 import '../srs/srs_settings_store.dart';
 import '../theme/theme_mode_store.dart';
 import '../tts/tts_service.dart';
+import '../update/app_release.dart';
+import '../update/update_service.dart';
 
 final appDatabaseProvider = Provider<AppDatabase>((ref) {
   final db = AppDatabase();
@@ -257,6 +259,21 @@ final reviewsTodayProvider = FutureProvider.autoDispose<int>((ref) {
   return ref.watch(cardStateRepositoryProvider).countReviewsSince(DateTime(now.year, now.month, now.day));
 });
 
+
+// --- App updates -------------------------------------------------------------
+
+final updateServiceProvider = Provider<UpdateService>((ref) => UpdateService());
+
+/// A newer release to offer, checked once per start (and again on demand by
+/// invalidating). Null when up to date, offline, or not on Android.
+final availableUpdateProvider = FutureProvider<AppRelease?>((ref) async {
+  final service = ref.watch(updateServiceProvider);
+  if (!service.supported) return null;
+  final release = await service.check(await ref.watch(appVersionProvider.future));
+  // Up to date: an APK downloaded for this or an older version is just junk.
+  if (release == null) await service.clearDownloads();
+  return release;
+});
 
 // --- Server (devices) -------------------------------------------------------
 
