@@ -2854,6 +2854,18 @@ class $CardsTable extends Cards with TableInfo<$CardsTable, CardRow> {
     requiredDuringInsert: false,
     defaultValue: const Constant('[]'),
   );
+  static const VerificationMeta _exampleTranslationsMeta =
+      const VerificationMeta('exampleTranslations');
+  @override
+  late final GeneratedColumn<String> exampleTranslations =
+      GeneratedColumn<String>(
+        'example_translations',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant('[]'),
+      );
   static const VerificationMeta _noteMeta = const VerificationMeta('note');
   @override
   late final GeneratedColumn<String> note = GeneratedColumn<String>(
@@ -2889,6 +2901,7 @@ class $CardsTable extends Cards with TableInfo<$CardsTable, CardRow> {
     transcription,
     partOfSpeech,
     examples,
+    exampleTranslations,
     note,
     imageRef,
   ];
@@ -2990,6 +3003,15 @@ class $CardsTable extends Cards with TableInfo<$CardsTable, CardRow> {
         examples.isAcceptableOrUnknown(data['examples']!, _examplesMeta),
       );
     }
+    if (data.containsKey('example_translations')) {
+      context.handle(
+        _exampleTranslationsMeta,
+        exampleTranslations.isAcceptableOrUnknown(
+          data['example_translations']!,
+          _exampleTranslationsMeta,
+        ),
+      );
+    }
     if (data.containsKey('note')) {
       context.handle(
         _noteMeta,
@@ -3059,6 +3081,10 @@ class $CardsTable extends Cards with TableInfo<$CardsTable, CardRow> {
         DriftSqlType.string,
         data['${effectivePrefix}examples'],
       )!,
+      exampleTranslations: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}example_translations'],
+      )!,
       note: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}note'],
@@ -3091,6 +3117,10 @@ class CardRow extends DataClass implements Insertable<CardRow> {
 
   /// JSON-encoded list of example sentence strings.
   final String examples;
+
+  /// JSON-encoded Russian translations of [examples], same order; what turns
+  /// an example into a phrase card.
+  final String exampleTranslations;
   final String note;
   final String? imageRef;
   const CardRow({
@@ -3106,6 +3136,7 @@ class CardRow extends DataClass implements Insertable<CardRow> {
     required this.transcription,
     required this.partOfSpeech,
     required this.examples,
+    required this.exampleTranslations,
     required this.note,
     this.imageRef,
   });
@@ -3128,6 +3159,7 @@ class CardRow extends DataClass implements Insertable<CardRow> {
     map['transcription'] = Variable<String>(transcription);
     map['part_of_speech'] = Variable<String>(partOfSpeech);
     map['examples'] = Variable<String>(examples);
+    map['example_translations'] = Variable<String>(exampleTranslations);
     map['note'] = Variable<String>(note);
     if (!nullToAbsent || imageRef != null) {
       map['image_ref'] = Variable<String>(imageRef);
@@ -3153,6 +3185,7 @@ class CardRow extends DataClass implements Insertable<CardRow> {
       transcription: Value(transcription),
       partOfSpeech: Value(partOfSpeech),
       examples: Value(examples),
+      exampleTranslations: Value(exampleTranslations),
       note: Value(note),
       imageRef: imageRef == null && nullToAbsent
           ? const Value.absent()
@@ -3178,6 +3211,9 @@ class CardRow extends DataClass implements Insertable<CardRow> {
       transcription: serializer.fromJson<String>(json['transcription']),
       partOfSpeech: serializer.fromJson<String>(json['partOfSpeech']),
       examples: serializer.fromJson<String>(json['examples']),
+      exampleTranslations: serializer.fromJson<String>(
+        json['exampleTranslations'],
+      ),
       note: serializer.fromJson<String>(json['note']),
       imageRef: serializer.fromJson<String?>(json['imageRef']),
     );
@@ -3198,6 +3234,7 @@ class CardRow extends DataClass implements Insertable<CardRow> {
       'transcription': serializer.toJson<String>(transcription),
       'partOfSpeech': serializer.toJson<String>(partOfSpeech),
       'examples': serializer.toJson<String>(examples),
+      'exampleTranslations': serializer.toJson<String>(exampleTranslations),
       'note': serializer.toJson<String>(note),
       'imageRef': serializer.toJson<String?>(imageRef),
     };
@@ -3216,6 +3253,7 @@ class CardRow extends DataClass implements Insertable<CardRow> {
     String? transcription,
     String? partOfSpeech,
     String? examples,
+    String? exampleTranslations,
     String? note,
     Value<String?> imageRef = const Value.absent(),
   }) => CardRow(
@@ -3231,6 +3269,7 @@ class CardRow extends DataClass implements Insertable<CardRow> {
     transcription: transcription ?? this.transcription,
     partOfSpeech: partOfSpeech ?? this.partOfSpeech,
     examples: examples ?? this.examples,
+    exampleTranslations: exampleTranslations ?? this.exampleTranslations,
     note: note ?? this.note,
     imageRef: imageRef.present ? imageRef.value : this.imageRef,
   );
@@ -3254,6 +3293,9 @@ class CardRow extends DataClass implements Insertable<CardRow> {
           ? data.partOfSpeech.value
           : this.partOfSpeech,
       examples: data.examples.present ? data.examples.value : this.examples,
+      exampleTranslations: data.exampleTranslations.present
+          ? data.exampleTranslations.value
+          : this.exampleTranslations,
       note: data.note.present ? data.note.value : this.note,
       imageRef: data.imageRef.present ? data.imageRef.value : this.imageRef,
     );
@@ -3274,6 +3316,7 @@ class CardRow extends DataClass implements Insertable<CardRow> {
           ..write('transcription: $transcription, ')
           ..write('partOfSpeech: $partOfSpeech, ')
           ..write('examples: $examples, ')
+          ..write('exampleTranslations: $exampleTranslations, ')
           ..write('note: $note, ')
           ..write('imageRef: $imageRef')
           ..write(')'))
@@ -3294,6 +3337,7 @@ class CardRow extends DataClass implements Insertable<CardRow> {
     transcription,
     partOfSpeech,
     examples,
+    exampleTranslations,
     note,
     imageRef,
   );
@@ -3313,6 +3357,7 @@ class CardRow extends DataClass implements Insertable<CardRow> {
           other.transcription == this.transcription &&
           other.partOfSpeech == this.partOfSpeech &&
           other.examples == this.examples &&
+          other.exampleTranslations == this.exampleTranslations &&
           other.note == this.note &&
           other.imageRef == this.imageRef);
 }
@@ -3330,6 +3375,7 @@ class CardsCompanion extends UpdateCompanion<CardRow> {
   final Value<String> transcription;
   final Value<String> partOfSpeech;
   final Value<String> examples;
+  final Value<String> exampleTranslations;
   final Value<String> note;
   final Value<String?> imageRef;
   final Value<int> rowid;
@@ -3346,6 +3392,7 @@ class CardsCompanion extends UpdateCompanion<CardRow> {
     this.transcription = const Value.absent(),
     this.partOfSpeech = const Value.absent(),
     this.examples = const Value.absent(),
+    this.exampleTranslations = const Value.absent(),
     this.note = const Value.absent(),
     this.imageRef = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -3363,6 +3410,7 @@ class CardsCompanion extends UpdateCompanion<CardRow> {
     this.transcription = const Value.absent(),
     this.partOfSpeech = const Value.absent(),
     this.examples = const Value.absent(),
+    this.exampleTranslations = const Value.absent(),
     this.note = const Value.absent(),
     this.imageRef = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -3383,6 +3431,7 @@ class CardsCompanion extends UpdateCompanion<CardRow> {
     Expression<String>? transcription,
     Expression<String>? partOfSpeech,
     Expression<String>? examples,
+    Expression<String>? exampleTranslations,
     Expression<String>? note,
     Expression<String>? imageRef,
     Expression<int>? rowid,
@@ -3400,6 +3449,8 @@ class CardsCompanion extends UpdateCompanion<CardRow> {
       if (transcription != null) 'transcription': transcription,
       if (partOfSpeech != null) 'part_of_speech': partOfSpeech,
       if (examples != null) 'examples': examples,
+      if (exampleTranslations != null)
+        'example_translations': exampleTranslations,
       if (note != null) 'note': note,
       if (imageRef != null) 'image_ref': imageRef,
       if (rowid != null) 'rowid': rowid,
@@ -3419,6 +3470,7 @@ class CardsCompanion extends UpdateCompanion<CardRow> {
     Value<String>? transcription,
     Value<String>? partOfSpeech,
     Value<String>? examples,
+    Value<String>? exampleTranslations,
     Value<String>? note,
     Value<String?>? imageRef,
     Value<int>? rowid,
@@ -3436,6 +3488,7 @@ class CardsCompanion extends UpdateCompanion<CardRow> {
       transcription: transcription ?? this.transcription,
       partOfSpeech: partOfSpeech ?? this.partOfSpeech,
       examples: examples ?? this.examples,
+      exampleTranslations: exampleTranslations ?? this.exampleTranslations,
       note: note ?? this.note,
       imageRef: imageRef ?? this.imageRef,
       rowid: rowid ?? this.rowid,
@@ -3481,6 +3534,9 @@ class CardsCompanion extends UpdateCompanion<CardRow> {
     if (examples.present) {
       map['examples'] = Variable<String>(examples.value);
     }
+    if (exampleTranslations.present) {
+      map['example_translations'] = Variable<String>(exampleTranslations.value);
+    }
     if (note.present) {
       map['note'] = Variable<String>(note.value);
     }
@@ -3508,6 +3564,7 @@ class CardsCompanion extends UpdateCompanion<CardRow> {
           ..write('transcription: $transcription, ')
           ..write('partOfSpeech: $partOfSpeech, ')
           ..write('examples: $examples, ')
+          ..write('exampleTranslations: $exampleTranslations, ')
           ..write('note: $note, ')
           ..write('imageRef: $imageRef, ')
           ..write('rowid: $rowid')
@@ -12536,6 +12593,7 @@ typedef $$CardsTableCreateCompanionBuilder = CardsCompanion Function({
   Value<String> transcription,
   Value<String> partOfSpeech,
   Value<String> examples,
+  Value<String> exampleTranslations,
   Value<String> note,
   Value<String?> imageRef,
   Value<int> rowid,
@@ -12553,6 +12611,7 @@ typedef $$CardsTableUpdateCompanionBuilder = CardsCompanion Function({
   Value<String> transcription,
   Value<String> partOfSpeech,
   Value<String> examples,
+  Value<String> exampleTranslations,
   Value<String> note,
   Value<String?> imageRef,
   Value<int> rowid,
@@ -12678,6 +12737,11 @@ class $$CardsTableFilterComposer extends Composer<_$AppDatabase, $CardsTable> {
 
   ColumnFilters<String> get examples => $composableBuilder(
     column: $table.examples,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get exampleTranslations => $composableBuilder(
+    column: $table.exampleTranslations,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -12829,6 +12893,11 @@ class $$CardsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get exampleTranslations => $composableBuilder(
+    column: $table.exampleTranslations,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get note => $composableBuilder(
     column: $table.note,
     builder: (column) => ColumnOrderings(column),
@@ -12910,6 +12979,11 @@ class $$CardsTableAnnotationComposer
 
   GeneratedColumn<String> get examples =>
       $composableBuilder(column: $table.examples, builder: (column) => column);
+
+  GeneratedColumn<String> get exampleTranslations => $composableBuilder(
+    column: $table.exampleTranslations,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get note =>
       $composableBuilder(column: $table.note, builder: (column) => column);
@@ -13035,6 +13109,7 @@ class $$CardsTableTableManager
                 Value<String> transcription = const Value.absent(),
                 Value<String> partOfSpeech = const Value.absent(),
                 Value<String> examples = const Value.absent(),
+                Value<String> exampleTranslations = const Value.absent(),
                 Value<String> note = const Value.absent(),
                 Value<String?> imageRef = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -13051,6 +13126,7 @@ class $$CardsTableTableManager
                 transcription: transcription,
                 partOfSpeech: partOfSpeech,
                 examples: examples,
+                exampleTranslations: exampleTranslations,
                 note: note,
                 imageRef: imageRef,
                 rowid: rowid,
@@ -13069,6 +13145,7 @@ class $$CardsTableTableManager
                 Value<String> transcription = const Value.absent(),
                 Value<String> partOfSpeech = const Value.absent(),
                 Value<String> examples = const Value.absent(),
+                Value<String> exampleTranslations = const Value.absent(),
                 Value<String> note = const Value.absent(),
                 Value<String?> imageRef = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -13085,6 +13162,7 @@ class $$CardsTableTableManager
                 transcription: transcription,
                 partOfSpeech: partOfSpeech,
                 examples: examples,
+                exampleTranslations: exampleTranslations,
                 note: note,
                 imageRef: imageRef,
                 rowid: rowid,

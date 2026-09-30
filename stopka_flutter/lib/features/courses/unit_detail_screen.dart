@@ -18,6 +18,7 @@ import '../dictation/dictation_setup_screen.dart';
 import '../pack/pack_screen.dart';
 import 'add_words/add_words_screen.dart';
 import 'card_form_sheet.dart';
+import 'phrases_card.dart';
 
 class UnitDetailScreen extends ConsumerStatefulWidget {
   final String courseId;
@@ -46,10 +47,12 @@ class _UnitDetailScreenState extends ConsumerState<UnitDetailScreen> {
 
   Future<void> _bootstrap() async {
     final unit = await ref.read(unitRepositoryProvider).getUnit(widget.unitId);
-    final sets = await ref
-        .read(wordSetRepositoryProvider)
-        .watchWordSets(unitId: widget.unitId)
-        .first;
+    final sets = (await ref
+            .read(wordSetRepositoryProvider)
+            .watchWordSets(unitId: widget.unitId)
+            .first)
+        .where((s) => s.source != WordSetSource.phrases)
+        .toList();
     String setId;
     if (sets.isNotEmpty) {
       setId = sets.first.id;
@@ -111,6 +114,16 @@ class _UnitDetailScreenState extends ConsumerState<UnitDetailScreen> {
                 ),
                 child: PackEntryCard(unitId: widget.unitId),
               ),
+              if (unit != null && allCards.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.screen,
+                    AppSpacing.s10,
+                    AppSpacing.screen,
+                    0,
+                  ),
+                  child: PhrasesCard(unit: unit),
+                ),
               Expanded(
                 child: snapshot.connectionState == ConnectionState.waiting
                     ? const Center(child: CircularProgressIndicator())

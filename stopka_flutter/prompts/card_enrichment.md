@@ -14,7 +14,13 @@ For each entry:
   "прилагательное", "наречие", "фраза", etc.
 - `examples` — 1 to 2 original example sentences in English, written at
   the student's course level, naturally using the word. Do not quote or
-  paraphrase textbook material — write fresh sentences.
+  paraphrase textbook material — write fresh sentences. Each is a complete
+  sentence of 5-12 words ending with a full stop, question or exclamation
+  mark: the learner will translate it back from Russian, so keep it
+  natural and unambiguous.
+- `examplesRu` — the Russian translation of each example, same order, one
+  per example. Translate the meaning naturally, not word by word, so that
+  the English example is the most obvious way back.
 
 Words to enrich:
 {{words}}
@@ -33,6 +39,10 @@ or after. Match this shape exactly, one entry per input word, same order:
       "examples": [
         "She achieved her goal after years of hard work.",
         "We finally achieved a good result in the project."
+      ],
+      "examplesRu": [
+        "Она достигла своей цели после многих лет упорного труда.",
+        "Мы наконец добились хорошего результата в проекте."
       ]
     }
   ]

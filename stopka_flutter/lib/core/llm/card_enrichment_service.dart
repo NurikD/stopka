@@ -15,12 +15,18 @@ class EnrichedCard {
   final String partOfSpeech;
   final List<String> examples;
 
+  /// Russian translations of [examples], same order. Empty when the model
+  /// left them out; a count that does not match [examples] is dropped, since
+  /// a shifted translation would teach the wrong sentence.
+  final List<String> examplesRu;
+
   const EnrichedCard({
     required this.term,
     required this.translation,
     required this.transcription,
     required this.partOfSpeech,
     required this.examples,
+    this.examplesRu = const [],
   });
 
   Map<String, dynamic> toJson() => {
@@ -29,17 +35,20 @@ class EnrichedCard {
     'transcription': transcription,
     'partOfSpeech': partOfSpeech,
     'examples': examples,
+    'examplesRu': examplesRu,
   };
 
   factory EnrichedCard.fromJson(Map<String, dynamic> json) {
+    List<String> strings(Object? v) => ((v as List?) ?? const []).map((e) => e.toString().trim()).toList();
+    final examples = strings(json['examples']);
+    final examplesRu = strings(json['examplesRu']);
     return EnrichedCard(
       term: (json['term'] as String? ?? '').trim(),
       translation: (json['translation'] as String? ?? '').trim(),
       transcription: (json['transcription'] as String? ?? '').trim(),
       partOfSpeech: (json['partOfSpeech'] as String? ?? '').trim(),
-      examples: ((json['examples'] as List?) ?? const [])
-          .map((e) => e.toString())
-          .toList(),
+      examples: examples,
+      examplesRu: examplesRu.length == examples.length ? examplesRu : const [],
     );
   }
 }
@@ -154,7 +163,8 @@ class CardEnrichmentService {
     String grammarTopic,
     String vocabTopic,
   ) {
-    final key = '${term.toLowerCase()}|$level|$grammarTopic|$vocabTopic';
+    // v2: cards cached before examples had translations are asked again.
+    final key = 'v2|${term.toLowerCase()}|$level|$grammarTopic|$vocabTopic';
     return sha256.convert(utf8.encode(key)).toString();
   }
 }

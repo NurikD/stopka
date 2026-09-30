@@ -14,6 +14,7 @@ import '../../core/widgets/app_header_bar.dart';
 import '../../core/widgets/diff_row.dart';
 import '../../core/widgets/dictation_field.dart';
 import '../../core/widgets/ghost_button.dart';
+import '../../core/widgets/listen_prompt.dart';
 import '../../core/widgets/primary_button.dart';
 import '../../core/widgets/stacked_card.dart';
 import '../../core/widgets/sticky_action_bar.dart';
@@ -97,17 +98,30 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
       _index = 0;
       _phase = items.isEmpty ? _Phase.done : _Phase.reviewing;
     });
+    _speakIfAudio();
   }
 
   _QueueItem get _current => _queue[_index];
 
-  bool get _ruToEn => _current.state.direction == DictationDirection.ruEn;
+  DictationDirection get _direction => _current.state.direction;
 
-  String get _prompt =>
-      _ruToEn ? _current.card.translation : _current.card.term;
+  /// The answer is English: typed letter by letter, shown as a diff.
+  bool get _answersInEnglish => _direction.answersInEnglish;
 
-  String get _answer =>
-      _ruToEn ? _current.card.term : _current.card.translation;
+  String get _prompt => _direction.promptOf(
+    term: _current.card.term,
+    translation: _current.card.translation,
+  );
+
+  String get _answer => _direction.answerOf(
+    term: _current.card.term,
+    translation: _current.card.translation,
+  );
+
+  void _speakIfAudio({bool slow = false}) {
+    if (_phase != _Phase.reviewing || !_direction.isAudio) return;
+    ref.read(ttsServiceProvider).speak(_current.card.term, slow: slow);
+  }
 
   Future<void> _appeal() async {
     final messenger = ScaffoldMessenger.of(context);
@@ -183,6 +197,7 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
         _phase = _Phase.done;
       }
     });
+    _speakIfAudio();
   }
 
   engine.SrsSnapshot _toEngineSnapshot(domain.CardState s) {
@@ -270,11 +285,18 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
           layers: layers,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.s22),
-            child: Text(
-              _prompt,
-              textAlign: TextAlign.center,
-              style: promptStyle(!_ruToEn).copyWith(color: colors.ink),
-            ),
+            child: _direction.isAudio
+                ? ListenPrompt(
+                    onPlay: _speakIfAudio,
+                    onPlaySlow: () => _speakIfAudio(slow: true),
+                  )
+                : Text(
+                    _prompt,
+                    textAlign: TextAlign.center,
+                    style: promptStyle(
+                      _direction == DictationDirection.enRu,
+                    ).copyWith(color: colors.ink),
+                  ),
           ),
         ),
         const SizedBox(height: AppSpacing.s22),
@@ -313,17 +335,25 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
       children: [
         Text(label, style: AppTypography.label.copyWith(color: color)),
         const SizedBox(height: AppSpacing.s10),
-        if (!accepted && _ruToEn && input.isNotEmpty)
+        if (!accepted && _answersInEnglish && input.isNotEmpty)
           DiffRow(user: input, correct: correct)
         else
           Text(
             correct,
             style:
-                (_ruToEn
+                (_answersInEnglish
                         ? AppTypography.monoWord.copyWith(fontSize: 26)
                         : AppTypography.heading)
                     .copyWith(color: colors.ink),
           ),
+        // By ear the meaning was never on screen; show it with the result.
+        if (_direction.isAudio && _current.card.translation.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.s8),
+          Text(
+            _current.card.translation,
+            style: AppTypography.caption.copyWith(color: colors.muted),
+          ),
+        ],
         if (_current.card.transcription.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.s8),
           Text(
@@ -354,8 +384,9 @@ class _SrsReviewScreenState extends ConsumerState<SrsReviewScreen> {
         ],
       );
     }
+    // Only a Russian answer can be worded another right way.
     final canOverrule =
-        !_ruToEn &&
+        !_answersInEnglish &&
         !_appealed &&
         !_overruled &&
         verdict != DictationVerdict.correct;

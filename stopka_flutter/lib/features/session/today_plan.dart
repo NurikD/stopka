@@ -8,6 +8,7 @@ import '../../core/srs/srs_queue.dart';
 import '../../data/repositories/session_stats_repository_impl.dart';
 import '../../domain/models/unit.dart';
 import '../../domain/models/unit_pack.dart';
+import '../../domain/models/word_set.dart';
 import '../../domain/repositories/session_stats_repository.dart';
 import '../pack/pack_context.dart';
 
@@ -86,7 +87,11 @@ final todayPlanProvider = FutureProvider.autoDispose<TodayPlan?>((ref) async {
         .watch(wordSetRepositoryProvider)
         .watchWordSets(unitId: unit.id)
         .first;
-    final setId = sets.isEmpty ? null : sets.first.id;
+    // The words of the unit; its phrase set is not "new words".
+    final setId = sets
+        .where((s) => s.source != WordSetSource.phrases)
+        .firstOrNull
+        ?.id;
     final unlearned = setId == null
         ? 0
         : await ref

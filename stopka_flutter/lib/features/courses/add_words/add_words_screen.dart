@@ -122,6 +122,7 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
             transcription: e.transcription,
             partOfSpeech: e.partOfSpeech,
             examples: e.examples,
+            exampleTranslations: e.examplesRu,
           ));
     }).catchError((_) {
       // The word is already saved with whatever the user typed; a failed
@@ -246,6 +247,7 @@ class _AddWordsScreenState extends ConsumerState<AddWordsScreen> {
               transcription: e.transcription,
               partOfSpeech: e.partOfSpeech,
               examples: e.examples,
+              exampleTranslations: e.examplesRu,
             ));
       }
     } on LlmException catch (e) {

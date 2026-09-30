@@ -1,4 +1,5 @@
-enum WordSetSource { manual, paste, photo }
+/// [phrases]: the unit's phrase cards, built from the examples of its words.
+enum WordSetSource { manual, paste, photo, phrases }
 
 class WordSet {
   final String id;

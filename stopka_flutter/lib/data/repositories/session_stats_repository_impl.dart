@@ -15,8 +15,12 @@ class DriftSessionStatsRepository implements SessionStatsRepository {
   Future<int> unlearnedCardCount(String setId) async {
     final cards = await (_db.select(_db.cards)..where((t) => t.setId.equals(setId) & t.deletedAt.isNull())).get();
     if (cards.isEmpty) return 0;
+    // Only a written dictation counts: a word heard by ear still needs one.
     final touched = await (_db.select(_db.cardStates)
-          ..where((t) => t.cardId.isIn(cards.map((c) => c.id)) & t.deletedAt.isNull()))
+          ..where((t) =>
+              t.cardId.isIn(cards.map((c) => c.id)) &
+              t.deletedAt.isNull() &
+              t.direction.equalsValue(db.DictationDirection.listen).not()))
         .get();
     final touchedIds = touched.map((s) => s.cardId).toSet();
     return cards.where((c) => !touchedIds.contains(c.id)).length;

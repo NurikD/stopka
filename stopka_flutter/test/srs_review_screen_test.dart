@@ -8,6 +8,7 @@ import 'fixed_ai_availability.dart';
 
 import 'package:stopka/core/srs/srs_settings_store.dart';
 import 'package:stopka/core/theme/app_theme.dart';
+import 'package:stopka/core/tts/tts_service.dart';
 import 'package:stopka/domain/models/card_state.dart';
 import 'package:stopka/domain/models/dictation_session.dart';
 import 'package:stopka/domain/models/word_card.dart';
@@ -49,6 +50,15 @@ class _FakeAppeal implements AnswerAppealService {
       explanationRu: accepted ? 'Тоже верно.' : 'Не подходит по смыслу.',
     );
   }
+}
+
+class _FakeTts extends TtsService {
+  final List<String> spoken = [];
+
+  _FakeTts() : super(read: (_) async => null, write: (_, _) async {});
+
+  @override
+  Future<void> speak(String text, {bool slow = false}) async => spoken.add(text);
 }
 
 class _FakeSrsSettingsStore extends SrsSettingsStore {
@@ -334,6 +344,53 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(stateRepo.logged.single.rating, ReviewRating.again);
+    },
+  );
+
+  testWidgets(
+    'a card due by ear plays the word, hides it, and checks the English spelling',
+    (tester) async {
+      final tts = _FakeTts();
+      final state = CardState(
+        id: 's1',
+        cardId: 'c1',
+        direction: DictationDirection.listen,
+        due: DateTime.now().toUtc(),
+        reps: 0,
+        lapses: 0,
+        state: SrsState.learning,
+      );
+      final stateRepo = _FakeCardStateRepository(fresh: [state]);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            wordCardRepositoryProvider.overrideWithValue(
+              _FakeWordCardRepository([_card('c1', 'achieve', 'достигать')]),
+            ),
+            cardStateRepositoryProvider.overrideWithValue(stateRepo),
+            srsSettingsStoreProvider.overrideWithValue(_FakeSrsSettingsStore()),
+            ttsServiceProvider.overrideWithValue(tts),
+          ],
+          child: MaterialApp(
+            theme: AppTheme.dark(),
+            home: const SrsReviewScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(tts.spoken, ['achieve']);
+      expect(find.text('achieve'), findsNothing);
+      expect(find.text('достигать'), findsNothing);
+
+      await _answer(tester, 'acheive');
+      expect(find.text('Почти, опечатка'), findsOneWidget);
+      expect(find.text('достигать'), findsOneWidget);
+      expect(find.text('Мой ответ тоже верный?'), findsNothing);
+      await tester.tap(find.text('Дальше'));
+      await tester.pumpAndSettle();
+
+      expect(stateRepo.logged.single.rating, ReviewRating.hard);
     },
   );
 
