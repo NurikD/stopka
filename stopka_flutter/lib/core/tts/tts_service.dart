@@ -76,7 +76,7 @@ class TtsService {
       final match = voices.where((v) => v.name == voice).firstOrNull;
       if (match != null) await _tts.setVoice({'name': match.name, 'locale': match.locale});
     }
-    await _tts.setSpeechRate(0.42);
+    await _tts.setSpeechRate(wordRate);
     await _tts.setPitch(1.0);
     _configured = true;
   }
@@ -120,10 +120,16 @@ class TtsService {
     await _tts.stop();
   }
 
-  Future<void> speak(String text) async {
+  /// Speech rates for single words and phrases: the normal one, and the slow
+  /// one for listening dictation, where every sound has to be caught.
+  static const double wordRate = 0.42;
+  static const double slowWordRate = 0.25;
+
+  Future<void> speak(String text, {bool slow = false}) async {
     if (text.trim().isEmpty) return;
     await _ensureConfigured();
     await _tts.stop();
+    await _tts.setSpeechRate(slow ? slowWordRate : wordRate);
     await _tts.speak(text);
   }
 }

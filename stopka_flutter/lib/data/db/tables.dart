@@ -99,7 +99,8 @@ class DictationSessions extends Table with SyncColumns {
   late final requiredStreak = integer().withDefault(const Constant(1))();
 }
 
-enum DictationDirection { ruEn, enRu }
+// Stored by name, so a new value needs no migration.
+enum DictationDirection { ruEn, enRu, listen }
 
 enum DictationVerdictColumn { correct, typo, wrong, skipped }
 

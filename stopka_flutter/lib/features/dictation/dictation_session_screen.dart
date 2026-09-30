@@ -15,6 +15,7 @@ import '../../core/widgets/app_header_bar.dart';
 import '../../core/widgets/diff_row.dart';
 import '../../core/widgets/dictation_field.dart';
 import '../../core/widgets/ghost_button.dart';
+import '../../core/widgets/listen_prompt.dart';
 import '../../core/widgets/primary_button.dart';
 import '../../core/widgets/stack_progress.dart';
 import '../../core/widgets/stacked_card.dart';
@@ -71,13 +72,12 @@ class DictationSessionScreen extends ConsumerStatefulWidget {
     List<WordCard> cards,
     DictationDirection direction,
   ) {
-    final ruToEn = direction == DictationDirection.ruEn;
     return cards
         .map(
           (c) => DictationWord(
             cardId: c.id,
-            prompt: ruToEn ? c.translation : c.term,
-            correctAnswer: ruToEn ? c.term : c.translation,
+            prompt: direction.promptOf(term: c.term, translation: c.translation),
+            correctAnswer: direction.answerOf(term: c.term, translation: c.translation),
           ),
         )
         .where((w) => w.prompt.isNotEmpty && w.correctAnswer.isNotEmpty)
@@ -161,9 +161,16 @@ class _DictationSessionScreenState
       _phase = _Phase.playing;
       _inputController.clear();
     });
+    _speakCurrent();
   }
 
   DictationWord get _currentWord => _stack[_index];
+
+  /// By ear, every new word is heard as soon as it is shown.
+  void _speakCurrent({bool slow = false}) {
+    if (!widget.direction.isAudio || _stack.isEmpty) return;
+    ref.read(ttsServiceProvider).speak(_currentWord.prompt, slow: slow);
+  }
 
   Future<void> _submit({required bool skipped}) async {
     final userInput = skipped ? '' : _inputController.text;
@@ -229,6 +236,7 @@ class _DictationSessionScreenState
         _inputController.clear();
         _phase = _Phase.playing;
       });
+      _speakCurrent();
     } else {
       setState(() => _phase = _Phase.stackReview);
     }
@@ -350,7 +358,11 @@ class _DictationSessionScreenState
 
   /// "ru → en · глагол" — direction plus the card's part of speech.
   String _promptMeta() {
-    final direction = _promptIsEnglish ? 'en → ru' : 'ru → en';
+    final direction = switch (widget.direction) {
+      DictationDirection.ruEn => 'ru → en',
+      DictationDirection.enRu => 'en → ru',
+      DictationDirection.listen => 'на слух',
+    };
     final pos = _cardsById[_currentWord.cardId]?.partOfSpeech ?? '';
     return pos.isEmpty ? direction : '$direction · $pos';
   }
@@ -433,10 +445,16 @@ class _DictationSessionScreenState
                             ),
                           ),
                           const SizedBox(height: AppSpacing.s14),
-                          Text(
-                            _currentWord.prompt,
-                            style: promptStyle.copyWith(color: colors.ink),
-                          ),
+                          if (widget.direction.isAudio)
+                            ListenPrompt(
+                              onPlay: _speakCurrent,
+                              onPlaySlow: () => _speakCurrent(slow: true),
+                            )
+                          else
+                            Text(
+                              _currentWord.prompt,
+                              style: promptStyle.copyWith(color: colors.ink),
+                            ),
                           if (_hint.isNotEmpty) ...[
                             const SizedBox(height: AppSpacing.s8),
                             Text(
@@ -506,6 +524,15 @@ class _DictationSessionScreenState
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(label, style: AppTypography.heading.copyWith(color: color)),
+        // By ear the meaning was never on screen; show it with the result.
+        if (widget.direction.isAudio &&
+            (_cardsById[answer.word.cardId]?.translation ?? '').isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.s4),
+          Text(
+            _cardsById[answer.word.cardId]!.translation,
+            style: AppTypography.caption.copyWith(color: colors.muted),
+          ),
+        ],
         if (answer.verdict != DictationVerdict.correct) ...[
           const SizedBox(height: AppSpacing.s14),
           AppCard(
@@ -594,7 +621,10 @@ class _DictationSessionScreenState
             children: [
               Expanded(
                 child: Text(
-                  a.word.prompt,
+                  // By ear the prompt is the English word itself.
+                  widget.direction.isAudio
+                      ? (card?.translation ?? '')
+                      : a.word.prompt,
                   style: AppTypography.caption.copyWith(color: colors.muted),
                 ),
               ),
@@ -615,8 +645,10 @@ class _DictationSessionScreenState
             ],
           ),
           DiffRow(user: a.userInput, correct: correct),
-          if (a.verdict == DictationVerdict.wrong ||
-              a.verdict == DictationVerdict.typo)
+          // Spelling by ear has one right answer: nothing to appeal.
+          if (!widget.direction.isAudio &&
+              (a.verdict == DictationVerdict.wrong ||
+                  a.verdict == DictationVerdict.typo))
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton(

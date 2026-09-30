@@ -167,11 +167,19 @@ class _DictationSetupScreenState extends ConsumerState<DictationSetupScreen> {
             options: const [
               ChoiceOption(DictationDirection.ruEn, 'RU / EN'),
               ChoiceOption(DictationDirection.enRu, 'EN / RU'),
+              ChoiceOption(DictationDirection.listen, 'На слух'),
             ],
             selected: _direction,
             onChanged: (v) => setState(() => _direction = v),
           ),
         ),
+        if (_direction.isAudio) ...[
+          const SizedBox(height: AppSpacing.s8),
+          Text(
+            'Слово звучит голосом телефона — напишите его по-английски. Голос выбирается в профиле.',
+            style: AppTypography.caption.copyWith(color: context.colors.muted),
+          ),
+        ],
         const SizedBox(height: AppSpacing.s22),
         LabeledField(
           label: 'Слов в стопке',

@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:stopka/core/providers/core_providers.dart';
 import 'package:stopka/core/theme/app_theme.dart';
 import 'package:stopka/core/theme/tokens.dart';
+import 'package:stopka/core/tts/tts_service.dart';
 import 'package:stopka/domain/models/dictation_answer.dart';
 import 'package:stopka/domain/models/dictation_session.dart';
 import 'package:stopka/domain/models/word_card.dart';
@@ -121,7 +122,22 @@ class _FakeDictationRepository implements DictationRepository {
   Stream<List<DictationSession>> watchSessions(String setId) => throw UnimplementedError();
 }
 
+class _FakeTts extends TtsService {
+  final List<(String, bool)> spoken = [];
+
+  _FakeTts() : super(read: (_) async => null, write: (_, _) async {});
+
+  @override
+  Future<void> speak(String text, {bool slow = false}) async => spoken.add((text, slow));
+}
+
 void main() {
+  test('by ear, the prompt and the answer are both the English word', () {
+    final words = DictationSessionScreen.buildWords([_card('c1', 'achieve', 'достигать')], DictationDirection.listen);
+    expect(words.single.prompt, 'achieve');
+    expect(words.single.correctAnswer, 'achieve');
+  });
+
   testWidgets('a two-word session: one correct, one wrong, reaches stack review', (tester) async {
     final cardRepo = _FakeWordCardRepository([
       _card('c1', 'achieve', 'достигать'),
@@ -175,6 +191,54 @@ void main() {
     // The missed word is shown letter by letter in the diff.
     expect(find.text('goal', findRichText: true), findsOneWidget);
     expect(dictationRepo.recordedAnswers, 2);
+  });
+
+  testWidgets('by ear: the word is spoken, never shown, and typed back in English', (tester) async {
+    final tts = _FakeTts();
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          wordCardRepositoryProvider.overrideWithValue(_FakeWordCardRepository([
+            _card('c1', 'achieve', 'достигать'),
+            _card('c2', 'goal', 'цель'),
+          ])),
+          dictationRepositoryProvider.overrideWithValue(_FakeDictationRepository()),
+          ttsServiceProvider.overrideWithValue(tts),
+        ],
+        child: MaterialApp(
+          theme: AppTheme.dark(),
+          home: const DictationSessionScreen(
+            setId: 'set1',
+            direction: DictationDirection.listen,
+            stackSize: 12,
+            requiredStreak: 1,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(tts.spoken, [('achieve', false)]);
+    expect(find.text('achieve'), findsNothing);
+    expect(find.text('достигать'), findsNothing);
+
+    await tester.tap(find.text('Медленно'));
+    expect(tts.spoken.last, ('achieve', true));
+
+    await tester.enterText(find.byType(TextField), 'achieve');
+    await tester.tap(find.text('Проверить'));
+    await tester.pump();
+    expect(find.text('Верно'), findsOneWidget);
+    expect(find.text('достигать'), findsOneWidget); // the meaning comes with the result
+
+    await tester.pumpAndSettle(const Duration(seconds: 2));
+    expect(tts.spoken.last, ('goal', false)); // the next word plays by itself
+
+    await tester.enterText(find.byType(TextField), 'gol');
+    await tester.tap(find.text('Проверить'));
+    await tester.pumpAndSettle(const Duration(seconds: 2));
+    expect(find.text('1 из 2'), findsOneWidget);
+    expect(find.text('Мой ответ тоже верный?'), findsNothing); // spelling has nothing to appeal
   });
 
   testWidgets('pressing "Не знаю" records a skip without typing', (tester) async {
