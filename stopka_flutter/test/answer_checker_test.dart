@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:stopka/core/dictation/sentence_answer.dart';
 import 'package:stopka/core/dictation/answer_checker.dart';
 
 void main() {
@@ -234,6 +235,64 @@ void main() {
         AnswerChecker.check(userInput: 'banana', correctAnswer: 'achieve'),
         DictationVerdict.wrong,
       );
+    });
+  });
+
+  group('sentences', () {
+    DictationVerdict check(String input, String answer) => AnswerChecker.check(userInput: input, correctAnswer: answer);
+
+    test('case, punctuation and spacing do not matter', () {
+      expect(check('she has never been to london', 'She has never been to London.'), DictationVerdict.correct);
+      expect(check('Yes  I do', 'Yes, I do.'), DictationVerdict.correct);
+    });
+
+    test('a contraction and its full form are the same answer', () {
+      expect(check("I'm tired, I don't want to go.", 'I am tired, I do not want to go.'), DictationVerdict.correct);
+      expect(check('She will not come.', "She won't come."), DictationVerdict.correct);
+      expect(check('I cannot swim.', "I can't swim."), DictationVerdict.correct);
+    });
+
+    test("'s after a pronoun is either is or has", () {
+      expect(check("He's been there twice.", 'He has been there twice.'), DictationVerdict.correct);
+      expect(check("It's cold today.", 'It is cold today.'), DictationVerdict.correct);
+    });
+
+    test("a possessive 's is not a verb", () {
+      expect(check('Tom is car is red.', "Tom's car is red."), DictationVerdict.wrong);
+    });
+
+    test('a typo in one long word is "typo"', () {
+      expect(check('I have recieved your letter.', 'I have received your letter.'), DictationVerdict.typo);
+    });
+
+    test('a short grammar word has no tolerance', () {
+      expect(check('She have a dog.', 'She has a dog.'), DictationVerdict.wrong);
+    });
+
+    test('a missing, extra or swapped word is wrong', () {
+      expect(check('I been to Paris.', 'I have been to Paris.'), DictationVerdict.wrong);
+      expect(check('I have have been to Paris.', 'I have been to Paris.'), DictationVerdict.wrong);
+      expect(check('Have I been to Paris.', 'I have been to Paris.'), DictationVerdict.wrong);
+    });
+
+    test('too many typos is not knowing the sentence', () {
+      expect(check('Yesterday we visitd the museun.', 'Yesterday we visited the museum.'), DictationVerdict.wrong);
+    });
+
+    test('a sentence with a comma is one variant, alternatives still split on "/"', () {
+      expect(AnswerChecker.rawVariantsOf('Yes, I do.'), ['Yes, I do.']);
+      expect(check('I am fine.', "I'm fine. / I am OK."), DictationVerdict.correct);
+      expect(check('I am OK', "I'm fine. / I am OK."), DictationVerdict.correct);
+    });
+
+    test('short phrases keep the old word rules', () {
+      expect(check('look after', 'to look after'), DictationVerdict.correct);
+    });
+
+    test('the diff marks missing and wrong words, not letters', () {
+      final d = SentenceAnswer.diff(user: 'I been to Pariss.', correct: 'I have been to Paris.');
+      expect(d.user.where((w) => !w.$2).map((w) => w.$1), ['Pariss.']);
+      expect(d.correct.where((w) => !w.$2).map((w) => w.$1), ['have', 'Paris.']);
     });
   });
 }

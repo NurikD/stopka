@@ -1,3 +1,5 @@
+import 'sentence_answer.dart';
+
 enum DictationVerdict { correct, typo, wrong, skipped }
 
 /// Local, offline answer checking for the dictation mode — no AI call, so
@@ -14,9 +16,7 @@ class AnswerChecker {
   static String normalize(String input) {
     var s = input.trim().toLowerCase();
     s = s.replaceAll(RegExp(r'\s+'), ' ');
-    s = s.replaceAll(_apostrophes, "'");
-    s = s.replaceAll(_hyphens, '-');
-    s = s.replaceAll('ё', 'е');
+    s = foldTypography(s);
     if (s.startsWith('to ')) {
       s = s.substring(3);
     } else if (s.startsWith('the ')) {
@@ -26,6 +26,10 @@ class AnswerChecker {
     }
     return s.trim();
   }
+
+  /// Every apostrophe and dash look-alike onto one form, ё onto е.
+  static String foldTypography(String s) =>
+      s.replaceAll(_apostrophes, "'").replaceAll(_hyphens, '-').replaceAll('ё', 'е');
 
   /// A stored answer field may hold several acceptable variants separated
   /// by "/", ",", or ";" (e.g. "достигать / добиваться"). "/" and ";"
@@ -44,6 +48,11 @@ class AnswerChecker {
     for (final chunk in storedAnswer.split(RegExp(r'[/;]'))) {
       final trimmed = chunk.trim();
       if (trimmed.isEmpty) continue;
+      // "Yes, I do." is one sentence, not two synonyms.
+      if (SentenceAnswer.isSentence(trimmed)) {
+        result.add(trimmed);
+        continue;
+      }
 
       final commaParts = trimmed.split(',').map((p) => p.trim()).where((p) => p.isNotEmpty).toList();
       final isSynonymList = commaParts.length > 1 && commaParts.every((p) => _wordCount(p) <= 2);
@@ -83,23 +92,38 @@ class AnswerChecker {
   /// [userInput] must be non-empty — an explicit skip is a UI-level action,
   /// not something this checks for.
   static DictationVerdict check({required String userInput, required String correctAnswer}) {
+    final raw = rawVariantsOf(correctAnswer);
+    final sentences = raw.where(SentenceAnswer.isSentence).toList();
     final normalizedInput = normalize(userInput);
-    final variants = variantsOf(correctAnswer);
+    final variants = raw.where((v) => !SentenceAnswer.isSentence(v)).map(normalize).where((s) => s.isNotEmpty).toList();
 
     if (variants.contains(normalizedInput)) return DictationVerdict.correct;
 
-    for (final variant in variants) {
-      final maxDistance = _typoMaxDistanceFor(variant.length);
-      if (maxDistance == 0) continue;
-      final distance = _editDistance(
-        normalizedInput,
-        variant,
-        countSwapAsOneEdit: variant.length >= _swapFriendlyLength,
-      );
-      if (distance <= maxDistance) return DictationVerdict.typo;
+    var best = DictationVerdict.wrong;
+    for (final sentence in sentences) {
+      final verdict = SentenceAnswer.check(userInput: userInput, answer: sentence);
+      if (verdict == DictationVerdict.correct) return verdict;
+      if (verdict == DictationVerdict.typo) best = verdict;
     }
 
-    return DictationVerdict.wrong;
+    for (final variant in variants) {
+      if (isTypo(input: normalizedInput, expected: variant)) return DictationVerdict.typo;
+    }
+
+    return best;
+  }
+
+  /// [input] is within the typo tolerance of [expected] (both normalized),
+  /// but not equal to it.
+  static bool isTypo({required String input, required String expected}) {
+    final maxDistance = _typoMaxDistanceFor(expected.length);
+    if (maxDistance == 0) return false;
+    final distance = _editDistance(
+      input,
+      expected,
+      countSwapAsOneEdit: expected.length >= _swapFriendlyLength,
+    );
+    return distance > 0 && distance <= maxDistance;
   }
 
   /// From this length on, swapping two neighbouring letters (recieve ->
