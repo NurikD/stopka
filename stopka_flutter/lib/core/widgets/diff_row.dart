@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../dictation/sentence_answer.dart';
 import '../theme/app_theme_extension.dart';
 import '../theme/typography.dart';
 
@@ -19,6 +20,7 @@ class DiffRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (SentenceAnswer.isSentence(correct)) return _buildWords(context);
     final colors = context.colors;
     final base = AppTypography.monoWord;
 
@@ -79,6 +81,64 @@ class DiffRow extends StatelessWidget {
           line('верно', correctSpans()),
         ],
       ),
+    );
+  }
+
+  /// A sentence is compared word by word and wraps instead of shrinking:
+  /// letters cannot line up across two different sentences anyway.
+  Widget _buildWords(BuildContext context) {
+    final colors = context.colors;
+    final base = AppTypography.monoWord;
+    final diff = SentenceAnswer.diff(user: user, correct: correct);
+
+    List<InlineSpan> spans(List<(String, bool)> words, TextStyle Function(bool matched) style) => [
+      for (var i = 0; i < words.length; i++) ...[
+        if (i > 0) TextSpan(text: ' ', style: base),
+        TextSpan(text: words[i].$1, style: style(words[i].$2)),
+      ],
+    ];
+
+    Widget line(String label, List<InlineSpan> content) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: _labelWidth,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(label, softWrap: false, style: AppTypography.monoMeta.copyWith(color: colors.muted)),
+            ),
+          ),
+          Expanded(child: Text.rich(TextSpan(children: content))),
+        ],
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        line(
+          'вы',
+          user.trim().isEmpty
+              ? [TextSpan(text: '—', style: base.copyWith(color: colors.muted))]
+              : spans(diff.user, (matched) => base.copyWith(color: matched ? colors.ink : colors.danger)),
+        ),
+        const SizedBox(height: 4),
+        line(
+          'верно',
+          spans(
+            diff.correct,
+            (matched) => matched
+                ? base.copyWith(color: colors.ink)
+                : base.copyWith(
+                    color: colors.accent,
+                    decoration: TextDecoration.underline,
+                    decorationColor: colors.accent,
+                    decorationThickness: 2,
+                  ),
+          ),
+        ),
+      ],
     );
   }
 }
