@@ -52,7 +52,7 @@ class Units extends Table with SyncColumns {
   late final studiedAt = dateTime().nullable()();
 }
 
-enum WordSetSource { manual, paste, photo }
+enum WordSetSource { manual, paste, photo, phrases }
 
 @DataClassName('WordSetRow')
 class WordSets extends Table with SyncColumns {
@@ -71,6 +71,9 @@ class Cards extends Table with SyncColumns {
   late final partOfSpeech = text().withDefault(const Constant(''))();
   /// JSON-encoded list of example sentence strings.
   late final examples = text().withDefault(const Constant('[]'))();
+  /// JSON-encoded Russian translations of [examples], same order; what turns
+  /// an example into a phrase card.
+  late final exampleTranslations = text().withDefault(const Constant('[]'))();
   late final note = text().withDefault(const Constant(''))();
   late final imageRef = text().nullable()();
 }
