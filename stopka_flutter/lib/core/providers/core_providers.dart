@@ -115,12 +115,19 @@ final aiAvailabilityProvider = Provider<AiAvailability>((ref) {
 /// Where AI requests go: the server proxy by default, Gemini directly only
 /// behind the developer flag, and nowhere when the app has no server address.
 final llmClientProvider = Provider<LlmClient>((ref) {
-  final LlmClient inner = switch (ref.watch(aiModeProvider)) {
+  final mode = ref.watch(aiModeProvider);
+  final LlmClient inner = switch (mode) {
     AiMode.direct => GeminiLlmClient(ref.watch(apiKeyStoreProvider)),
     AiMode.server => ServerLlmClient(ref.watch(serverClientProvider), ref.watch(deviceTokenStoreProvider)),
     AiMode.none => UnavailableLlmClient(),
   };
-  return ThrottledLlmClient(inner, ref.watch(llmRequestCounterProvider));
+  return ThrottledLlmClient(
+    inner,
+    ref.watch(llmRequestCounterProvider),
+    // A free personal key allows 15 requests a minute (Flash-Lite); the
+    // server paces its own provider.
+    minInterval: mode == AiMode.direct ? const Duration(seconds: 4) : const Duration(seconds: 1),
+  );
 });
 
 final eventLoggerProvider = Provider<EventLogger>((ref) => NoopEventLogger());

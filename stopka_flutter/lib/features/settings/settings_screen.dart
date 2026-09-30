@@ -18,15 +18,16 @@ import '../../core/widgets/primary_button.dart';
 import '../../core/widgets/segmented_choice.dart';
 import '../update/update_screen.dart';
 
-/// Known Gemini flash model ids as of the last documentation check
-/// (ai.google.dev/gemini-api/docs/models, checked 2026-09-23). Re-verify
+/// Known Gemini model ids as of the last documentation check
+/// (ai.google.dev/gemini-api/docs/models, checked 2026-09-30). Re-verify
 /// before adding new options — Google renames/retires models over time.
+/// Flash-Lite first: on a free key it allows 500 requests a day, Flash 20.
 const List<String> knownGeminiModels = [
+  'gemini-3.5-flash-lite',
+  'gemini-3.1-flash-lite',
   'gemini-3.8-flash',
   'gemini-3.7-flash',
-  'gemini-3.6-flash',
   'gemini-3.5-flash',
-  'gemini-3.5-flash-lite',
 ];
 
 const List<int> newCardLimitChoices = [10, 20, 30, 50];
@@ -321,6 +322,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         if (value != null) setState(() => _model = value);
                       },
                     ),
+                  ),
+                  const SizedBox(height: AppSpacing.s8),
+                  Text(
+                    'На бесплатном ключе Flash-Lite даёт 500 запросов в день, Flash — только 20. '
+                    'Когда лимит модели кончается, приложение само переходит на Flash-Lite.',
+                    style: AppTypography.caption.copyWith(color: colors.muted),
                   ),
                   const SizedBox(height: AppSpacing.s18),
                   Row(
